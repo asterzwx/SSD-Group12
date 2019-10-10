@@ -16,24 +16,24 @@ import hello.repo.UserAccountRepo;
 public class UserAccountService {
 
 	@Autowired
-	UserAccountRepo userRepository;
+	UserAccountRepo userRepo;
 
 	public List<UserAccount> getAll() {
 		// TODO Auto-generated method stub				
-		return userRepository.findAll();
+		return userRepo.findAll();
 	}
 	
 	public UserAccount saveUser(UserAccount userAccount) {
-		return userRepository.save(userAccount);
+		return userRepo.save(userAccount);
 	}
 	
 	public Optional<UserAccount> findById(String username) {
 		// TODO Auto-generated method stub
-        return userRepository.findById(username);
+        return userRepo.findById(username);
 	}
 	
 	public void deleteById(String username) {
-        userRepository.deleteById(username);
+        userRepo.deleteById(username);
     }
 
 }

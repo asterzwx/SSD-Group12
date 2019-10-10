@@ -43,53 +43,49 @@ public class UserAccountController {
 	public ResponseEntity<UserAccount> findById(@PathVariable String username) {
 		Optional<UserAccount> user = userService.findById(username);
 		if (!user.isPresent()) {
-//            log.error("Id " + id + " is not existed");
 			ResponseEntity.badRequest().build();
 		}
 
 		return ResponseEntity.ok(user.get());
 	}
 
-	@PostMapping(path = "/create") // Map ONLY POST Requests
+	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserAccount userAccount) {
 		// if user dont exist
 		if (!userService.findById(userAccount.getUsername()).isPresent()) {
 			userAccount.setUsername(userAccount.getUsername());
-			userAccount.setPasswordHash("knnbccb");
-			userAccount.setSalt("wtfhelp");
+			userAccount.setPassword_hash("hashvaluehere");
+			userAccount.setSalt("saltvaluehere");
 			return ResponseEntity.ok(userService.saveUser(userAccount));
 		}
 		return null;
-//		return ResponseEntity.ok(userService.saveUser(userAccount));
 	}
 	
-	@PutMapping(path = "/updateHashSalt/{username}")
+	@PutMapping("/updateHashSalt/{username}")
 	public ResponseEntity<UserAccount> updateHashSalt(@PathVariable String username, @RequestBody UserAccount userAccount) {
 		if (!userService.findById(username).isPresent()) {
-//            log.error("username " + username + " is not existed");
 			ResponseEntity.badRequest().build();
 		}
 		
 		return ResponseEntity.ok(userService.saveUser(userAccount));
 	}
 
-	@PutMapping(path = "/update/{username}")
+	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
+		userAccount.setUsername(username);
 		if (!userService.findById(username).isPresent()) {
-//            log.error("username " + username + " is not existed");
-			ResponseEntity.badRequest().build();
+			ResponseEntity.badRequest().build();			
 		}
-		
+		userAccount.setPassword_hash("updatedhashvaluehere");
+		userAccount.setSalt("updatedsaltvaluehere");
 		return ResponseEntity.ok(userService.saveUser(userAccount));
 	}
 	
 	@DeleteMapping("/delete/{username}")
     public ResponseEntity delete(@PathVariable String username) {
         if (!userService.findById(username).isPresent()) {
-//            log.error("Id " + id + " is not existed");
             ResponseEntity.badRequest().build();
         }
-
         userService.deleteById(username);
 
         return ResponseEntity.ok().build();
