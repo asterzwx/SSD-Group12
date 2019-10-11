@@ -14,13 +14,13 @@ public class UserAccount {
 	}
 
 	
-	public UserAccount(String username, String password, String profile_picture, String mobileNumber, String email,
+	public UserAccount(String username, String password, String profile_picture, String mobile_number, String email,
 			String status, String password_hash, String salt) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.profile_picture = profile_picture;
-		this.mobileNumber = mobileNumber;
+		this.mobile_number = mobile_number;
 		this.email = email;
 		this.status = status;
 		this.password_hash = password_hash;
@@ -40,8 +40,8 @@ public class UserAccount {
 	@Column(name = "profile_picture")
 	private String profile_picture;
 
-	@Column(name = "mobileNumber")
-	private String mobileNumber;
+	@Column(name = "mobile_number")
+	private String mobile_number;
 
 	@Column(name = "email")
 	private String email;
@@ -83,13 +83,14 @@ public class UserAccount {
 	}
 
 
-	public String getMobileNumber() {
-		return mobileNumber;
+
+	public String getMobile_number() {
+		return mobile_number;
 	}
 
 
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
+	public void setMobile_number(String mobile_number) {
+		this.mobile_number = mobile_number;
 	}
 
 

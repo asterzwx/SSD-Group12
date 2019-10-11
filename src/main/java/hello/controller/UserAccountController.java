@@ -2,11 +2,15 @@ package hello.controller;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import javax.validation.Valid;
 
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +27,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.google.common.hash.Hashing;
+
+import hello.Application;
 import hello.model.UserAccount;
 import hello.repo.UserAccountRepo;
 import hello.service.UserAccountService;
@@ -54,8 +61,17 @@ public class UserAccountController {
 		// if user dont exist
 		if (!userService.findById(userAccount.getUsername()).isPresent()) {
 			userAccount.setUsername(userAccount.getUsername());
-			userAccount.setPassword_hash("hashvaluehere");
-			userAccount.setSalt("saltvaluehere");
+			//generate salt value
+			String generatedSalt = generateSalt().toString();
+
+			//generate password hash value			
+			String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+			String generatedHash_SHA256 = Hashing.sha256()
+					  .hashString(password_plus_salt, StandardCharsets.UTF_8)
+					  .toString();
+			
+			userAccount.setPassword_hash(generatedHash_SHA256);
+			userAccount.setSalt(generatedSalt.toString());
 			return ResponseEntity.ok(userService.saveUser(userAccount));
 		}
 		return null;
@@ -89,6 +105,13 @@ public class UserAccountController {
         userService.deleteById(username);
 
         return ResponseEntity.ok().build();
+    }
+	
+	public byte[] generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte bytes[] = new byte[20];
+        random.nextBytes(bytes);
+        return bytes;
     }
 
 }

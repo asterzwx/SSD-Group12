@@ -1,5 +1,7 @@
 package hello.controller;
 
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.common.hash.Hashing;
 
 import hello.model.Admin;
 import hello.service.AdminService;
@@ -44,8 +48,18 @@ public class AdminController {
 		// if user dont exist
 		if (!adminService.findById(adminAccount.getUsername()).isPresent()) {
 			adminAccount.setUsername(adminAccount.getUsername());
-			adminAccount.setPassword_hash("hashvaluehere");
-			adminAccount.setSalt("saltvaluehere");
+			
+			//generate salt value
+			String generatedSalt = generateSalt().toString();
+
+			//generate password hash value			
+			String password_plus_salt = "" + adminAccount.getPassword() + generatedSalt;
+			String generatedHash_SHA256 = Hashing.sha256()
+					  .hashString(password_plus_salt, StandardCharsets.UTF_8)
+					  .toString();
+			
+			adminAccount.setPassword_hash(generatedHash_SHA256);
+			adminAccount.setSalt(generatedSalt);
 			return ResponseEntity.ok(adminService.saveUser(adminAccount));
 		}
 		return null;
@@ -80,6 +94,14 @@ public class AdminController {
 
         return ResponseEntity.ok().build();
     }
+	
+	public byte[] generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte bytes[] = new byte[20];
+        random.nextBytes(bytes);
+        return bytes;
+    }
+
 
 
 }

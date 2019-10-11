@@ -84,8 +84,8 @@ public class DOTAController {
 			e2.printStackTrace();
 
 		}
-		return ResponseEntity.status(HttpStatus.OK).body(jsonObject);
-//		return ResponseEntity.ok(jsonObject);
+//		return ResponseEntity.status(HttpStatus.OK).body(jsonObject);
+		return ResponseEntity.ok(jsonObject);
 //		return ResponseEntity.ok(convertedObject.getString("begin_at"));
 //		return convertedObject.getJSONArray("content").getJSONObject(0).getString("article")
 		
