@@ -26,7 +26,7 @@ public class Item {
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Column(name = "item_id", unique = true)
 	@Column(name = "item_id")
-	private int item_id;
+	private Integer item_id;
 
 	@Column(name = "name")
 	private String name;
@@ -37,11 +37,11 @@ public class Item {
 	@Column(name = "cost")
 	private int cost;
 
-	public int getItem_id() {
+	public Integer getItem_id() {
 		return item_id;
 	}
 
-	public void setItem_id(int item_id) {
+	public void setItem_id(Integer item_id) {
 		this.item_id = item_id;
 	}
 

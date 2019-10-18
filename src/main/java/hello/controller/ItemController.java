@@ -45,8 +45,12 @@ public class ItemController {
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
-	public ResponseEntity create(@RequestBody Item item) {
-		if (!itemService.findById(item.getItem_id()).isPresent()) {			
+	public ResponseEntity create(@RequestBody Item item) {		
+//		if (!itemService.findById(item.getItem_id()).isPresent()) {			
+//			return ResponseEntity.ok(itemService.saveItem(item));
+//		}
+//		return null;		
+		if (!itemService.findById(item.getItem_id()).isPresent()) {
 			return ResponseEntity.ok(itemService.saveItem(item));
 		}
 		return null;
