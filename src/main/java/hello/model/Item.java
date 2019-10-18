@@ -7,14 +7,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
+import net.bytebuddy.asm.Advice.This;
+
 @Entity
 public class Item {
 	public Item() {}
 	
 	
 	
-	public Item( String name, String image, int cost) {
+	public Item(int itemid, String name, String image, int cost) {
 		super();
+		this.item_id = itemid;
 		this.name = name;
 		this.image = image;
 		this.cost = cost;
@@ -25,7 +28,7 @@ public class Item {
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Column(name = "item_id", unique = true)
 	
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "item_id")
 	private int item_id;
 
