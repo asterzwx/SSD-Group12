@@ -13,9 +13,8 @@ public class Item {
 	
 	
 	
-	public Item(int item_id, String name, String image, int cost) {
+	public Item( String name, String image, int cost) {
 		super();
-		this.item_id = item_id;
 		this.name = name;
 		this.image = image;
 		this.cost = cost;
@@ -26,7 +25,7 @@ public class Item {
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Column(name = "item_id", unique = true)
 	@Column(name = "item_id")
-	private Integer item_id;
+	private int item_id;
 
 	@Column(name = "name")
 	private String name;
@@ -37,11 +36,11 @@ public class Item {
 	@Column(name = "cost")
 	private int cost;
 
-	public Integer getItem_id() {
+	public int getItem_id() {
 		return item_id;
 	}
 
-	public void setItem_id(Integer item_id) {
+	public void setItem_id(int item_id) {
 		this.item_id = item_id;
 	}
 

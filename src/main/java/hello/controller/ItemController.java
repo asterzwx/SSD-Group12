@@ -50,10 +50,11 @@ public class ItemController {
 //			return ResponseEntity.ok(itemService.saveItem(item));
 //		}
 //		return null;		
-		if (!itemService.findById(item.getItem_id()).isPresent()) {
-			return ResponseEntity.ok(itemService.saveItem(item));
-		}
-		return null;
+//		if (!itemService.findById(item.getItem_id()).isPresent()) {
+//			return ResponseEntity.ok(itemService.saveItem(item));
+//		}
+//		return null;
+		return ResponseEntity.ok(itemService.saveItem(item));
 	}
 	
 	@PutMapping("/update/{item_id}")
