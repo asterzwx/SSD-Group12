@@ -13,9 +13,8 @@ public class Item {
 	
 	
 	
-	public Item(int item_id, String name, String image, int cost) {
+	public Item( String name, String image, int cost) {
 		super();
-		this.item_id = item_id;
 		this.name = name;
 		this.image = image;
 		this.cost = cost;

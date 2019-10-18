@@ -7,6 +7,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import hello.model.Item;
 import hello.repo.ItemRepo;
 import hello.service.ItemService;
 
+@CrossOrigin(origins = "https://gambit-team12.tk")
 @RestController
 @RequestMapping(value = "/rest/item")
 public class ItemController {
@@ -43,11 +45,16 @@ public class ItemController {
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
-	public ResponseEntity create(@RequestBody Item item) {
-		if (!itemService.findById(item.getItem_id()).isPresent()) {			
-			return ResponseEntity.ok(itemService.saveItem(item));
-		}
-		return null;
+	public ResponseEntity create(@RequestBody Item item) {		
+//		if (!itemService.findById(item.getItem_id()).isPresent()) {			
+//			return ResponseEntity.ok(itemService.saveItem(item));
+//		}
+//		return null;		
+//		if (!itemService.findById(item.getItem_id()).isPresent()) {
+//			return ResponseEntity.ok(itemService.saveItem(item));
+//		}
+//		return null;
+		return ResponseEntity.ok(itemService.saveItem(item));
 	}
 	
 	@PutMapping("/update/{item_id}")
