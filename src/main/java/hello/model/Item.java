@@ -24,6 +24,8 @@ public class Item {
 	@Id
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 //	@Column(name = "item_id", unique = true)
+	
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "item_id")
 	private int item_id;
 
