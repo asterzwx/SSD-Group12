@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.common.hash.Hashing;
 
 import hello.model.Admin;
+import hello.model.UserAccount;
 import hello.service.AdminService;
 
 @CrossOrigin(origins = "https://gambit-team12.tk")
@@ -65,6 +66,39 @@ public class AdminController {
 		}
 		return null;
 	}
+	
+	
+	@PostMapping("/login")
+	public boolean login(@RequestBody Admin adminAccount) {
+		Optional<Admin> user = adminService.findById(adminAccount.getUsername());
+		
+		// if user exists
+		if (adminService.findById(adminAccount.getUsername()).isPresent()) {		
+			
+			Admin userInfo = user.get();	
+			// get user's paswordhash
+			String user_password_hash = userInfo.getPassword_hash(); // for comparing later				
+			// do hashing procedure again with the provided password
+			
+			String password_plus_salt = "" + adminAccount.getPassword() + userInfo.getSalt();
+			// now u hash again
+			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+					.toString();
+			
+			System.out.println("@@@@@@@@@@@@@ " + user_password_hash);
+			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
+			
+			// compare this hash with the user's pw hash
+			if (user_password_hash.equals(generatedHash_SHA256)) {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+	
+	
 	
 	@PutMapping("/updateHashSalt/{username}")
 	public ResponseEntity<Admin> updateHashSalt(@PathVariable String username, @RequestBody Admin adminAccount) {

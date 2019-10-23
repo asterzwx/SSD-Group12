@@ -10,6 +10,7 @@ import java.util.Random;
 
 import javax.validation.Valid;
 
+import org.apache.catalina.User;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -63,28 +64,60 @@ public class UserAccountController {
 		// if user dont exist
 		if (!userService.findById(userAccount.getUsername()).isPresent()) {
 			userAccount.setUsername(userAccount.getUsername());
-			//generate salt value
-			String generatedSalt = generateSalt().toString();
 
-			//generate password hash value			
+			// 1. generate salt
+			// generate salt value
+			String generatedSalt = generateSalt().toString();
+			// 2. hash the user's password with the salt (X)
 			String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
-			String generatedHash_SHA256 = Hashing.sha256()
-					  .hashString(password_plus_salt, StandardCharsets.UTF_8)
-					  .toString();
-			
+			// 3. use sha256 to hash X
+			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+					.toString();
+
 			userAccount.setPassword_hash(generatedHash_SHA256);
 			userAccount.setSalt(generatedSalt.toString());
 			return ResponseEntity.ok(userService.saveUser(userAccount));
 		}
 		return null;
 	}
-	
+
+	@PostMapping("/login")
+	public boolean login(@RequestBody UserAccount userAccount) {
+		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
+		
+		// if user exists
+		if (userService.findById(userAccount.getUsername()).isPresent()) {		
+			
+			UserAccount userInfo = user.get();	
+			// get user's paswordhash
+			String user_password_hash = userInfo.getPassword_hash(); // for comparing later				
+			// do hashing procedure again with the provided password
+			
+			String password_plus_salt = "" + userAccount.getPassword() + userInfo.getSalt();
+			// now u hash again
+			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+					.toString();
+			
+			System.out.println("@@@@@@@@@@@@@ " + user_password_hash);
+			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
+			
+			// compare this hash with the user's pw hash
+			if (user_password_hash.equals(generatedHash_SHA256)) {
+				return true;
+			}
+		}
+
+		return false;
+
+	}
+
 	@PutMapping("/updateHashSalt/{username}")
-	public ResponseEntity<UserAccount> updateHashSalt(@PathVariable String username, @RequestBody UserAccount userAccount) {
+	public ResponseEntity<UserAccount> updateHashSalt(@PathVariable String username,
+			@RequestBody UserAccount userAccount) {
 		if (!userService.findById(username).isPresent()) {
 			ResponseEntity.badRequest().build();
 		}
-		
+
 		return ResponseEntity.ok(userService.saveUser(userAccount));
 	}
 
@@ -92,28 +125,28 @@ public class UserAccountController {
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
 		userAccount.setUsername(username);
 		if (!userService.findById(username).isPresent()) {
-			ResponseEntity.badRequest().build();			
+			ResponseEntity.badRequest().build();
 		}
 		userAccount.setPassword_hash("updatedhashvaluehere");
 		userAccount.setSalt("updatedsaltvaluehere");
 		return ResponseEntity.ok(userService.saveUser(userAccount));
 	}
-	
-	@DeleteMapping("/delete/{username}")
-    public ResponseEntity delete(@PathVariable String username) {
-        if (!userService.findById(username).isPresent()) {
-            ResponseEntity.badRequest().build();
-        }
-        userService.deleteById(username);
 
-        return ResponseEntity.ok().build();
-    }
-	
+	@DeleteMapping("/delete/{username}")
+	public ResponseEntity delete(@PathVariable String username) {
+		if (!userService.findById(username).isPresent()) {
+			ResponseEntity.badRequest().build();
+		}
+		userService.deleteById(username);
+
+		return ResponseEntity.ok().build();
+	}
+
 	public byte[] generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
-        random.nextBytes(bytes);
-        return bytes;
-    }
+		SecureRandom random = new SecureRandom();
+		byte bytes[] = new byte[20];
+		random.nextBytes(bytes);
+		return bytes;
+	}
 
 }
