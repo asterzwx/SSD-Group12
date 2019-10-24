@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.apache.catalina.startup.ClassLoaderFactory.Repository;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,26 +26,40 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import hello.model.League;
-import hello.service.GithubService;
+import hello.model.LeagueAPI;
+import hello.repo.LeagueRepo;
 import hello.service.LeagueService;
 
 //@CrossOrigin(origins = "https://gambit-team12.tk")
 @RestController
-//@RequestMapping(value = "/rest/league")
+@RequestMapping(value = "/rest/league")
 public class LeagueController {
+	
+	@Autowired
+	LeagueRepo leagueRepo;
 
 	 @Autowired
-	    private LeagueService githubService;
+	    private LeagueService leagueAPIService;
+	 @Autowired
+	 private LeagueService leagueService;
 
-	    @GetMapping("/leagues")
-	    public List<League> getRepos() throws IOException {
-	        return githubService.getRepositories();
+	    @GetMapping(path = "/leagues", produces=MediaType.APPLICATION_JSON_VALUE)
+	    public List<LeagueAPI> getLeagues() throws IOException {
+	        return leagueAPIService.getLeagues();
 	    }
 
 //	    @PostMapping("/repos")
 //	    public Repository createRepo(@RequestBody Repository newRepo) throws IOException {
 //	        return githubService.createRepository(newRepo);
 //	    }
+	    
+	    @PostMapping("/create") // Map ONLY POST Requests
+		public ResponseEntity create(@Valid @RequestBody League league) {
+//			if (!leagueService.findById(leagueService.getPoll_id()).isPresent()) {			
+				return ResponseEntity.ok(leagueService.saveLeague(league));
+//			}
+//			return null;
+		}
 
 	  
 

@@ -1,141 +1,110 @@
 package hello.model;
 
-import java.util.List;
+import java.io.Serializable;
+import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-//@Entity
-public class League {
-	public League() {
-	}
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-	public League(Integer id, String imageUrl, Boolean liveSupported, String modifiedAt, String name,
-			List<Series> series, String slug, Object url, Videogame videogame) {
+@Entity
+@Table(name = "league")
+@EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, 
+        allowGetters = true, allowSetters = true)
+
+public class League implements Serializable{
+	
+	public League() {}
+	
+	public League(int league_id, String league_name, String league_slug, String league_img, Date createdAt,
+			Date updatedAt) {
 		super();
-		this.id = id;
-		this.imageUrl = imageUrl;
-		this.liveSupported = liveSupported;
-		this.modifiedAt = modifiedAt;
-		this.name = name;
-		this.series = series;
-		this.slug = slug;
-		this.url = url;
-		this.videogame = videogame;
+		this.league_id = league_id;
+		this.league_name = league_name;
+		this.league_slug = league_slug;
+		this.league_img = league_img;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
 	}
 
-	@SerializedName("id")
-	@Expose
-	private Integer id;
+	@Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "league_id")
+    private int league_id;
+	
+	@Column(name = "league_name")
+	private String league_name;
+	
+	@Column(name = "league_slug")
+	private String league_slug;
+	
+	@Column(name = "league_img")
+	private String league_img;
+	
+	@Column(nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @CreatedDate
+    private Date createdAt;
 
-	@SerializedName("image_url")
-	@Expose
-	private String imageUrl;
+    @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @LastModifiedDate
+    private Date updatedAt;
 
-	@SerializedName("live_supported")
-	@Expose
-	private Boolean liveSupported;
-
-	@SerializedName("modified_at")
-	@Expose
-	private String modifiedAt;
-
-	@SerializedName("name")
-	@Expose
-	private String name;
-
-	@SerializedName("series")
-	@Expose
-	private List<Series> series = null;
-
-	@SerializedName("slug")
-	@Expose
-	private String slug;
-
-	@SerializedName("url")
-	@Expose
-	private Object url;
-
-	@SerializedName("videogame")
-	@Expose
-	private Videogame videogame;
-
-	public Integer getId() {
-		return id;
+	public int getLeague_id() {
+		return league_id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setLeague_id(int league_id) {
+		this.league_id = league_id;
 	}
 
-	public String getImageUrl() {
-		return imageUrl;
+	public String getLeague_name() {
+		return league_name;
 	}
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
+	public void setLeague_name(String league_name) {
+		this.league_name = league_name;
 	}
 
-	public Boolean getLiveSupported() {
-		return liveSupported;
+	public String getLeague_slug() {
+		return league_slug;
 	}
 
-	public void setLiveSupported(Boolean liveSupported) {
-		this.liveSupported = liveSupported;
+	public void setLeague_slug(String league_slug) {
+		this.league_slug = league_slug;
 	}
 
-	public String getModifiedAt() {
-		return modifiedAt;
+	public String getLeague_img() {
+		return league_img;
 	}
 
-	public void setModifiedAt(String modifiedAt) {
-		this.modifiedAt = modifiedAt;
+	public void setLeague_img(String league_img) {
+		this.league_img = league_img;
 	}
 
-	public String getName() {
-		return name;
+	public Date getCreatedAt() {
+		return createdAt;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
 	}
 
-	public List<Series> getSeries() {
-		return series;
+	public Date getUpdatedAt() {
+		return updatedAt;
 	}
 
-	public void setSeries(List<Series> series) {
-		this.series = series;
+	public void setUpdatedAt(Date updatedAt) {
+		this.updatedAt = updatedAt;
 	}
-
-	public String getSlug() {
-		return slug;
-	}
-
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
-
-	public Object getUrl() {
-		return url;
-	}
-
-	public void setUrl(Object url) {
-		this.url = url;
-	}
-
-	public Videogame getVideogame() {
-		return videogame;
-	}
-
-	public void setVideogame(Videogame videogame) {
-		this.videogame = videogame;
-	}
-
+    
+    
+    
+    
 }
