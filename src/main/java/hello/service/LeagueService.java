@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.Null;
 
 import org.apache.catalina.startup.ClassLoaderFactory.Repository;
 import org.json.JSONArray;
@@ -22,9 +23,11 @@ import com.google.gson.JsonParser;
 
 import hello.APIConfiguration;
 import hello.RepositoryInterface;
+import hello.model.API_League;
+import hello.model.Item;
 import hello.model.League;
-import hello.model.LeagueAPI;
-import hello.repo.LeagueRepo;
+import hello.model.API_League;
+import hello.repo.DotaLeagueRepo;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -40,52 +43,40 @@ import retrofit2.converter.gson.GsonConverterFactory;
 //@Transactional
 public class LeagueService implements APIConfiguration {
 	@Autowired
-	LeagueRepo leagueRepo;
-
+	DotaLeagueRepo leagueRepo;
 	private RepositoryInterface service;
 	
-	List<LeagueAPI> leagues = null;
+	List<API_League> leagues = null;
 
 	public LeagueService() {
-
 		Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.pandascore.co/")
 				.addConverterFactory(GsonConverterFactory.create()).build();
-
 		service = retrofit.create(RepositoryInterface.class);
 	}
 
-	public List<LeagueAPI> getLeagues() throws IOException {		
-
-		Call<List<LeagueAPI>> call = service.listLeagues(API_KEY);
-		call.enqueue(new Callback<List<LeagueAPI>>() {
-
+	public List<API_League> getLeagues() throws IOException {	
+		Call<List<API_League>> call = service.listLeagues(API_KEY);
+		call.enqueue(new Callback<List<API_League>>() {
 			@Override
-			public void onResponse(Call<List<LeagueAPI>> call, Response<List<LeagueAPI>> response) {
-				// TODO Auto-generated method stub
+			public void onResponse(Call<List<API_League>> call, Response<List<API_League>> response) {
+			
 				leagues = response.body();
-//				System.out.println(response.body());
 				Gson responseGson = new Gson();
 				responseGson.toJson(response.body());
-//				System.out.println("@@@@@@@@@ " + responseGson);
-//				JsonArray json = new JsonArray();
-//				json.add(responseGson.toJson(response.body()));
-//				// iterate the json object to save the details
-//				for(int i=0; i<json.size(); i++) {
-//					System.out.println(json.get(i));
-//				}
 				
-				for (LeagueAPI u : response.body()) {
-			           int id = u.getId();
-			           String name = u.getName();
-			           String slug = u.getSlug();
-			           String img = u.getImageUrl();
-			           saveLeagueDetails(id, name, slug, img);			           
-			        }
-				System.out.println("Saved all league details to DB");
+				if(getAll().size() == 0) {
+					for (API_League u : response.body()) {
+				           int id = u.getId();
+				           String name = u.getName();
+				           String slug = u.getSlug();
+				           
+				           saveLeagueDetails(id, name, slug);			           
+				        }
+					System.out.println("Saved all league details to DB");					
+				}				
 			}
-
 			@Override
-			public void onFailure(Call<List<LeagueAPI>> call, Throwable t) {
+			public void onFailure(Call<List<API_League>> call, Throwable t) {
 				// TODO Auto-generated method stub
 				System.out.println("ERROR: " + t.getMessage());
 			}
@@ -94,31 +85,24 @@ public class LeagueService implements APIConfiguration {
 		 
 	}
 	
+	public List<League> getAll() {
+		// TODO Auto-generated method stub				
+		return leagueRepo.findAll();
+	}
+	
 	
 	public League saveLeague(League league) {		
 		return leagueRepo.save(league);
 	}
 	
-	public League saveLeagueDetails(int id, String name, String slug, String img) {	
+	public League saveLeagueDetails(int id, String name, String slug) {	
 		League league = new League();
 		league.setLeague_id(id);
 		league.setLeague_name(name);
 		league.setLeague_slug(slug);
-		league.setLeague_img(img);
 		return leagueRepo.save(league);
 	}
 	
 	
-	public static void printJsonObject(JSONObject jsonObj) {
-	    jsonObj.keySet().forEach(keyStr ->
-	    {
-	        Object keyvalue = jsonObj.get(keyStr);
-	        System.out.println("key: "+ keyStr + " value: " + keyvalue);
-
-//	        for nested objects iteration if required
-	        if (keyvalue instanceof JSONObject)
-	            printJsonObject((JSONObject)keyvalue);
-	    });
-	}
 
 }

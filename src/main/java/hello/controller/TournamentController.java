@@ -26,42 +26,43 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import hello.model.API_League;
+import hello.model.API_Tournament;
 import hello.model.League;
 import hello.model.LeagueAPI;
+import hello.model.Tournament;
 import hello.repo.DotaLeagueRepo;
+import hello.repo.TournamentRepo;
 import hello.service.LeagueService;
+import hello.service.TournamentService;
 
 //@CrossOrigin(origins = "https://gambit-team12.tk")
 @RestController
-@RequestMapping(value = "/rest/league")
-public class LeagueController {
-	
+@RequestMapping(value = "/rest/tournament")
+public class TournamentController {
+
 	@Autowired
-	DotaLeagueRepo leagueRepo;
+	TournamentRepo tournamentRepo;
+	@Autowired
+	private TournamentService tournamentAPIService;
+	@Autowired
+	private TournamentService tournamentService;
 
-	 @Autowired
-	    private LeagueService leagueAPIService;
-	 @Autowired
-	 private LeagueService leagueService;
-
-	    @GetMapping(path = "/leagues", produces=MediaType.APPLICATION_JSON_VALUE)
-	    public List<API_League> getLeagues() throws IOException {
-	        return leagueAPIService.getLeagues();
-	    }
+	@GetMapping(path = "/dota/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Tournament> getDotaTournaments() throws IOException {
+		return tournamentAPIService.getDotaTournaments();
+	}
 
 //	    @PostMapping("/repos")
 //	    public Repository createRepo(@RequestBody Repository newRepo) throws IOException {
 //	        return githubService.createRepository(newRepo);
 //	    }
-	    
-	    @PostMapping("/create") // Map ONLY POST Requests
-		public ResponseEntity create(@Valid @RequestBody League league) {
+
+	@PostMapping("/create") // Map ONLY POST Requests
+	public ResponseEntity create(@Valid @RequestBody Tournament tournament) {
 //			if (!leagueService.findById(leagueService.getPoll_id()).isPresent()) {			
-				return ResponseEntity.ok(leagueService.saveLeague(league));
+		return ResponseEntity.ok(tournamentService.saveTournament(tournament));
 //			}
 //			return null;
-		}
-
-	  
+	}
 
 }

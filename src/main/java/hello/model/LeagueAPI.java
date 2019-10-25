@@ -17,7 +17,7 @@ public class LeagueAPI {
 	}
 
 	public LeagueAPI(Integer id, String imageUrl, Boolean liveSupported, String modifiedAt, String name,
-			List<Series> series, String slug, Object url, Videogame videogame) {
+			List<Series> series, String slug, Object url) {
 		super();
 		this.id = id;
 		this.imageUrl = imageUrl;
@@ -27,7 +27,7 @@ public class LeagueAPI {
 		this.series = series;
 		this.slug = slug;
 		this.url = url;
-		this.videogame = videogame;
+//		this.videogame = videogame;
 	}
 
 	@SerializedName("id")
@@ -62,9 +62,9 @@ public class LeagueAPI {
 	@Expose
 	private Object url;
 
-	@SerializedName("videogame")
-	@Expose
-	private Videogame videogame;
+//	@SerializedName("videogame")
+//	@Expose
+//	private Videogame videogame;
 
 	public Integer getId() {
 		return id;
@@ -130,12 +130,12 @@ public class LeagueAPI {
 		this.url = url;
 	}
 
-	public Videogame getVideogame() {
-		return videogame;
-	}
-
-	public void setVideogame(Videogame videogame) {
-		this.videogame = videogame;
-	}
+//	public Videogame getVideogame() {
+//		return videogame;
+//	}
+//
+//	public void setVideogame(Videogame videogame) {
+//		this.videogame = videogame;
+//	}
 
 }

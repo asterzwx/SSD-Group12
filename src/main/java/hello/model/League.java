@@ -21,13 +21,12 @@ public class League implements Serializable{
 	
 	public League() {}
 	
-	public League(int league_id, String league_name, String league_slug, String league_img, Date createdAt,
+	public League(int league_id, String league_name, String league_slug, Date createdAt,
 			Date updatedAt) {
 		super();
 		this.league_id = league_id;
 		this.league_name = league_name;
 		this.league_slug = league_slug;
-		this.league_img = league_img;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
 	}
@@ -42,9 +41,6 @@ public class League implements Serializable{
 	
 	@Column(name = "league_slug")
 	private String league_slug;
-	
-	@Column(name = "league_img")
-	private String league_img;
 	
 	@Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -78,14 +74,6 @@ public class League implements Serializable{
 
 	public void setLeague_slug(String league_slug) {
 		this.league_slug = league_slug;
-	}
-
-	public String getLeague_img() {
-		return league_img;
-	}
-
-	public void setLeague_img(String league_img) {
-		this.league_img = league_img;
 	}
 
 	public Date getCreatedAt() {

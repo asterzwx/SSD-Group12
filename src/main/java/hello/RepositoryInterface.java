@@ -11,6 +11,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import hello.model.API_League;
+import hello.model.API_Tournament;
 import hello.model.LeagueAPI;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -26,7 +28,10 @@ public interface RepositoryInterface {
 //	String accessToken = "hQ_IH5YjOHweKpx0ti6_zzXD4qdJa4LXgSbO0TxmPiWcgd6qFxE";
 	
 	 @GET("leagues")
-	    Call<List<LeagueAPI>> listLeagues(@Query("token") String accessToken);
+	    Call<List<API_League>> listLeagues(@Query("token") String accessToken);
+
+	 @GET("tournaments")
+	    Call<List<API_Tournament>> listTournaments(@Query("token") String accessToken);
 
 //	    @DELETE("repos/{owner}/{repo}")
 //	    Call<DeletePayload> deleteRepo(@Header("Authorization") String accessToken, @Header("Accept") String apiVersionSpec,
