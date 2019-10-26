@@ -1,5 +1,7 @@
 package hello.model;
 
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,7 +9,8 @@ public class API_Tournament {
 	public API_Tournament() {}
 	
 	public API_Tournament(String beginAt, String endAt, Integer id, Integer leagueId, String modifiedAt,
-			String name, Object prizepool, Integer serieId, String slug, Integer winnerId, Object winnerType) {
+			String name, Object prizepool, Integer serieId, String slug, Integer winnerId, Object winnerType,
+			API_Videogame videogame, List<API_Opponent> teams) {
 		super();
 		this.beginAt = beginAt;
 		this.endAt = endAt;
@@ -20,6 +23,8 @@ public class API_Tournament {
 		this.slug = slug;
 		this.winnerId = winnerId;
 		this.winnerType = winnerType;
+		this.videogame = videogame;
+		this.teams = teams;
 	}
 	@SerializedName("begin_at")
 	@Expose
@@ -54,6 +59,16 @@ public class API_Tournament {
 	@SerializedName("winner_type")
 	@Expose
 	public Object winnerType;
+	@SerializedName("videogame")
+	@Expose
+	public API_Videogame videogame;
+	
+	@SerializedName("teams")
+	@Expose
+	public List<API_Opponent> teams;
+	
+	
+	
 	public String getBeginAt() {
 		return beginAt;
 	}
@@ -119,6 +134,22 @@ public class API_Tournament {
 	}
 	public void setWinnerType(Object winnerType) {
 		this.winnerType = winnerType;
+	}
+
+	public API_Videogame getVideogame() {
+		return videogame;
+	}
+
+	public void setVideogame(API_Videogame videogame) {
+		this.videogame = videogame;
+	}
+
+	public List<API_Opponent> getTeams() {
+		return teams;
+	}
+
+	public void setTeams(List<API_Opponent> teams) {
+		this.teams = teams;
 	}
 	
 	

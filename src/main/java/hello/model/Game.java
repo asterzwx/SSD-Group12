@@ -9,43 +9,37 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.lang.Nullable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import io.micrometer.core.lang.Nullable;
-
 @Entity
-@Table(name = "tournament")
+@Table(name = "game")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, 
         allowGetters = true, allowSetters = true)
-public class Tournament implements Serializable {
+public class Game implements Serializable{
 	
-	public Tournament() {
+	public Game() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Tournament(int tournament_id, String tournament_name, String begin_at, String end_at, int league_id,
-			String series_id, String winner_id, String videogame) {
+	public Game(int game_id, String begin_at, String end_at, int match_id, int position, String status,
+			String winner_id, String videogame) {
 		super();
-		this.tournament_id = tournament_id;
-		this.tournament_name = tournament_name;
+		this.game_id = game_id;
 		this.begin_at = begin_at;
 		this.end_at = end_at;
-		this.league_id = league_id;
-		this.series_id = series_id;
+		this.match_id = match_id;
+		this.position = position;
+		this.status = status;
 		this.winner_id = winner_id;
 		this.videogame = videogame;
 	}
 
 	@Id
-//  @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "tournament_id")
-	private int tournament_id;
-
-	@Column(name = "tournament_name")
-	private String tournament_name;
+	@Column(name = "game_id")
+	private int game_id;
 	
 	@Column(name = "begin_at")
 	@Nullable
@@ -55,11 +49,17 @@ public class Tournament implements Serializable {
 	@Nullable
 	private String end_at;
 	
-	@Column(name = "league_id")
-	private int league_id;
+	@Column(name = "match_id")
+	@Nullable
+	private int match_id;
 	
-	@Column(name = "series_id")
-	private String series_id;
+	@Column(name = "position")
+	@Nullable
+	private int position;
+	
+	@Column(name = "status")
+	@Nullable
+	private String status;
 	
 	@Column(name = "winner_id")
 	@Nullable
@@ -69,20 +69,12 @@ public class Tournament implements Serializable {
 	@Nullable
 	private String videogame;
 
-	public int getTournament_id() {
-		return tournament_id;
+	public int getGame_id() {
+		return game_id;
 	}
 
-	public void setTournament_id(int tournament_id) {
-		this.tournament_id = tournament_id;
-	}
-
-	public String getTournament_name() {
-		return tournament_name;
-	}
-
-	public void setTournament_name(String tournament_name) {
-		this.tournament_name = tournament_name;
+	public void setGame_id(int game_id) {
+		this.game_id = game_id;
 	}
 
 	public String getBegin_at() {
@@ -101,20 +93,28 @@ public class Tournament implements Serializable {
 		this.end_at = end_at;
 	}
 
-	public int getLeague_id() {
-		return league_id;
+	public int getMatch_id() {
+		return match_id;
 	}
 
-	public void setLeague_id(int league_id) {
-		this.league_id = league_id;
+	public void setMatch_id(int match_id) {
+		this.match_id = match_id;
 	}
 
-	public String getSeries_id() {
-		return series_id;
+	public int getPosition() {
+		return position;
 	}
 
-	public void setSeries_id(String series_id) {
-		this.series_id = series_id;
+	public void setPosition(int position) {
+		this.position = position;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	public String getWinner_id() {
@@ -132,8 +132,6 @@ public class Tournament implements Serializable {
 	public void setVideogame(String videogame) {
 		this.videogame = videogame;
 	}
-
-	
 	
 
 }

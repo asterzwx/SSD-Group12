@@ -80,12 +80,12 @@ public class API_League {
 	@SerializedName("tournament_id")
 	@Expose
 	public Integer tournamentId;
-//	@SerializedName("videogame")
-//	@Expose
-//	public Videogame videogame;
-	@SerializedName("videogame_version")
+	@SerializedName("videogame")
 	@Expose
-	public Object videogameVersion;
+	public API_Videogame videogame;
+//	@SerializedName("videogame_version")
+//	@Expose
+//	public Object videogameVersion;
 	@SerializedName("winner")
 	@Expose
 	public API_Winner winner;
@@ -224,18 +224,18 @@ public class API_League {
 	public void setTournamentId(Integer tournamentId) {
 		this.tournamentId = tournamentId;
 	}
-//	public Videogame getVideogame() {
-//		return videogame;
-//	}
-//	public void setVideogame(Videogame videogame) {
-//		this.videogame = videogame;
-//	}
-	public Object getVideogameVersion() {
-		return videogameVersion;
+	public API_Videogame getVideogame() {
+		return videogame;
 	}
-	public void setVideogameVersion(Object videogameVersion) {
-		this.videogameVersion = videogameVersion;
+	public void setVideogame(API_Videogame videogame) {
+		this.videogame = videogame;
 	}
+//	public Object getVideogameVersion() {
+//		return videogameVersion;
+//	}
+//	public void setVideogameVersion(Object videogameVersion) {
+//		this.videogameVersion = videogameVersion;
+//	}
 	public API_Winner getWinner() {
 		return winner;
 	}

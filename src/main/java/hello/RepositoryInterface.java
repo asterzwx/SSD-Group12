@@ -11,7 +11,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import hello.model.API_Game;
 import hello.model.API_League;
+import hello.model.API_Match;
+import hello.model.API_Serie;
 import hello.model.API_Tournament;
 import hello.model.LeagueAPI;
 import retrofit2.Call;
@@ -24,21 +27,47 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RepositoryInterface {
+
+	// PANDASCORE API ENDPOINTS
+	@GET("leagues")
+	Call<List<API_League>> listLeagues(@Query("token") String accessToken);
+
+	@GET("tournaments")
+	Call<List<API_Tournament>> listTournaments(@Query("token") String accessToken);
 	
-//	String accessToken = "hQ_IH5YjOHweKpx0ti6_zzXD4qdJa4LXgSbO0TxmPiWcgd6qFxE";
+	@GET("dota2/tournaments")
+	Call<List<API_Tournament>> listDotaTournaments(@Query("token") String accessToken);
 	
-	 @GET("leagues")
-	    Call<List<API_League>> listLeagues(@Query("token") String accessToken);
+	
+	
+	@GET("matches/past")
+	Call<List<API_Match>> listDotaPastMatches(@Query("token") String accessToken);
+	
+	@GET("lol/matches/past")
+	Call<List<API_Match>> listLoLPastMatches(@Query("token") String accessToken);
+	
+	@GET("lol/matches/running")
+	Call<List<API_Match>> listLoLRunningMatches(@Query("token") String accessToken);
+	
+	@GET("lol/matches/upcoming")
+	Call<List<API_Match>> listLoLUpcomingMatches(@Query("token") String accessToken);
 
-	 @GET("tournaments")
-	    Call<List<API_Tournament>> listTournaments(@Query("token") String accessToken);
+//	@GET("matches/{game_id}")
+//	Call<List<API_Game>> listGames(@Query("token") String accessToken);
+//
+	@GET("dota2/matches")
+	Call<List<API_Match>> listDotaGamesByMatchId(@Query("token") String accessToken);
+	
+	@GET("lol/matches")
+	Call<List<API_Match>> listLoLGamesByMatchId(@Query("token") String accessToken);
+	
+	
+	
+	@GET("dota2/series")
+	Call<List<API_Serie>> listDotaSeries(@Query("token") String accessToken);
+	
 
-//	    @DELETE("repos/{owner}/{repo}")
-//	    Call<DeletePayload> deleteRepo(@Header("Authorization") String accessToken, @Header("Accept") String apiVersionSpec,
-//	                                   @Path("repo") String repo, @Path("owner") String owner);
-
-	    @POST("user/repos")
-	    Call<Repository> createRepo(@Body Repository repo, @Header("Authorization") String accessToken,
-	                                      @Header("Accept") String apiVersionSpec,
-	                                      @Header("Content-Type") String contentType);
+//	@POST("user/repos")
+//	Call<Repository> createRepo(@Body Repository repo, @Header("Authorization") String accessToken,
+//			@Header("Accept") String apiVersionSpec, @Header("Content-Type") String contentType);
 }

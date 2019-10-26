@@ -15,74 +15,57 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.micrometer.core.lang.Nullable;
 
 @Entity
-@Table(name = "tournament")
+@Table(name = "serie")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"}, 
-        allowGetters = true, allowSetters = true)
-public class Tournament implements Serializable {
-	
-	public Tournament() {
+@JsonIgnoreProperties(value = { "createdAt", "updatedAt" }, allowGetters = true, allowSetters = true)
+public class Serie implements Serializable {
+
+	public Serie() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Tournament(int tournament_id, String tournament_name, String begin_at, String end_at, int league_id,
-			String series_id, String winner_id, String videogame) {
+	public Serie(int serie_id, String begin_at, String end_at, int league_id, String winner_id, int year) {
 		super();
-		this.tournament_id = tournament_id;
-		this.tournament_name = tournament_name;
+		this.serie_id = serie_id;
 		this.begin_at = begin_at;
 		this.end_at = end_at;
 		this.league_id = league_id;
-		this.series_id = series_id;
 		this.winner_id = winner_id;
-		this.videogame = videogame;
+		this.year = year;
 	}
 
 	@Id
 //  @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "tournament_id")
-	private int tournament_id;
+	@Column(name = "serie_id")
+	private int serie_id;
 
-	@Column(name = "tournament_name")
-	private String tournament_name;
-	
 	@Column(name = "begin_at")
 	@Nullable
 	private String begin_at;
-	
+
 	@Column(name = "end_at")
 	@Nullable
 	private String end_at;
-	
+
 	@Column(name = "league_id")
+	@Nullable
 	private int league_id;
-	
-	@Column(name = "series_id")
-	private String series_id;
-	
+
 	@Column(name = "winner_id")
 	@Nullable
 	private String winner_id;
-	
-	@Column(name = "videogame")
+
+	@Column(name = "year")
 	@Nullable
-	private String videogame;
+	private int year;
 
-	public int getTournament_id() {
-		return tournament_id;
+	public int getSerie_id() {
+		return serie_id;
 	}
 
-	public void setTournament_id(int tournament_id) {
-		this.tournament_id = tournament_id;
-	}
-
-	public String getTournament_name() {
-		return tournament_name;
-	}
-
-	public void setTournament_name(String tournament_name) {
-		this.tournament_name = tournament_name;
+	public void setSerie_id(int serie_id) {
+		this.serie_id = serie_id;
 	}
 
 	public String getBegin_at() {
@@ -109,14 +92,6 @@ public class Tournament implements Serializable {
 		this.league_id = league_id;
 	}
 
-	public String getSeries_id() {
-		return series_id;
-	}
-
-	public void setSeries_id(String series_id) {
-		this.series_id = series_id;
-	}
-
 	public String getWinner_id() {
 		return winner_id;
 	}
@@ -125,15 +100,12 @@ public class Tournament implements Serializable {
 		this.winner_id = winner_id;
 	}
 
-	public String getVideogame() {
-		return videogame;
+	public int getYear() {
+		return year;
 	}
 
-	public void setVideogame(String videogame) {
-		this.videogame = videogame;
+	public void setYear(int year) {
+		this.year = year;
 	}
-
-	
-	
 
 }

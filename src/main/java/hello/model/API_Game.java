@@ -1,5 +1,7 @@
 package hello.model;
 
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,7 +10,7 @@ public class API_Game {
 	
 	public API_Game(String beginAt, Boolean detailedStats, String endAt, Boolean finished, Boolean forfeit,
 			Integer id, Integer length, Integer matchId, Integer position, String status, Object videoUrl,
-			API_Winner winner, String winnerType) {
+			API_Winner winner, String winnerType, API_Videogame videogame, List<API_OpponentMain> opponents) {
 		super();
 		this.beginAt = beginAt;
 		this.detailedStats = detailedStats;
@@ -23,6 +25,8 @@ public class API_Game {
 		this.videoUrl = videoUrl;
 		this.winner = winner;
 		this.winnerType = winnerType;
+		this.videogame = videogame;
+		this.opponents = opponents;
 	}
 	@SerializedName("begin_at")
 	@Expose
@@ -63,6 +67,14 @@ public class API_Game {
 	@SerializedName("winner_type")
 	@Expose
 	public String winnerType;
+	@SerializedName("videogame")
+	@Expose
+	public API_Videogame videogame;
+	
+	@SerializedName("opponents")
+	@Expose
+	public List<API_OpponentMain> opponents;
+	
 	public String getBeginAt() {
 		return beginAt;
 	}
@@ -141,5 +153,23 @@ public class API_Game {
 	public void setWinnerType(String winnerType) {
 		this.winnerType = winnerType;
 	}
+
+	public API_Videogame getVideogame() {
+		return videogame;
+	}
+
+	public void setVideogame(API_Videogame videogame) {
+		this.videogame = videogame;
+	}
+
+	public List<API_OpponentMain> getOpponents() {
+		return opponents;
+	}
+
+	public void setOpponents(List<API_OpponentMain> opponents) {
+		this.opponents = opponents;
+	}
+	
+	
 
 }

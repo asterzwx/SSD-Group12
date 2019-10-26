@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import hello.APIConfiguration;
 import hello.RepositoryInterface;
 import hello.model.API_League;
+import hello.model.API_Opponent;
 import hello.model.API_Tournament;
 import hello.model.League;
 import hello.model.Tournament;
@@ -56,7 +57,8 @@ public class TournamentService implements APIConfiguration {
 						int league_id = u.getLeagueId();
 						String series_id = u.getSerieId().toString();
 						String winner_id = "";
-						String type = "dota";
+						String videogame = u.getVideogame().getName();
+						
 						try {
 							if (u.getWinnerId().toString().equals(null)) {
 								winner_id = "";
@@ -76,9 +78,9 @@ public class TournamentService implements APIConfiguration {
 
 //				           int winner_id = u.getWinnerId();
 						saveTournamentDetails(id, name, begin_at, end_at, league_id,
-								series_id, winner_id, type);
+								series_id, winner_id, videogame);
 					}
-					System.out.println("Saved all league details to DB");
+					System.out.println("Saved all tournament details to DB");
 				}
 			}
 
@@ -101,7 +103,7 @@ public class TournamentService implements APIConfiguration {
 	}
 
 	public Tournament saveTournamentDetails(int id, String name, String begin_at, String end_at, int league_id,
-			String series_id, String winner_id, String type) {
+			String series_id, String winner_id, String videogame) {
 		Tournament tournament = new Tournament();
 		tournament.setTournament_id(id);
 		tournament.setTournament_name(name);
@@ -110,7 +112,7 @@ public class TournamentService implements APIConfiguration {
 		tournament.setLeague_id(league_id);
 		tournament.setSeries_id(series_id);
 		tournament.setWinner_id(winner_id);
-		tournament.setType(type);
+		tournament.setVideogame(videogame);
 		return tournamentRepo.save(tournament);
 	}
 

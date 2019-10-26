@@ -1,5 +1,7 @@
 package hello.model;
 
+import java.util.List;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -9,7 +11,7 @@ public class API_Serie {
 	
 	public API_Serie(String beginAt, Object description, String endAt, String fullName, Integer id,
 			Integer leagueId, String modifiedAt, String name, String prizepool, Object season, String slug,
-			Object winnerId, Object winnerType, Integer year) {
+			Object winnerId, Object winnerType, Integer year, List<API_Tournament> tournaments) {
 		super();
 		this.beginAt = beginAt;
 		this.description = description;
@@ -25,6 +27,7 @@ public class API_Serie {
 		this.winnerId = winnerId;
 		this.winnerType = winnerType;
 		this.year = year;
+		this.tournaments = tournaments;
 	}
 	@SerializedName("begin_at")
 	@Expose
@@ -68,6 +71,10 @@ public class API_Serie {
 	@SerializedName("year")
 	@Expose
 	public Integer year;
+	@SerializedName("tournaments")
+	@Expose
+	public List<API_Tournament> tournaments;
+	
 	public String getBeginAt() {
 		return beginAt;
 	}
@@ -153,4 +160,13 @@ public class API_Serie {
 		this.year = year;
 	}
 
+	public List<API_Tournament> getTournaments() {
+		return tournaments;
+	}
+
+	public void setTournaments(List<API_Tournament> tournaments) {
+		this.tournaments = tournaments;
+	}
+
+	
 }
