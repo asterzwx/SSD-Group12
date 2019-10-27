@@ -12,7 +12,7 @@ import hello.model.UserAccount;
 import hello.repo.UserAccountRepo;
 
 @Service
-@Transactional
+//@Transactional
 public class UserAccountService {
 
 	@Autowired
@@ -35,5 +35,10 @@ public class UserAccountService {
 	public void deleteById(String username) {
         userRepo.deleteById(username);
     }
+	
+	@Transactional
+	public void updateUserLogin(String username, String status) {
+        userRepo.updateUserLoginStatus(username, status);
+	}
 
 }

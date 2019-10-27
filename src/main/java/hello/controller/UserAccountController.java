@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.apache.catalina.User;
@@ -45,6 +46,8 @@ public class UserAccountController {
 
 	@Autowired
 	private UserAccountService userService;
+	@Autowired
+	UserAccountRepo userAccountRepo;
 
 	@GetMapping(value = "/all")
 	public List<UserAccount> getAllUsers() {
@@ -84,35 +87,51 @@ public class UserAccountController {
 	}
 
 	@PostMapping("/login")
+	@Transactional
 	public JSONObject login(@RequestBody UserAccount userAccount) {
 		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		JSONObject json = new JSONObject();
 
 		// if user exists
-		if (userService.findById(userAccount.getUsername()).isPresent()) {		
-			
-			UserAccount userInfo = user.get();	
+		if (userService.findById(userAccount.getUsername()).isPresent()) {
+
+			UserAccount userInfo = user.get();
 			// get user's paswordhash
-			String user_password_hash = userInfo.getPassword_hash(); // for comparing later				
+			String user_password_hash = userInfo.getPassword_hash(); // for comparing later
 			// do hashing procedure again with the provided password
-			
+
 			String password_plus_salt = "" + userAccount.getPassword() + userInfo.getSalt();
 			// now u hash again
 			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
 					.toString();
-			
+
 			System.out.println("@@@@@@@@@@@@@ " + user_password_hash);
 			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
-			
+
 			// compare this hash with the user's pw hash
 			if (user_password_hash.equals(generatedHash_SHA256)) {
 				json.put("login", "true");
-
+				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
 				return json;
-			}
-			else {
+			} else {
 				json.put("login", "false");
 			}
+		}
+		return json;
+
+	}
+
+	@PostMapping("/logout")
+	@Transactional
+	public JSONObject logout(@RequestBody UserAccount userAccount) {
+		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
+		JSONObject json = new JSONObject();
+
+		// if user exists
+		if (userService.findById(userAccount.getUsername()).isPresent()) {			
+			json.put("login", "false");
+			userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "active");
+			System.out.println(userAccount.getUsername() + " logged out");
 		}
 		return json;
 

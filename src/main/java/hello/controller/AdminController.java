@@ -5,6 +5,8 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -97,10 +99,26 @@ public class AdminController {
 				json.put("login", "false");
 			}
 		}
-
 		return json;
 
 	}
+	
+	@PostMapping("/logout")
+	@Transactional
+	public JSONObject logout(@RequestBody Admin adminAccount) {
+		Optional<Admin> user = adminService.findById(adminAccount.getUsername());
+		JSONObject json = new JSONObject();
+
+		// if user exists
+		if (adminService.findById(adminAccount.getUsername()).isPresent()) {			
+			json.put("login", "false");			
+		}
+		return json;
+
+	}
+	
+	
+	
 
 	@PutMapping("/updateHashSalt/{username}")
 	public ResponseEntity<Admin> updateHashSalt(@PathVariable String username, @RequestBody Admin adminAccount) {
