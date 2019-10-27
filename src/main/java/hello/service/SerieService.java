@@ -100,6 +100,59 @@ public class SerieService implements APIConfiguration {
 		return series;
 	}
 	
+	public List<API_Serie> getLoLSeries() throws IOException {
+		Call<List<API_Serie>> call = service.listLoLSeries(API_KEY);
+		call.enqueue(new Callback<List<API_Serie>>() {
+			@Override
+			public void onResponse(Call<List<API_Serie>> call, Response<List<API_Serie>> response) {
+
+				series = response.body();
+				Gson responseGson = new Gson();
+				String winner_id = "";
+				String begin_at = "";
+				String end_at = "";				
+				
+				for (API_Serie u : response.body()) {
+					System.out.println(u.getId());
+					int serie_id = u.getId();					
+					int league_id = u.getLeagueId();
+					int year = u.getYear();
+					try {
+						if (u.getWinnerId().toString().equals(null)) {
+							winner_id = "";
+						} else {
+							winner_id = u.getWinnerId().toString();
+						}
+						if (u.getBeginAt().toString().equals(null)) {
+							begin_at = "";
+						} else {
+							begin_at = u.getBeginAt();
+						}
+						if (u.getEndAt().toString().equals(null)) {
+							end_at = "";
+						} else {
+							end_at = u.getEndAt();
+						}
+					} catch (Exception e) {
+						System.out.println("ERROR: " + e.getMessage());
+					}
+					saveSerieDetails(serie_id, begin_at, end_at, league_id, winner_id, year);
+				}
+				System.out.println("Saved all Dota series to DB");
+
+			}
+
+			@Override
+			public void onFailure(Call<List<API_Serie>> call, Throwable t) {
+				// TODO Auto-generated method stub
+				System.out.println("ERROR: " + t.getMessage());
+			}
+		});
+		return series;
+	}
+	
+	
+	
 	public List<Serie> getAll() {
 		// TODO Auto-generated method stub
 		return serieRepo.findAll();

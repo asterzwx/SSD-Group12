@@ -56,31 +56,45 @@ public class OpponentController {
 	@Autowired
 	private OpponentService  opponentService;
 
-	@GetMapping(path = "dota/opponents/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "dota/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getDotaMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getDotaMatchOpponentsById(match_id);
 	}
 	
-	@GetMapping(path = "lol/opponents/past/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "lol/past/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getLoLPastMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getLoLPastMatchOpponentsById(match_id);
 	}
 	
-	@GetMapping(path = "lol/opponents/running/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "lol/running/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getLoLRunningMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getLoLRunningMatchOpponentsById(match_id);
 	}
 	
-	@GetMapping(path = "lol/opponents/upcoming/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "lol/upcoming/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getLoLUpcomingMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getLoLUpcomingMatchOpponentsById(match_id);
 	}
 	
-	@GetMapping(path = "dota/opponents/tournament/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "dota/tournament/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getDotaTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
 		return opponentAPIService.getDotaTournamentOpponentsById(tournament_id);
 	}
 	
+	@GetMapping(path = "lol/tournament/past/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_OpponentMain> getLoLPastTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
+		return opponentAPIService.getLoLPastTournamentOpponentsById(tournament_id);
+	}
+	
+	@GetMapping(path = "lol/tournament/running/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_OpponentMain> getLoLRunningTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
+		return opponentAPIService.getLoLRunningTournamentOpponentsById(tournament_id);
+	}
+	
+	@GetMapping(path = "lol/tournament/upcoming/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_OpponentMain> getLoLUpcomingTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
+		return opponentAPIService.getLoLUpcomingTournamentOpponentsById(tournament_id);
+	}
 	
 	
 

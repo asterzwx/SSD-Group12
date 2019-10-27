@@ -64,16 +64,16 @@ public class LeagueService implements APIConfiguration {
 				Gson responseGson = new Gson();
 				responseGson.toJson(response.body());
 				
-				if(getAll().size() == 0) {
+//				if(getAll().size() == 0) {
 					for (API_League u : response.body()) {
 				           int id = u.getId();
 				           String name = u.getName();
 				           String slug = u.getSlug();
-				           
-				           saveLeagueDetails(id, name, slug);			           
+				           String videogame = u.getVideogame().getName();
+				           saveLeagueDetails(id, name, slug, videogame);			           
 				        }
 					System.out.println("Saved all league details to DB");					
-				}				
+//				}				
 			}
 			@Override
 			public void onFailure(Call<List<API_League>> call, Throwable t) {
@@ -95,11 +95,12 @@ public class LeagueService implements APIConfiguration {
 		return leagueRepo.save(league);
 	}
 	
-	public League saveLeagueDetails(int id, String name, String slug) {	
+	public League saveLeagueDetails(int id, String name, String slug, String videogame) {	
 		League league = new League();
 		league.setLeague_id(id);
 		league.setLeague_name(name);
 		league.setLeague_slug(slug);
+		league.setVideogame(videogame);
 		return leagueRepo.save(league);
 	}
 	

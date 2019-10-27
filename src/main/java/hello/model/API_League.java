@@ -8,6 +8,43 @@ import com.google.gson.annotations.SerializedName;
 public class API_League {
 	public API_League() {}
 	
+	
+	
+	public API_League(String beginAt, Boolean detailedStats, Boolean draw, String endAt, Boolean forfeit,
+			List<API_Game> games, Integer id, API_League league, Integer leagueId, String liveUrl, String matchType,
+			String modifiedAt, String name, Integer numberOfGames, List<API_Opponent> opponents, String scheduledAt,
+			API_Serie serie, Integer serieId, String slug, String status, API_Tournament tournament,
+			Integer tournamentId, API_Videogame videogame, API_Winner winner, Integer winnerId) {
+		super();
+		this.beginAt = beginAt;
+		this.detailedStats = detailedStats;
+		this.draw = draw;
+		this.endAt = endAt;
+		this.forfeit = forfeit;
+		this.games = games;
+		this.id = id;
+		this.league = league;
+		this.leagueId = leagueId;
+		this.liveUrl = liveUrl;
+		this.matchType = matchType;
+		this.modifiedAt = modifiedAt;
+		this.name = name;
+		this.numberOfGames = numberOfGames;
+		this.opponents = opponents;
+		this.scheduledAt = scheduledAt;
+		this.serie = serie;
+		this.serieId = serieId;
+		this.slug = slug;
+		this.status = status;
+		this.tournament = tournament;
+		this.tournamentId = tournamentId;
+		this.videogame = videogame;
+		this.winner = winner;
+		this.winnerId = winnerId;
+	}
+
+
+
 	@SerializedName("begin_at")
 	@Expose
 	public String beginAt;

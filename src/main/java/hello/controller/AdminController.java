@@ -5,6 +5,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,7 +35,7 @@ public class AdminController {
 	public List<Admin> getAllAdmin() {
 		return adminService.getAll();
 	}
-	
+
 	@GetMapping("/{username}")
 	public ResponseEntity<Admin> findById(@PathVariable String username) {
 		Optional<Admin> user = adminService.findById(username);
@@ -50,62 +51,63 @@ public class AdminController {
 		// if user dont exist
 		if (!adminService.findById(adminAccount.getUsername()).isPresent()) {
 			adminAccount.setUsername(adminAccount.getUsername());
-			
-			//generate salt value
+
+			// generate salt value
 			String generatedSalt = generateSalt().toString();
 
-			//generate password hash value			
+			// generate password hash value
 			String password_plus_salt = "" + adminAccount.getPassword() + generatedSalt;
-			String generatedHash_SHA256 = Hashing.sha256()
-					  .hashString(password_plus_salt, StandardCharsets.UTF_8)
-					  .toString();
-			
+			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+					.toString();
+
 			adminAccount.setPassword_hash(generatedHash_SHA256);
 			adminAccount.setSalt(generatedSalt);
 			return ResponseEntity.ok(adminService.saveUser(adminAccount));
 		}
 		return null;
 	}
-	
-	
+
 	@PostMapping("/login")
-	public boolean login(@RequestBody Admin adminAccount) {
+	public JSONObject login(@RequestBody Admin adminAccount) {
 		Optional<Admin> user = adminService.findById(adminAccount.getUsername());
-		
+		JSONObject json = new JSONObject();
+
 		// if user exists
-		if (adminService.findById(adminAccount.getUsername()).isPresent()) {		
-			
-			Admin userInfo = user.get();	
+		if (adminService.findById(adminAccount.getUsername()).isPresent()) {
+
+			Admin userInfo = user.get();
 			// get user's paswordhash
-			String user_password_hash = userInfo.getPassword_hash(); // for comparing later				
+			String user_password_hash = userInfo.getPassword_hash(); // for comparing later
 			// do hashing procedure again with the provided password
-			
+
 			String password_plus_salt = "" + adminAccount.getPassword() + userInfo.getSalt();
 			// now u hash again
 			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
 					.toString();
-			
+
 			System.out.println("@@@@@@@@@@@@@ " + user_password_hash);
 			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
-			
+
 			// compare this hash with the user's pw hash
 			if (user_password_hash.equals(generatedHash_SHA256)) {
-				return true;
+				json.put("login", "true");
+
+				return json;
+			} else {
+				json.put("login", "false");
 			}
 		}
 
-		return false;
+		return json;
 
 	}
-	
-	
-	
+
 	@PutMapping("/updateHashSalt/{username}")
 	public ResponseEntity<Admin> updateHashSalt(@PathVariable String username, @RequestBody Admin adminAccount) {
 		if (!adminService.findById(username).isPresent()) {
 			ResponseEntity.badRequest().build();
 		}
-		
+
 		return ResponseEntity.ok(adminService.saveUser(adminAccount));
 	}
 
@@ -119,24 +121,22 @@ public class AdminController {
 		adminAccount.setSalt("updatedsaltvaluehere");
 		return ResponseEntity.ok(adminService.saveUser(adminAccount));
 	}
-	
+
 	@DeleteMapping("/delete/{username}")
-    public ResponseEntity delete(@PathVariable String username) {
-        if (!adminService.findById(username).isPresent()) {
-            ResponseEntity.badRequest().build();
-        }
-        adminService.deleteById(username);
+	public ResponseEntity delete(@PathVariable String username) {
+		if (!adminService.findById(username).isPresent()) {
+			ResponseEntity.badRequest().build();
+		}
+		adminService.deleteById(username);
 
-        return ResponseEntity.ok().build();
-    }
-	
+		return ResponseEntity.ok().build();
+	}
+
 	public byte[] generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte bytes[] = new byte[20];
-        random.nextBytes(bytes);
-        return bytes;
-    }
-
-
+		SecureRandom random = new SecureRandom();
+		byte bytes[] = new byte[20];
+		random.nextBytes(bytes);
+		return bytes;
+	}
 
 }

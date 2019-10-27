@@ -39,7 +39,7 @@ import hello.service.MatchService;
 
 //@CrossOrigin(origins = "https://gambit-team12.tk")
 @RestController
-@RequestMapping(value = "/rest")
+@RequestMapping(value = "/rest/match")
 public class MatchController {
 
 	@Autowired
@@ -51,20 +51,20 @@ public class MatchController {
 	@Autowired
 	private GameService gameAPIService;
 
-	@GetMapping(path = "dota/matches/past", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "dota/past", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Match> getDotaMatches() throws IOException {
 		return matchAPIService.getDotaMatches();
 	}
 	
-	@GetMapping(path = "lol/matches/past", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "lol/past", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Match> getLoLPastMatches() throws IOException {
 		return matchAPIService.getLoLPastMatches();
 	}
-	@GetMapping(path = "lol/matches/running", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "lol/running", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Match> getLoLRunningMatches() throws IOException {
 		return matchAPIService.getLoLRunningMatches();
 	}
-	@GetMapping(path = "lol/matches/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "lol/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Match> getLoLUpcomingMatches() throws IOException {
 		return matchAPIService.getLoLUpcomingMatches();
 	}

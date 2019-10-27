@@ -12,6 +12,7 @@ import javax.validation.Valid;
 
 import org.apache.catalina.User;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.hash.Hashing;
+import com.google.gson.JsonObject;
 
 import hello.Application;
 import hello.model.UserAccount;
@@ -82,9 +84,10 @@ public class UserAccountController {
 	}
 
 	@PostMapping("/login")
-	public boolean login(@RequestBody UserAccount userAccount) {
+	public JSONObject login(@RequestBody UserAccount userAccount) {
 		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
-		
+		JSONObject json = new JSONObject();
+
 		// if user exists
 		if (userService.findById(userAccount.getUsername()).isPresent()) {		
 			
@@ -103,11 +106,15 @@ public class UserAccountController {
 			
 			// compare this hash with the user's pw hash
 			if (user_password_hash.equals(generatedHash_SHA256)) {
-				return true;
+				json.put("login", "true");
+
+				return json;
+			}
+			else {
+				json.put("login", "false");
 			}
 		}
-
-		return false;
+		return json;
 
 	}
 

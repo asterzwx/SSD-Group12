@@ -51,9 +51,14 @@ public class SerieController {
 	@Autowired
 	private SerieService  serieService;
 
-	@GetMapping(path = "/dota/series", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/dota", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Serie> getDotaSeries() throws IOException {
 		return serieAPIService.getDotaSeries();
+	}
+	
+	@GetMapping(path = "/lol", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Serie> getLoLSeries() throws IOException {
+		return serieAPIService.getLoLSeries();
 	}
 
 //	    @PostMapping("/repos")

@@ -47,9 +47,24 @@ public class TournamentController {
 	@Autowired
 	private TournamentService tournamentService;
 
-	@GetMapping(path = "/dota/tournaments", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/dota", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Tournament> getDotaTournaments() throws IOException {
 		return tournamentAPIService.getDotaTournaments();
+	}
+	
+	@GetMapping(path = "/lol/past", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Tournament> getLoLPastTournaments() throws IOException {
+		return tournamentAPIService.getLoLPastTournaments();
+	}
+	
+	@GetMapping(path = "/lol/running", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Tournament> getLoLRunningTournaments() throws IOException {
+		return tournamentAPIService.getLoLRunningTournaments();
+	}
+	
+	@GetMapping(path = "/lol/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Tournament> getLoLUpcomingTournaments() throws IOException {
+		return tournamentAPIService.getLoLUpcomingTournaments();
 	}
 
 //	    @PostMapping("/repos")

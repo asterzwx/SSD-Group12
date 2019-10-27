@@ -294,6 +294,158 @@ public class OpponentService implements APIConfiguration {
 		return dotaMatchOpponents;
 	}
 
+	
+	public List<API_OpponentMain> getLoLPastTournamentOpponentsById(int tournament_id) throws IOException {
+		Call<List<API_Tournament>> call = service.listLoLPastTournaments(API_KEY);
+		call.enqueue(new Callback<List<API_Tournament>>() {
+			@Override
+			public void onResponse(Call<List<API_Tournament>> call, Response<List<API_Tournament>> response) {
+				dotaTournaments = response.body();
+				Gson responseGson = new Gson();
+				String acronym = "";
+				String image_url = "";
+				for (API_Tournament t : response.body()) {
+
+					if (tournament_id == t.getId()) {
+						for (API_Opponent o : t.getTeams()) {
+							try {
+								if (o.getAcronym().equals(null)) {
+									acronym = "";
+								} else {
+									acronym = o.getAcronym();
+								}	
+								if (o.getImageUrl().equals(null)) {
+									image_url = "";
+								} else {
+									image_url = o.getImageUrl();
+								}	
+								
+							} catch (Exception e) {
+								// TODO: handle exception
+								System.out.println("ERROR: " + e.getMessage());
+							}					
+							saveTournamentOpponentDetails(
+									o.getId(), acronym, o.getName(), image_url,
+									tournament_id);
+							
+						}
+						
+					}
+					
+				}
+				System.out.println("Saved Dota teams for " + tournament_id + " to DB");
+			}
+
+			@Override
+			public void onFailure(Call<List<API_Tournament>> call, Throwable t) {
+				// TODO Auto-generated method stub
+				System.out.println("ERROR: " + t.getMessage());
+			}
+		});
+		return dotaMatchOpponents;
+	}
+
+	public List<API_OpponentMain> getLoLRunningTournamentOpponentsById(int tournament_id) throws IOException {
+		Call<List<API_Tournament>> call = service.listLoLRunningTournaments(API_KEY);
+		call.enqueue(new Callback<List<API_Tournament>>() {
+			@Override
+			public void onResponse(Call<List<API_Tournament>> call, Response<List<API_Tournament>> response) {
+				dotaTournaments = response.body();
+				Gson responseGson = new Gson();
+				String acronym = "";
+				String image_url = "";
+				for (API_Tournament t : response.body()) {
+
+					if (tournament_id == t.getId()) {
+						for (API_Opponent o : t.getTeams()) {
+							try {
+								if (o.getAcronym().equals(null)) {
+									acronym = "";
+								} else {
+									acronym = o.getAcronym();
+								}	
+								if (o.getImageUrl().equals(null)) {
+									image_url = "";
+								} else {
+									image_url = o.getImageUrl();
+								}	
+								
+							} catch (Exception e) {
+								// TODO: handle exception
+								System.out.println("ERROR: " + e.getMessage());
+							}					
+							saveTournamentOpponentDetails(
+									o.getId(), acronym, o.getName(), image_url,
+									tournament_id);
+							
+						}
+						
+					}
+					
+				}
+				System.out.println("Saved Dota teams for " + tournament_id + " to DB");
+			}
+
+			@Override
+			public void onFailure(Call<List<API_Tournament>> call, Throwable t) {
+				// TODO Auto-generated method stub
+				System.out.println("ERROR: " + t.getMessage());
+			}
+		});
+		return dotaMatchOpponents;
+	}
+	
+	public List<API_OpponentMain> getLoLUpcomingTournamentOpponentsById(int tournament_id) throws IOException {
+		Call<List<API_Tournament>> call = service.listLoLUpcomingTournaments(API_KEY);
+		call.enqueue(new Callback<List<API_Tournament>>() {
+			@Override
+			public void onResponse(Call<List<API_Tournament>> call, Response<List<API_Tournament>> response) {
+				dotaTournaments = response.body();
+				Gson responseGson = new Gson();
+				String acronym = "";
+				String image_url = "";
+				for (API_Tournament t : response.body()) {
+
+					if (tournament_id == t.getId()) {
+						for (API_Opponent o : t.getTeams()) {
+							try {
+								if (o.getAcronym().equals(null)) {
+									acronym = "";
+								} else {
+									acronym = o.getAcronym();
+								}	
+								if (o.getImageUrl().equals(null)) {
+									image_url = "";
+								} else {
+									image_url = o.getImageUrl();
+								}	
+								
+							} catch (Exception e) {
+								// TODO: handle exception
+								System.out.println("ERROR: " + e.getMessage());
+							}					
+							saveTournamentOpponentDetails(
+									o.getId(), acronym, o.getName(), image_url,
+									tournament_id);
+							
+						}
+						
+					}
+					
+				}
+				System.out.println("Saved Dota teams for " + tournament_id + " to DB");
+			}
+
+			@Override
+			public void onFailure(Call<List<API_Tournament>> call, Throwable t) {
+				// TODO Auto-generated method stub
+				System.out.println("ERROR: " + t.getMessage());
+			}
+		});
+		return dotaMatchOpponents;
+	}
+	
+	
 	public List<Opponent> getAll() {
 		// TODO Auto-generated method stub
 		return opponentRepo.findAll();

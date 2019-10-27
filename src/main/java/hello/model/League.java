@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import io.micrometer.core.lang.Nullable;
+
 @Entity
 @Table(name = "league")
 @EntityListeners(AuditingEntityListener.class)
@@ -22,13 +24,14 @@ public class League implements Serializable{
 	public League() {}
 	
 	public League(int league_id, String league_name, String league_slug, Date createdAt,
-			Date updatedAt) {
+			Date updatedAt, String videogame) {
 		super();
 		this.league_id = league_id;
 		this.league_name = league_name;
 		this.league_slug = league_slug;
 		this.createdAt = createdAt;
 		this.updatedAt = updatedAt;
+		this.videogame = videogame;
 	}
 
 	@Id
@@ -51,6 +54,11 @@ public class League implements Serializable{
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt;
+    
+    @Column(name = "videogame")
+    @Nullable
+    private String videogame;
+
 
 	public int getLeague_id() {
 		return league_id;
@@ -90,6 +98,14 @@ public class League implements Serializable{
 
 	public void setUpdatedAt(Date updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public String getVideogame() {
+		return videogame;
+	}
+
+	public void setVideogame(String videogame) {
+		this.videogame = videogame;
 	}
     
     
