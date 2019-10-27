@@ -25,7 +25,8 @@ public class Serie implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Serie(int serie_id, String begin_at, String end_at, int league_id, String winner_id, int year) {
+	public Serie(int serie_id, String begin_at, String end_at, int league_id, String winner_id, int year,
+			String videogame) {
 		super();
 		this.serie_id = serie_id;
 		this.begin_at = begin_at;
@@ -33,6 +34,7 @@ public class Serie implements Serializable {
 		this.league_id = league_id;
 		this.winner_id = winner_id;
 		this.year = year;
+		this.videogame = videogame;
 	}
 
 	@Id
@@ -59,6 +61,10 @@ public class Serie implements Serializable {
 	@Column(name = "year")
 	@Nullable
 	private int year;
+	
+	@Column(name = "videogame")
+	@Nullable
+	private String videogame;
 
 	public int getSerie_id() {
 		return serie_id;
@@ -108,4 +114,14 @@ public class Serie implements Serializable {
 		this.year = year;
 	}
 
+	public String getVideogame() {
+		return videogame;
+	}
+
+	public void setVideogame(String videogame) {
+		this.videogame = videogame;
+	}
+
+	
+	
 }

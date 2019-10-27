@@ -11,7 +11,8 @@ public class API_Serie {
 	
 	public API_Serie(String beginAt, Object description, String endAt, String fullName, Integer id,
 			Integer leagueId, String modifiedAt, String name, String prizepool, Object season, String slug,
-			Object winnerId, Object winnerType, Integer year, List<API_Tournament> tournaments) {
+			Object winnerId, Object winnerType, Integer year, List<API_Tournament> tournaments,
+			API_Videogame videogame) {
 		super();
 		this.beginAt = beginAt;
 		this.description = description;
@@ -28,6 +29,7 @@ public class API_Serie {
 		this.winnerType = winnerType;
 		this.year = year;
 		this.tournaments = tournaments;
+		this.videogame = videogame;
 	}
 	@SerializedName("begin_at")
 	@Expose
@@ -74,6 +76,9 @@ public class API_Serie {
 	@SerializedName("tournaments")
 	@Expose
 	public List<API_Tournament> tournaments;
+	@SerializedName("videogame")
+	@Expose
+	public API_Videogame videogame;
 	
 	public String getBeginAt() {
 		return beginAt;
@@ -166,6 +171,14 @@ public class API_Serie {
 
 	public void setTournaments(List<API_Tournament> tournaments) {
 		this.tournaments = tournaments;
+	}
+
+	public API_Videogame getVideogame() {
+		return videogame;
+	}
+
+	public void setVideogame(API_Videogame videogame) {
+		this.videogame = videogame;
 	}
 
 	

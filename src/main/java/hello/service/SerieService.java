@@ -85,7 +85,8 @@ public class SerieService implements APIConfiguration {
 					} catch (Exception e) {
 						System.out.println("ERROR: " + e.getMessage());
 					}
-					saveSerieDetails(serie_id, begin_at, end_at, league_id, winner_id, year);
+					saveSerieDetails(serie_id, begin_at, end_at, league_id, winner_id, year,
+							u.getVideogame().getName());
 				}
 				System.out.println("Saved all Dota series to DB");
 
@@ -136,9 +137,10 @@ public class SerieService implements APIConfiguration {
 					} catch (Exception e) {
 						System.out.println("ERROR: " + e.getMessage());
 					}
-					saveSerieDetails(serie_id, begin_at, end_at, league_id, winner_id, year);
+					saveSerieDetails(serie_id, begin_at, end_at, league_id, winner_id, year,
+							u.getVideogame().getName());
 				}
-				System.out.println("Saved all Dota series to DB");
+				System.out.println("Saved all LoL series to DB");
 
 			}
 
@@ -163,7 +165,7 @@ public class SerieService implements APIConfiguration {
 	}
 	
 	public Serie saveSerieDetails(int serie_id, String begin_at, String end_at,
-			int league_id, String winner_id, int year) {
+			int league_id, String winner_id, int year, String videogame) {
 		Serie serie = new Serie();
 		serie.setSerie_id(serie_id);
 		serie.setBegin_at(begin_at);
@@ -171,6 +173,7 @@ public class SerieService implements APIConfiguration {
 		serie.setLeague_id(league_id);
 		serie.setWinner_id(winner_id);
 		serie.setYear(year);
+		serie.setVideogame(videogame);
 		return serieRepo.save(serie);
 	}
 

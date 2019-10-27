@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import hello.model.API_League;
 import hello.model.API_Serie;
 import hello.model.API_Tournament;
+import hello.model.Item;
 import hello.model.League;
 import hello.model.LeagueAPI;
 import hello.model.Serie;
@@ -61,11 +62,6 @@ public class SerieController {
 		return serieAPIService.getLoLSeries();
 	}
 
-//	    @PostMapping("/repos")
-//	    public Repository createRepo(@RequestBody Repository newRepo) throws IOException {
-//	        return githubService.createRepository(newRepo);
-//	    }
-
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@Valid @RequestBody Serie serie) {
 //			if (!leagueService.findById(leagueService.getPoll_id()).isPresent()) {			
@@ -73,5 +69,24 @@ public class SerieController {
 //			}
 //			return null;
 	}
+	
+	
+	//ROUTES FOR RETRIEVING FROM DB
+	
+	@GetMapping(value = "/all")
+	public List<Serie> getAllSerie() {
+		return serieService.getAll();
+	}
+	
+	@GetMapping(value = "/db/dota")
+	public List<Serie> getAllDotaSerieFromDB() {
+		return serieRepo.findDotaSeries("Dota 2");
+	}
+	
+	@GetMapping(value = "/db/lol")
+	public List<Serie> getAllLoLSerieFromDB() {
+		return serieRepo.findDotaSeries("LoL");
+	}
+	
 
 }
