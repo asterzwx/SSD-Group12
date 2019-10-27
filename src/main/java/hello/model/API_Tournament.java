@@ -10,7 +10,7 @@ public class API_Tournament {
 	
 	public API_Tournament(String beginAt, String endAt, Integer id, Integer leagueId, String modifiedAt,
 			String name, Object prizepool, Integer serieId, String slug, Integer winnerId, Object winnerType,
-			API_Videogame videogame, List<API_Opponent> teams) {
+			API_Videogame videogame, List<API_Opponent> teams, List<API_Match> matches) {
 		super();
 		this.beginAt = beginAt;
 		this.endAt = endAt;
@@ -25,6 +25,7 @@ public class API_Tournament {
 		this.winnerType = winnerType;
 		this.videogame = videogame;
 		this.teams = teams;
+		this.matches = matches;
 	}
 	@SerializedName("begin_at")
 	@Expose
@@ -67,6 +68,9 @@ public class API_Tournament {
 	@Expose
 	public List<API_Opponent> teams;
 	
+	@SerializedName("matches")
+	@Expose
+	public List<API_Match> matches;
 	
 	
 	public String getBeginAt() {
@@ -150,6 +154,14 @@ public class API_Tournament {
 
 	public void setTeams(List<API_Opponent> teams) {
 		this.teams = teams;
+	}
+
+	public List<API_Match> getMatches() {
+		return matches;
+	}
+
+	public void setMatches(List<API_Match> matches) {
+		this.matches = matches;
 	}
 	
 	

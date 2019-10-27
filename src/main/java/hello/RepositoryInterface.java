@@ -39,8 +39,8 @@ public interface RepositoryInterface {
 	@GET("leagues")
 	Call<List<API_League>> listLeagues(@Query("token") String accessToken);
 
-//	@GET("tournaments")
-//	Call<List<API_Tournament>> listTournaments(@Query("token") String accessToken);
+	@GET("tournaments")
+	Call<List<API_Tournament>> listTournaments(@Query("token") String accessToken);
 
 	@GET("dota2/tournaments")
 	Call<List<API_Tournament>> listDotaTournaments(@Query("token") String accessToken);

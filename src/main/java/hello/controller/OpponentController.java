@@ -32,10 +32,11 @@ import hello.model.API_Serie;
 import hello.model.API_Tournament;
 import hello.model.League;
 import hello.model.LeagueAPI;
+import hello.model.Match;
 import hello.model.Opponent;
 import hello.model.Serie;
 import hello.model.Tournament;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import hello.repo.OpponentRepo;
 import hello.repo.SerieRepo;
 import hello.repo.TournamentRepo;
@@ -54,54 +55,51 @@ public class OpponentController {
 	@Autowired
 	private OpponentService opponentAPIService;
 	@Autowired
-	private OpponentService  opponentService;
+	private OpponentService opponentService;
 
 	@GetMapping(path = "dota/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getDotaMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getDotaMatchOpponentsById(match_id);
 	}
-	
+
 	@GetMapping(path = "lol/past/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getLoLPastMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getLoLPastMatchOpponentsById(match_id);
 	}
-	
+
 	@GetMapping(path = "lol/running/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getLoLRunningMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getLoLRunningMatchOpponentsById(match_id);
 	}
-	
+
 	@GetMapping(path = "lol/upcoming/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getLoLUpcomingMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
 		return opponentAPIService.getLoLUpcomingMatchOpponentsById(match_id);
 	}
-	
+
 	@GetMapping(path = "dota/tournament/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_OpponentMain> getDotaTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
+	public List<API_OpponentMain> getDotaTournamentOpponents(@Valid @PathVariable int tournament_id)
+			throws IOException {
 		return opponentAPIService.getDotaTournamentOpponentsById(tournament_id);
 	}
-	
+
 	@GetMapping(path = "lol/tournament/past/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_OpponentMain> getLoLPastTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
+	public List<API_OpponentMain> getLoLPastTournamentOpponents(@Valid @PathVariable int tournament_id)
+			throws IOException {
 		return opponentAPIService.getLoLPastTournamentOpponentsById(tournament_id);
 	}
-	
+
 	@GetMapping(path = "lol/tournament/running/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_OpponentMain> getLoLRunningTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
+	public List<API_OpponentMain> getLoLRunningTournamentOpponents(@Valid @PathVariable int tournament_id)
+			throws IOException {
 		return opponentAPIService.getLoLRunningTournamentOpponentsById(tournament_id);
 	}
-	
+
 	@GetMapping(path = "lol/tournament/upcoming/{tournament_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_OpponentMain> getLoLUpcomingTournamentOpponents(@Valid @PathVariable int tournament_id) throws IOException {
+	public List<API_OpponentMain> getLoLUpcomingTournamentOpponents(@Valid @PathVariable int tournament_id)
+			throws IOException {
 		return opponentAPIService.getLoLUpcomingTournamentOpponentsById(tournament_id);
 	}
-	
-	
-
-//	    @PostMapping("/repos")
-//	    public Repository createRepo(@RequestBody Repository newRepo) throws IOException {
-//	        return githubService.createRepository(newRepo);
-//	    }
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@Valid @RequestBody Opponent opponent) {
@@ -109,6 +107,18 @@ public class OpponentController {
 		return ResponseEntity.ok(opponentService.saveOpponent(opponent));
 //			}
 //			return null;
+	}
+
+	// ROUTES FOR RETRIEVING FROM DB
+
+	@GetMapping(value = "/all")
+	public List<Opponent> getAllOpponents() {
+		return opponentService.getAll();
+	}
+
+	@GetMapping(value = "/opponents/{match_id}")
+	public List<Opponent> getOpponentsByMatchId(@Valid @PathVariable int match_id) {
+		return opponentRepo.findOpponentByMatchId(match_id);
 	}
 
 }

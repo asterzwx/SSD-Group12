@@ -31,7 +31,8 @@ import hello.model.API_Match;
 import hello.model.League;
 import hello.model.LeagueAPI;
 import hello.model.Match;
-import hello.repo.DotaLeagueRepo;
+import hello.model.Tournament;
+import hello.repo.LeagueRepo;
 import hello.repo.MatchRepo;
 import hello.service.GameService;
 import hello.service.LeagueService;
@@ -55,34 +56,33 @@ public class MatchController {
 	public List<API_Match> getDotaMatches() throws IOException {
 		return matchAPIService.getDotaMatches();
 	}
-	
+
 	@GetMapping(path = "lol/past", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Match> getLoLPastMatches() throws IOException {
 		return matchAPIService.getLoLPastMatches();
 	}
+
 	@GetMapping(path = "lol/running", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Match> getLoLRunningMatches() throws IOException {
 		return matchAPIService.getLoLRunningMatches();
 	}
+
 	@GetMapping(path = "lol/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Match> getLoLUpcomingMatches() throws IOException {
 		return matchAPIService.getLoLUpcomingMatches();
 	}
 	
+	// GAMES
+
 	@GetMapping(path = "dota/games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Game> getDotaGamesById(@Valid @PathVariable int match_id) throws IOException {
 		return matchAPIService.getDotaGamesById(match_id);
 	}
-	
+
 	@GetMapping(path = "lol/games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Game> getLoLGamesById(@Valid @PathVariable int match_id) throws IOException {
 		return matchAPIService.getLoLGamesById(match_id);
 	}
-
-//	    @PostMapping("/repos")
-//	    public Repository createRepo(@RequestBody Repository newRepo) throws IOException {
-//	        return githubService.createRepository(newRepo);
-//	    }
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@Valid @RequestBody Match match) {
@@ -91,5 +91,45 @@ public class MatchController {
 //			}
 //			return null;
 	}
+
+	// ROUTES FOR RETRIEVING FROM DB
+
+	@GetMapping(value = "/all")
+	public List<Match> getAllMatches() {
+		return matchService.getAll();
+	}
+	
+	@GetMapping(value = "/db/dota")
+	public List<Match> getDBDotaMatches() {
+		return matchRepo.findMatches("Dota 2");
+	}
+	
+	@GetMapping(value = "/db/lol")
+	public List<Match> getDBLoLMatches() {
+		return matchRepo.findMatches("LoL");
+	}
+	
+	@GetMapping(value = "/db/lol/past")
+	public List<Match> getDBLoLPastMatches() {
+		return matchRepo.findLoLPastMatches();
+	}
+	
+	@GetMapping(value = "/db/lol/running")
+	public List<Match> getDBLoLRunningMatches() {
+		return matchRepo.findLoLRunningMatches();
+	}
+	
+	@GetMapping(value = "/db/lol/upcoming")
+	public List<Match> getDBLoLUpcomingMatches() {
+		return matchRepo.findLoLUpcomingMatches();
+	}
+	
+	@GetMapping(value = "/tournament/{tournament_id}")
+	public List<Match> getAllMatchesByTournamentId(@Valid @PathVariable int tournament_id) {
+		return matchRepo.findMatchesByTournamentId(tournament_id);
+	}
+	
+	
+	
 
 }

@@ -22,7 +22,7 @@ import hello.model.Game;
 import hello.model.League;
 import hello.model.Match;
 import hello.model.Tournament;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import hello.repo.GameRepo;
 import hello.repo.MatchRepo;
 import hello.repo.TournamentRepo;

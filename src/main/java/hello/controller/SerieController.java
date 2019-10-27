@@ -33,7 +33,7 @@ import hello.model.League;
 import hello.model.LeagueAPI;
 import hello.model.Serie;
 import hello.model.Tournament;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import hello.repo.SerieRepo;
 import hello.repo.TournamentRepo;
 import hello.service.LeagueService;
@@ -50,13 +50,13 @@ public class SerieController {
 	@Autowired
 	private SerieService serieAPIService;
 	@Autowired
-	private SerieService  serieService;
+	private SerieService serieService;
 
 	@GetMapping(path = "/dota", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Serie> getDotaSeries() throws IOException {
 		return serieAPIService.getDotaSeries();
 	}
-	
+
 	@GetMapping(path = "/lol", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Serie> getLoLSeries() throws IOException {
 		return serieAPIService.getLoLSeries();
@@ -69,24 +69,22 @@ public class SerieController {
 //			}
 //			return null;
 	}
-	
-	
-	//ROUTES FOR RETRIEVING FROM DB
-	
+
+	// ROUTES FOR RETRIEVING FROM DB
+
 	@GetMapping(value = "/all")
 	public List<Serie> getAllSerie() {
 		return serieService.getAll();
 	}
-	
+
 	@GetMapping(value = "/db/dota")
 	public List<Serie> getAllDotaSerieFromDB() {
-		return serieRepo.findDotaSeries("Dota 2");
+		return serieRepo.findSeries("Dota 2");
 	}
-	
+
 	@GetMapping(value = "/db/lol")
 	public List<Serie> getAllLoLSerieFromDB() {
-		return serieRepo.findDotaSeries("LoL");
+		return serieRepo.findSeries("LoL");
 	}
-	
 
 }

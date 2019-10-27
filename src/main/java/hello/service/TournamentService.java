@@ -17,7 +17,7 @@ import hello.model.API_Opponent;
 import hello.model.API_Tournament;
 import hello.model.League;
 import hello.model.Tournament;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import hello.repo.TournamentRepo;
 import retrofit2.Call;
 import retrofit2.Callback;

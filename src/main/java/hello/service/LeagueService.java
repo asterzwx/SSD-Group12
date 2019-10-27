@@ -27,7 +27,7 @@ import hello.model.API_League;
 import hello.model.Item;
 import hello.model.League;
 import hello.model.API_League;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -43,7 +43,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 //@Transactional
 public class LeagueService implements APIConfiguration {
 	@Autowired
-	DotaLeagueRepo leagueRepo;
+	LeagueRepo leagueRepo;
 	private RepositoryInterface service;
 	
 	List<API_League> leagues = null;

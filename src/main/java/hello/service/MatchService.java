@@ -21,7 +21,7 @@ import hello.model.Game;
 import hello.model.League;
 import hello.model.Match;
 import hello.model.Tournament;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import hello.repo.GameRepo;
 import hello.repo.MatchRepo;
 import hello.repo.TournamentRepo;
@@ -37,13 +37,13 @@ public class MatchService implements APIConfiguration {
 	MatchRepo matchRepo;
 	@Autowired
 	GameRepo gameRepo;
-	
+
 	private RepositoryInterface service;
 	List<API_Match> dotaMatches = null;
 	List<API_Game> dotaGames = null;
 	List<API_Match> lolMatches = null;
 	List<API_Game> lolGames = null;
-	
+
 	List<API_Match> lolPastMatches = null;
 	List<API_Match> lolRunningMatches = null;
 	List<API_Match> lolUpcomingMatches = null;
@@ -128,9 +128,9 @@ public class MatchService implements APIConfiguration {
 						System.out.println("@@@ " + u.getVideogame().getName());
 //						Game game = new Game();
 						GameService gameService = new GameService();
-						for (API_Game g : u.getGames()) {	
-							try {							
-								
+						for (API_Game g : u.getGames()) {
+							try {
+
 								if (g.getWinner().getId().toString().equals(null)) {
 									winner_id = "";
 								} else {
@@ -144,15 +144,14 @@ public class MatchService implements APIConfiguration {
 								if (g.getEndAt().toString().equals(null)) {
 									end_at = "";
 								} else {
-									end_at =  g.getEndAt();
+									end_at = g.getEndAt();
 								}
-								} catch (Exception e) {
-									winner_id = "";
-									begin_at = "";
-									end_at = "";
-								}
-							saveGameDetails(g.getId(), begin_at, end_at, 
-									u.getId(), g.getPosition(), g.getStatus(), 
+							} catch (Exception e) {
+								winner_id = "";
+								begin_at = "";
+								end_at = "";
+							}
+							saveGameDetails(g.getId(), begin_at, end_at, u.getId(), g.getPosition(), g.getStatus(),
 									g.getWinner().getId().toString(), u.getVideogame().getName());
 						}
 					}
@@ -168,8 +167,7 @@ public class MatchService implements APIConfiguration {
 		});
 		return dotaGames;
 	}
-	
-	
+
 	public List<API_Game> getLoLGamesById(int match_id) throws IOException {
 		Call<List<API_Match>> call = service.listLoLGamesByMatchId(API_KEY);
 		call.enqueue(new Callback<List<API_Match>>() {
@@ -186,32 +184,31 @@ public class MatchService implements APIConfiguration {
 						System.out.println("@@@ " + u.getVideogame().getName());
 //						Game game = new Game();
 						GameService gameService = new GameService();
-						
-						for (API_Game g : u.getGames()) {				
-							try {							
-							
-							if (g.getWinner().getId().toString().equals(null)) {
-								winner_id = "";
-							} else {
-								winner_id = g.getWinner().getId().toString();
-							}
-							if (g.getBeginAt().toString().equals(null)) {
-								begin_at = "";
-							} else {
-								begin_at = g.getBeginAt();
-							}
-							if (g.getEndAt().toString().equals(null)) {
-								end_at = "";
-							} else {
-								end_at =  g.getEndAt();
-							}
+
+						for (API_Game g : u.getGames()) {
+							try {
+
+								if (g.getWinner().getId().toString().equals(null)) {
+									winner_id = "";
+								} else {
+									winner_id = g.getWinner().getId().toString();
+								}
+								if (g.getBeginAt().toString().equals(null)) {
+									begin_at = "";
+								} else {
+									begin_at = g.getBeginAt();
+								}
+								if (g.getEndAt().toString().equals(null)) {
+									end_at = "";
+								} else {
+									end_at = g.getEndAt();
+								}
 							} catch (Exception e) {
 								winner_id = "";
 								begin_at = "";
 								end_at = "";
 							}
-							saveGameDetails(g.getId(), begin_at, end_at, 
-									u.getId(), g.getPosition(), g.getStatus(), 
+							saveGameDetails(g.getId(), begin_at, end_at, u.getId(), g.getPosition(), g.getStatus(),
 									winner_id, u.getVideogame().getName());
 						}
 					}
@@ -227,10 +224,7 @@ public class MatchService implements APIConfiguration {
 		});
 		return lolGames;
 	}
-	
-	
-	
-	
+
 //	
 
 	public List<API_Match> getLoLPastMatches() throws IOException {
@@ -405,6 +399,68 @@ public class MatchService implements APIConfiguration {
 		return lolUpcomingMatches;
 	}
 
+	public List<API_Match> getMatchesByTournamentId(int tournament_id) throws IOException {
+		Call<List<API_Tournament>> call = service.listTournaments(API_KEY);
+		call.enqueue(new Callback<List<API_Tournament>>() {
+			@Override
+			public void onResponse(Call<List<API_Tournament>> call, Response<List<API_Tournament>> response) {
+
+//				lolUpcomingMatches = response.body();
+//				Gson responseGson = new Gson();
+
+				for (API_Tournament t : response.body()) {
+					if (tournament_id == t.getId()) {
+						for (API_Match u : t.getMatches()) {
+							System.out.println(u.getId());
+							String match_id = u.getId().toString();
+							String begin_at = "";
+							String end_at = "";
+							String match_type = u.getMatchType();
+							String match_name = u.getName();
+							int num_of_games = u.getNumberOfGames();
+							int league_id = u.getLeagueId();
+							String series_id = u.getSerieId().toString();
+							int tournament_id = u.getTournamentId();
+							String winner_id = "";
+							String videogame = u.getVideogame().getName();
+							try {
+								if (u.getWinnerId().toString().equals(null)) {
+									winner_id = "";
+								} else {
+									winner_id = u.getWinnerId().toString();
+								}
+								if (u.getBeginAt().toString().equals(null)) {
+									begin_at = "";
+								} else {
+									begin_at = u.getBeginAt();
+								}
+								if (u.getEndAt().toString().equals(null)) {
+									end_at = "";
+								} else {
+									end_at = u.getEndAt();
+								}
+							} catch (Exception e) {
+								System.out.println("ERROR: " + e.getMessage());
+							}
+							saveMatchDetails(match_id, begin_at, end_at, match_type, match_name, num_of_games,
+									league_id, series_id, tournament_id, winner_id, videogame);
+						}
+					}
+				}
+
+				System.out.println("Saved all matches for " + tournament_id + " to DB");
+
+			}
+
+			@Override
+			public void onFailure(Call<List<API_Tournament>> call, Throwable t) {
+				// TODO Auto-generated method stub
+				System.out.println("ERROR: " + t.getMessage());
+			}
+		});
+		return lolUpcomingMatches;
+	}
+
 	public List<Match> getAll() {
 		// TODO Auto-generated method stub
 		return matchRepo.findAll();
@@ -435,8 +491,8 @@ public class MatchService implements APIConfiguration {
 		return gameRepo.save(game);
 	}
 
-	public Game saveGameDetails(int game_id, String begin_at, String end_at, int match_id,
-			int position, String status, String winner_id, String videogame) {
+	public Game saveGameDetails(int game_id, String begin_at, String end_at, int match_id, int position, String status,
+			String winner_id, String videogame) {
 		Game game = new Game();
 		game.setGame_id(game_id);
 		game.setBegin_at(begin_at);

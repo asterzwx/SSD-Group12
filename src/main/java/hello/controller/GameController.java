@@ -32,7 +32,7 @@ import hello.model.Game;
 import hello.model.League;
 import hello.model.LeagueAPI;
 import hello.model.Match;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import hello.repo.GameRepo;
 import hello.repo.MatchRepo;
 import hello.service.GameService;
@@ -41,7 +41,7 @@ import hello.service.MatchService;
 
 //@CrossOrigin(origins = "https://gambit-team12.tk")
 @RestController
-@RequestMapping(value = "/rest")
+@RequestMapping(value = "/rest/game")
 public class GameController {
 
 	@Autowired
@@ -53,21 +53,27 @@ public class GameController {
 	private GameService gameService;
 	@Autowired
 	private MatchService matchAPIService;
-	
-//	@GetMapping(path = "dota/games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public List<API_Game> getDotaGamesById(@Valid @PathVariable int match_id) throws IOException {
-//		return matchAPIService.getDotaGamesById(match_id);
-//	}
 
-//	@GetMapping(path = "games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public List<API_Game> getGamesByMatchId(int match_id) throws IOException {
-//		return gameAPIService.getDotaGamesByMatchId(match_id);
-//	}
-	
-//	    @PostMapping("/repos")
-//	    public Repository createRepo(@RequestBody Repository newRepo) throws IOException {
-//	        return githubService.createRepository(newRepo);
-//	    }
+	// ROUTES FOR RETRIEVING FROM DB
 
+	@GetMapping(value = "/all")
+	public List<Game> getAllGames() {
+		return gameService.getAll();
+	}
+
+	@GetMapping(value = "/db/dota/{match_id}")
+	public List<Game> getDotaGamesByMatchId(@Valid @PathVariable int match_id) {
+		return gameRepo.findGamesByMatchId("Dota 2", match_id);
+	}
+
+	@GetMapping(value = "/db/lol/{match_id}")
+	public List<Game> getLoLGamesByMatchId(@Valid @PathVariable int match_id) {
+		return gameRepo.findGamesByMatchId("LoL", match_id);
+	}
+
+	@GetMapping(value = "/{game_id}")
+	public List<Game> getGameById(@Valid @PathVariable int game_id) {
+		return gameRepo.findGameById(game_id);
+	}
 	
 }

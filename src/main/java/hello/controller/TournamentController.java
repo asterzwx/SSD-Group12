@@ -29,8 +29,9 @@ import hello.model.API_League;
 import hello.model.API_Tournament;
 import hello.model.League;
 import hello.model.LeagueAPI;
+import hello.model.Serie;
 import hello.model.Tournament;
-import hello.repo.DotaLeagueRepo;
+import hello.repo.LeagueRepo;
 import hello.repo.TournamentRepo;
 import hello.service.LeagueService;
 import hello.service.TournamentService;
@@ -51,26 +52,21 @@ public class TournamentController {
 	public List<API_Tournament> getDotaTournaments() throws IOException {
 		return tournamentAPIService.getDotaTournaments();
 	}
-	
+
 	@GetMapping(path = "/lol/past", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Tournament> getLoLPastTournaments() throws IOException {
 		return tournamentAPIService.getLoLPastTournaments();
 	}
-	
+
 	@GetMapping(path = "/lol/running", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Tournament> getLoLRunningTournaments() throws IOException {
 		return tournamentAPIService.getLoLRunningTournaments();
 	}
-	
+
 	@GetMapping(path = "/lol/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_Tournament> getLoLUpcomingTournaments() throws IOException {
 		return tournamentAPIService.getLoLUpcomingTournaments();
 	}
-
-//	    @PostMapping("/repos")
-//	    public Repository createRepo(@RequestBody Repository newRepo) throws IOException {
-//	        return githubService.createRepository(newRepo);
-//	    }
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@Valid @RequestBody Tournament tournament) {
@@ -79,5 +75,59 @@ public class TournamentController {
 //			}
 //			return null;
 	}
+
+	// ROUTES FOR RETRIEVING FROM DB
+
+	@GetMapping(value = "/all")
+	public List<Tournament> getAllTournament() {
+		return tournamentService.getAll();
+	}
+
+	@GetMapping(value = "/db/dota")
+	public List<Tournament> getAllDotaTournamentFromDB() {
+		return tournamentRepo.findTournaments("Dota 2");
+	}
+	
+	@GetMapping(value = "/db/lol")
+	public List<Tournament> getAllLoLTournamentFromDB() {
+		return tournamentRepo.findTournaments("LoL");
+	}
+	
+	// General
+	
+	@GetMapping(value = "/db/past")
+	public List<Tournament> getAllPastTournamentFromDB() {
+		return tournamentRepo.findAllPastTournaments();
+	}
+	
+	@GetMapping(value = "/db/running")
+	public List<Tournament> getAllRunningTournamentFromDB() {
+		return tournamentRepo.findAllRunningTournaments();
+	}
+	
+	@GetMapping(value = "/db/upcoming")
+	public List<Tournament> getAllUpcomingTournamentFromDB() {
+		return tournamentRepo.findAllUpcomingTournaments();
+	}	
+	
+	//LOL specific 
+	
+	@GetMapping(value = "/db/lol/past")
+	public List<Tournament> getPastLoLTournamentFromDB() {
+		return tournamentRepo.findPastTournaments("LoL");
+	}
+	
+	@GetMapping(value = "/db/lol/running")
+	public List<Tournament> getRunningLoLTournamentFromDB() {
+		return tournamentRepo.findRunningTournaments("LoL");
+	}
+	
+	@GetMapping(value = "/db/lol/upcoming")
+	public List<Tournament> getUpcomingLoLTournamentFromDB() {
+		return tournamentRepo.findUpcomingTournaments("LoL");
+	}
+	
+	
+	
 
 }

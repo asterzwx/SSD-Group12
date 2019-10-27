@@ -13,6 +13,6 @@ import hello.model.Serie;
 public interface SerieRepo extends JpaRepository<Serie, Integer>{
 	
 	@Query("SELECT s FROM Serie s WHERE s.videogame = :videogame")
-	List<Serie> findDotaSeries(@Param("videogame") String videogame);
+	List<Serie> findSeries(@Param("videogame") String videogame);
 
 }
