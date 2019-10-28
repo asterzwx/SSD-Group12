@@ -55,8 +55,8 @@ public class ScheduledPredictionCheck {
 	int matchid;
 	int points;
 
-//	@Scheduled(fixedRate = 1200000)
-	@Scheduled(fixedRate = 3000)
+	@Scheduled(fixedRate = 1200000)
+//	@Scheduled(fixedRate = 3000)
 	@Transactional
 	public void create() {
 		final LocalDateTime start = LocalDateTime.now();

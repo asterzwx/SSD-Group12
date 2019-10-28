@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import hello.controller.LeagueController;
 import hello.controller.MatchController;
+import hello.controller.PlayerController;
 import hello.controller.SerieController;
 import hello.controller.TournamentController;
 import hello.controller.UserAccountController;
@@ -34,17 +35,21 @@ public class ScheduledTasks {
 	LeagueController leagueController;
 	TournamentController tournamentController;
 	MatchController matchController;
+	PlayerController playerController;
 
 	public ScheduledTasks(SerieController serieController, LeagueController leagueController,
-			TournamentController tournamentController, MatchController matchController) {
+			TournamentController tournamentController, MatchController matchController,
+			PlayerController playerController) {
 		super();
 		this.serieController = serieController;
 		this.leagueController = leagueController;
 		this.tournamentController = tournamentController;
 		this.matchController = matchController;
+		this.playerController = playerController;
 	}
 
-	@Scheduled(fixedRate = 36000000)
+//	@Scheduled(fixedRate = 36000000)
+	@Scheduled(fixedRate = 3000)
 //	@Transactional
 	public void create() {
 		final LocalDateTime start = LocalDateTime.now();
@@ -64,6 +69,9 @@ public class ScheduledTasks {
 			matchController.getLoLPastMatches();
 			matchController.getLoLRunningMatches();
 			matchController.getLoLUpcomingMatches();
+			
+			playerController.getDotaPlayers();
+			playerController.getLoLPlayers();
 			
 			System.out.println("\n Functions executed!\n");
 

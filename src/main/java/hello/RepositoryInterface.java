@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import hello.model.API_Game;
 import hello.model.API_League;
 import hello.model.API_Match;
+import hello.model.API_Player;
 import hello.model.API_Serie;
 import hello.model.API_Tournament;
 import hello.model.LeagueAPI;
@@ -74,6 +75,13 @@ public interface RepositoryInterface {
 
 	@GET("lol/matches")
 	Call<List<API_Match>> listLoLGamesByMatchId(@Query("token") String accessToken);
+	
+	
+	@GET("dota2/series/1821/players")
+	Call<List<API_Player>> listDotaPlayers(@Query("token") String accessToken);
+
+	@GET("lol/series/1839/players")
+	Call<List<API_Player>> listLoLPlayers(@Query("token") String accessToken);
 
 
 }
