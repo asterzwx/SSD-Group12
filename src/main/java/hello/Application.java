@@ -18,6 +18,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -35,25 +38,28 @@ public class Application {
 //	UserAccountRepo userAccountRepo;
 //	public ScheduledTasks scheduledTasks = new ScheduledTasks(userAccountRepo);
 //	UserAccountController userAccountController;
-	
-    public static void main(String[] args) {    	
-        SpringApplication.run(Application.class, args);        
-    }
-    
-    @PostConstruct
-    void started() {
-      TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-//      scheduledTasks.scheduleTaskWithFixedRate();      
-      
-    }
-    
-//    public WebMvcConfigurer corsConfigurer() {
-//        return new WebMvcConfigurer() {
-//            @Override
-//            public void addCorsMappings(CorsRegistry registry) {
-//                registry.addMapping("/greeting-javaconfig").allowedOrigins("https://gambit-team12.tk");
-//            }
-//        };
-//    }
 
+	public static void main(String[] args) {
+		SpringApplication.run(Application.class, args);
+	}
+
+	@PostConstruct
+	void started() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+//      scheduledTasks.scheduleTaskWithFixedRate();      
+
+	}
+
+	@Bean
+	CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(Arrays.asList("*"));
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS", "DELETE", "PUT", "PATCH"));
+		configuration.setAllowedHeaders(
+				Arrays.asList("X-Requested-With", "Origin", "Content-Type", "Accept", "Authorization"));
+		configuration.setAllowCredentials(true);
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+		return source;
+	}
 }

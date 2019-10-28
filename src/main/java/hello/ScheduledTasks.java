@@ -44,7 +44,7 @@ public class ScheduledTasks {
 		this.matchController = matchController;
 	}
 
-	@Scheduled(fixedRate = 3600)
+	@Scheduled(fixedRate = 36000000)
 //	@Transactional
 	public void create() {
 		final LocalDateTime start = LocalDateTime.now();
