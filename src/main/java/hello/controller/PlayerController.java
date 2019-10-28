@@ -47,13 +47,13 @@ public class PlayerController {
 	// ROUTES FOR RETRIEVING FROM DB
 	
 	@GetMapping(value = "/db/dota")
-	public List<Player> getDotaPlayers(@Valid @PathVariable String videogame) {
+	public List<Player> getDBDotaPlayers() {
 		return playerRepo.findPlayersByVideogame("Dota 2");	
 		
 	}
 	
 	@GetMapping(value = "/db/lol")
-	public List<Player> getLoLPlayers(@Valid @PathVariable String videogame) {
+	public List<Player> getDBLoLPlayers() {
 		return playerRepo.findPlayersByVideogame("LoL");	
 		
 	}

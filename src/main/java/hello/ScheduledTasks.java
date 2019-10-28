@@ -48,8 +48,8 @@ public class ScheduledTasks {
 		this.playerController = playerController;
 	}
 
-//	@Scheduled(fixedRate = 36000000)
-	@Scheduled(fixedRate = 3000)
+	@Scheduled(fixedRate = 36000000)
+//	@Scheduled(fixedRate = 3000)
 //	@Transactional
 	public void create() {
 		final LocalDateTime start = LocalDateTime.now();

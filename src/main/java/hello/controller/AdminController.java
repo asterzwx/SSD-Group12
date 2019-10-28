@@ -11,6 +11,8 @@ import javax.transaction.Transactional;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +28,7 @@ import com.google.common.hash.Hashing;
 
 import hello.model.Admin;
 import hello.model.UserAccount;
+import hello.repo.AdminRepo;
 import hello.service.AdminService;
 
 @CrossOrigin(origins = "https://gambit-team12.tk")
@@ -34,24 +37,34 @@ import hello.service.AdminService;
 public class AdminController {
 	@Autowired
 	private AdminService adminService;
+	@Autowired
+	AdminRepo adminRepo;
 
-	@GetMapping(value = "/all")
-	public List<Admin> getAllAdmin() {
-		return adminService.getAll();
-	}
+//	@GetMapping(value = "/all")
+//	public List<Admin> getAllAdmin() {
+//		return adminService.getAll();
+//	}
 
+//	@GetMapping("/{username}")
+//	public ResponseEntity<Admin> findById(@PathVariable String username) {
+//		Optional<Admin> user = adminService.findById(username);
+//		if (!user.isPresent()) {
+//			ResponseEntity.badRequest().build();
+//		}
+//		return ResponseEntity.ok(user.get());
+//	}
+	
 	@GetMapping("/{username}")
-	public ResponseEntity<Admin> findById(@PathVariable String username) {
-		Optional<Admin> user = adminService.findById(username);
-		if (!user.isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-
-		return ResponseEntity.ok(user.get());
+	public Object findById(@PathVariable String username) {
+		Object user = adminRepo.getAdminByUsername(username);		
+		return user;
 	}
+	
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody Admin adminAccount) {
+		ResponseEntity<Admin> responseEntity = null;
+
 		// if user dont exist
 		if (!adminService.findById(adminAccount.getUsername()).isPresent()) {
 			adminAccount.setUsername(adminAccount.getUsername());
@@ -66,16 +79,20 @@ public class AdminController {
 
 			adminAccount.setPassword_hash(generatedHash_SHA256);
 			adminAccount.setSalt(generatedSalt);
-			return ResponseEntity.ok(adminService.saveUser(adminAccount));
+			adminService.saveUser(adminAccount);
+//			return ResponseEntity.ok(adminService.saveUser(adminAccount));
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
 		}
 		return null;
 	}
 
 	@PostMapping("/login")
-	public Map<String, Object> login(@RequestBody Admin adminAccount) {
+	public ResponseEntity<Admin> login(@RequestBody Admin adminAccount) {
 		Optional<Admin> user = adminService.findById(adminAccount.getUsername());
 		Map<String, Object> json = new HashMap();
-		
+		ResponseEntity<Admin> responseEntity = null;
+		HttpHeaders httpHeaders = new HttpHeaders();
+
 		// if user exists
 		if (adminService.findById(adminAccount.getUsername()).isPresent()) {
 
@@ -95,17 +112,18 @@ public class AdminController {
 			// compare this hash with the user's pw hash
 			if (user_password_hash.equals(generatedHash_SHA256)) {
 				json.put("login", "true");
-
-				return json;
+				responseEntity = new ResponseEntity<Admin>(HttpStatus.OK);
 			} else {
 				json.put("login", "false");
+				responseEntity = new ResponseEntity<Admin>(HttpStatus.UNAUTHORIZED);
 			}
 		}
 		else {
 			json.put("login", "false");
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.UNAUTHORIZED);
 
 		}
-		return json;
+		return responseEntity;
 
 	}
 	

@@ -18,6 +18,8 @@ import org.apache.catalina.User;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -39,11 +41,12 @@ import com.google.common.hash.Hashing;
 import com.google.gson.JsonObject;
 
 import hello.Application;
+import hello.model.Admin;
 import hello.model.UserAccount;
 import hello.repo.UserAccountRepo;
 import hello.service.UserAccountService;
 
-@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost"})
+@CrossOrigin(origins = { "https://gambit-team12.tk", "http://localhost" })
 
 @RestController
 @RequestMapping(value = "/rest/useraccount")
@@ -54,23 +57,20 @@ public class UserAccountController {
 	@Autowired
 	UserAccountRepo userAccountRepo;
 
-	@GetMapping(value = "/all")
-	public List<UserAccount> getAllUsers() {
-		return userService.getAll();
-	}
+//	@GetMapping(value = "/all")
+//	public List<UserAccount> getAllUsers() {
+//		return userService.getAll();
+//	}
 
 	@GetMapping("/{username}")
-	public ResponseEntity<UserAccount> findById(@PathVariable String username) {
-		Optional<UserAccount> user = userService.findById(username);
-		if (!user.isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-
-		return ResponseEntity.ok(user.get());
+	public Object findById(@PathVariable String username) {
+		Object user = userAccountRepo.getUserByUsername(username);
+		return user;
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserAccount userAccount) {
+		ResponseEntity<Admin> responseEntity = null;
 		// if user dont exist
 		if (!userService.findById(userAccount.getUsername()).isPresent()) {
 			userAccount.setUsername(userAccount.getUsername());
@@ -86,16 +86,60 @@ public class UserAccountController {
 
 			userAccount.setPassword_hash(generatedHash_SHA256);
 			userAccount.setSalt(generatedSalt.toString());
-			return ResponseEntity.ok(userService.saveUser(userAccount));
+			userService.saveUser(userAccount);
+//			return ResponseEntity.ok(userService.saveUser(userAccount));
+//			return ResponseEntity.ok("account created");
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+
 		}
 		return null;
 	}
 
+//	@PostMapping("/login")
+//	@Transactional
+//	public Map<String, Object> login(@RequestBody UserAccount userAccount) {
+//		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
+//		Map<String, Object> json = new HashMap();
+//
+//		// if user exists
+//		if (userService.findById(userAccount.getUsername()).isPresent()) {
+//
+//			UserAccount userInfo = user.get();
+//			// get user's paswordhash
+//			String user_password_hash = userInfo.getPassword_hash(); // for comparing later
+//			// do hashing procedure again with the provided password
+//
+//			String password_plus_salt = "" + userAccount.getPassword() + userInfo.getSalt();
+//			// now u hash again
+//			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+//					.toString();
+//
+//			System.out.println("@@@@@@@@@@@@@ " + user_password_hash);
+//			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
+//
+//			// compare this hash with the user's pw hash
+//			if (user_password_hash.equals(generatedHash_SHA256)) {
+//				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
+//				json.put("login", "true");
+//
+//			} else {
+//				System.out.println("FAILED");
+//				json.put("login", "false");
+//
+//			}
+//		} else {
+//			json.put("login", "false");
+//		}
+//		return json;
+//	}
+
 	@PostMapping("/login")
 	@Transactional
-	public Map<String, Object> login(@RequestBody UserAccount userAccount) {
+	public ResponseEntity<UserAccount> login2(@RequestBody UserAccount userAccount) {
 		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		Map<String, Object> json = new HashMap();
+		ResponseEntity<UserAccount> responseEntity = null;
+		HttpHeaders httpHeaders = new HttpHeaders();
 
 		// if user exists
 		if (userService.findById(userAccount.getUsername()).isPresent()) {
@@ -117,19 +161,19 @@ public class UserAccountController {
 			if (user_password_hash.equals(generatedHash_SHA256)) {
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
 				json.put("login", "true");
-
+				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
 			} else {
 				System.out.println("FAILED");
 				json.put("login", "false");
-
+//				return ResponseEntity.ok("logged in");
+				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.UNAUTHORIZED);
 			}
-		}
-		else {
+		} else {
 			json.put("login", "false");
+			responseEntity = new ResponseEntity<UserAccount>(HttpStatus.UNAUTHORIZED);
 
 		}
-		return json;
-
+		return responseEntity;
 	}
 
 	@PostMapping("/logout")
