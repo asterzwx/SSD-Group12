@@ -101,6 +101,10 @@ public class AdminController {
 				json.put("login", "false");
 			}
 		}
+		else {
+			json.put("login", "false");
+
+		}
 		return json;
 
 	}

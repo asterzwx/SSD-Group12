@@ -43,7 +43,8 @@ import hello.model.UserAccount;
 import hello.repo.UserAccountRepo;
 import hello.service.UserAccountService;
 
-@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost"})
+
 @RestController
 @RequestMapping(value = "/rest/useraccount")
 public class UserAccountController {
@@ -122,6 +123,10 @@ public class UserAccountController {
 				json.put("login", "false");
 
 			}
+		}
+		else {
+			json.put("login", "false");
+
 		}
 		return json;
 

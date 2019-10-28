@@ -27,5 +27,6 @@ public interface UserInventoryRepo extends JpaRepository<UserInventory, String>{
 	int updateUserItemInUse(@Param("tinyint") boolean tinyint,
 			@Param("username") String username, @Param("item_id") int item_id);
 	
-	
+	@Query("SELECT i FROM UserInventory i WHERE i.username = :username")
+	List<UserInventory> getUsernamesById(@Param("username") String username);
 }

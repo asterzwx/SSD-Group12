@@ -9,13 +9,15 @@ public class UserPrediction {
 	public UserPrediction() {}
 	
 	
-	public UserPrediction(int id, String username, int match_id, int result, int prediction) {
+	public UserPrediction(int id, String username, int match_id, int result, int prediction,
+			boolean points_allocated) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.match_id = match_id;
 		this.result = result;
 		this.prediction = prediction;
+		this.points_allocated = points_allocated;
 	}
 
 
@@ -35,6 +37,9 @@ public class UserPrediction {
 	
 	@Column(name = "prediction")
 	private int prediction;
+	
+	@Column(name = "points_allocated")
+	private boolean points_allocated;
 
 	public int getId() {
 		return id;
@@ -74,6 +79,16 @@ public class UserPrediction {
 
 	public void setPrediction(int prediction) {
 		this.prediction = prediction;
+	}
+
+
+	public boolean isPoints_allocated() {
+		return points_allocated;
+	}
+
+
+	public void setPoints_allocated(boolean points_allocated) {
+		this.points_allocated = points_allocated;
 	}
 	
 	

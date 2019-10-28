@@ -38,6 +38,7 @@ public class Application {
 //	UserAccountRepo userAccountRepo;
 //	public ScheduledTasks scheduledTasks = new ScheduledTasks(userAccountRepo);
 //	UserAccountController userAccountController;
+	ScheduledTasks scheduledTasks;
 
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
@@ -46,7 +47,8 @@ public class Application {
 	@PostConstruct
 	void started() {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-//      scheduledTasks.scheduleTaskWithFixedRate();      
+//      scheduledTasks.scheduleTaskWithFixedRate();  
+		
 
 	}
 
