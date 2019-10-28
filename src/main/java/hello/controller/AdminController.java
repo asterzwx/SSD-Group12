@@ -53,13 +53,12 @@ public class AdminController {
 //		}
 //		return ResponseEntity.ok(user.get());
 //	}
-	
+
 	@GetMapping("/{username}")
 	public Object findById(@PathVariable String username) {
-		Object user = adminRepo.getAdminByUsername(username);		
+		Object user = adminRepo.getAdminByUsername(username);
 		return user;
 	}
-	
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody Admin adminAccount) {
@@ -82,8 +81,10 @@ public class AdminController {
 			adminService.saveUser(adminAccount);
 //			return ResponseEntity.ok(adminService.saveUser(adminAccount));
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+		} else {
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
 		}
-		return null;
+		return responseEntity;
 	}
 
 	@PostMapping("/login")
@@ -117,8 +118,7 @@ public class AdminController {
 				json.put("login", "false");
 				responseEntity = new ResponseEntity<Admin>(HttpStatus.UNAUTHORIZED);
 			}
-		}
-		else {
+		} else {
 			json.put("login", "false");
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.UNAUTHORIZED);
 
@@ -126,7 +126,7 @@ public class AdminController {
 		return responseEntity;
 
 	}
-	
+
 	@PostMapping("/logout")
 	@Transactional
 	public Map<String, Object> logout(@RequestBody Admin adminAccount) {
@@ -134,15 +134,12 @@ public class AdminController {
 		Map<String, Object> json = new HashMap();
 
 		// if user exists
-		if (adminService.findById(adminAccount.getUsername()).isPresent()) {			
-			json.put("login", "false");			
+		if (adminService.findById(adminAccount.getUsername()).isPresent()) {
+			json.put("login", "false");
 		}
 		return json;
 
 	}
-	
-	
-	
 
 	@PutMapping("/updateHashSalt/{username}")
 	public ResponseEntity<Admin> updateHashSalt(@PathVariable String username, @RequestBody Admin adminAccount) {

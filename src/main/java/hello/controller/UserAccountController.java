@@ -90,9 +90,12 @@ public class UserAccountController {
 //			return ResponseEntity.ok(userService.saveUser(userAccount));
 //			return ResponseEntity.ok("account created");
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
-
 		}
-		return null;
+		else {
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
+		}
+		
+		return responseEntity;
 	}
 
 //	@PostMapping("/login")
