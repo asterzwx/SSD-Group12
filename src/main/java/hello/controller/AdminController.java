@@ -2,7 +2,9 @@ package hello.controller;
 
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -70,10 +72,10 @@ public class AdminController {
 	}
 
 	@PostMapping("/login")
-	public JSONObject login(@RequestBody Admin adminAccount) {
+	public Map<String, Object> login(@RequestBody Admin adminAccount) {
 		Optional<Admin> user = adminService.findById(adminAccount.getUsername());
-		JSONObject json = new JSONObject();
-
+		Map<String, Object> json = new HashMap();
+		
 		// if user exists
 		if (adminService.findById(adminAccount.getUsername()).isPresent()) {
 
@@ -105,9 +107,9 @@ public class AdminController {
 	
 	@PostMapping("/logout")
 	@Transactional
-	public JSONObject logout(@RequestBody Admin adminAccount) {
+	public Map<String, Object> logout(@RequestBody Admin adminAccount) {
 		Optional<Admin> user = adminService.findById(adminAccount.getUsername());
-		JSONObject json = new JSONObject();
+		Map<String, Object> json = new HashMap();
 
 		// if user exists
 		if (adminService.findById(adminAccount.getUsername()).isPresent()) {			

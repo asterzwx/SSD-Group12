@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -16,6 +19,7 @@ import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -88,9 +92,9 @@ public class UserAccountController {
 
 	@PostMapping("/login")
 	@Transactional
-	public JSONObject login(@RequestBody UserAccount userAccount) {
+	public Map<String, Object> login(@RequestBody UserAccount userAccount) {
 		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
-		JSONObject json = new JSONObject();
+		Map<String, Object> json = new HashMap();
 
 		// if user exists
 		if (userService.findById(userAccount.getUsername()).isPresent()) {
@@ -110,11 +114,13 @@ public class UserAccountController {
 
 			// compare this hash with the user's pw hash
 			if (user_password_hash.equals(generatedHash_SHA256)) {
-				json.put("login", "true");
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
-				return json;
+				json.put("login", "true");
+
 			} else {
+				System.out.println("FAILED");
 				json.put("login", "false");
+
 			}
 		}
 		return json;
@@ -123,12 +129,11 @@ public class UserAccountController {
 
 	@PostMapping("/logout")
 	@Transactional
-	public JSONObject logout(@RequestBody UserAccount userAccount) {
+	public Map<String, Object> logout(@RequestBody UserAccount userAccount) {
 		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
-		JSONObject json = new JSONObject();
-
+		Map<String, Object> json = new HashMap();
 		// if user exists
-		if (userService.findById(userAccount.getUsername()).isPresent()) {			
+		if (userService.findById(userAccount.getUsername()).isPresent()) {
 			json.put("login", "false");
 			userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "active");
 			System.out.println(userAccount.getUsername() + " logged out");
@@ -173,6 +178,13 @@ public class UserAccountController {
 		byte bytes[] = new byte[20];
 		random.nextBytes(bytes);
 		return bytes;
+	}
+
+	@Transactional
+	@PutMapping("/update/ban/{username}")
+	public int banUser(@Valid @PathVariable String username) {
+		System.out.println("FIXED RATE BAN USER");
+		return userAccountRepo.banUser(username, "inactive");
 	}
 
 }

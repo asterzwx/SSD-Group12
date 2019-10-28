@@ -9,7 +9,7 @@ public class UserInventory {
 	
 	public UserInventory() {}
 	
-	public UserInventory(String username, String points, String item_id, String item_in_use) {
+	public UserInventory(String username, int points, int item_id, boolean item_in_use) {
 		super();
 		this.username = username;
 		this.points = points;
@@ -25,13 +25,13 @@ public class UserInventory {
 	private String username;
 
 	@Column(name = "points")
-	private String points;
+	private int points;
 
 	@Column(name = "item_id")
-	private String item_id;
+	private int item_id;
 	
 	@Column(name = "item_in_use")
-	private String item_in_use;
+	private boolean item_in_use;
 
 	public String getUsername() {
 		return username;
@@ -41,27 +41,27 @@ public class UserInventory {
 		this.username = username;
 	}
 
-	public String getPoints() {
+	public int getPoints() {
 		return points;
 	}
 
-	public void setPoints(String points) {
+	public void setPoints(int points) {
 		this.points = points;
 	}
 
-	public String getItem_id() {
+	public int getItem_id() {
 		return item_id;
 	}
 
-	public void setItem_id(String item_id) {
+	public void setItem_id(int item_id) {
 		this.item_id = item_id;
 	}
 
-	public String getItem_in_use() {
+	public boolean getItem_in_use() {
 		return item_in_use;
 	}
 
-	public void setItem_in_use(String item_in_use) {
+	public void setItem_in_use(boolean item_in_use) {
 		this.item_in_use = item_in_use;
 	}
 	

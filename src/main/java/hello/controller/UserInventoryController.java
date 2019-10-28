@@ -3,6 +3,7 @@ package hello.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import hello.model.Match;
 import hello.model.UserInventory;
+import hello.repo.UserInventoryRepo;
 import hello.service.PollService;
 import hello.service.UserInventoryService;
 
@@ -28,6 +31,8 @@ public class UserInventoryController {
 	
 	@Autowired
 	private UserInventoryService userInventoryService;
+	@Autowired
+	private UserInventoryRepo userInventoryRepo;
 
 	@GetMapping(value = "/all")
 	public List<UserInventory> getAllUserInventories() {
@@ -72,5 +77,26 @@ public class UserInventoryController {
 
         return ResponseEntity.ok().build();
     }
+	
+	@Transactional
+	@PutMapping("/update/allrecords/{points}/{username}")
+	public int updateUserPoints(@Valid @PathVariable int points, @PathVariable String username) {
+		return userInventoryRepo.updateUserPoints(points, username);
+	}
+	
+	@Transactional
+	@PutMapping("/update/itemsnotinuse/{username}")
+	public int updateOtherItemsNotInUse(@Valid @PathVariable String username) {
+		return userInventoryRepo.updateOtherItemsNotInUse(false, username);
+	}
+	
+	@Transactional
+	@PutMapping("/update/iteminuse/{username}/{item_id}")
+	public int updateItemInUse(@Valid @PathVariable String username, @PathVariable int item_id) {
+		return userInventoryRepo.updateUserItemInUse(true, username, item_id);
+	}
+	
+	
+	
 
 }
