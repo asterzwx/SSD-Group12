@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.google.common.hash.Hashing;
@@ -57,6 +58,8 @@ public class UserAccountController {
 	private UserAccountService userService;
 	@Autowired
 	UserAccountRepo userAccountRepo;
+	
+	ViewControllerRegistry registry;
 
 //	@GetMapping(value = "/all")
 //	public List<UserAccount> getAllUsers() {
@@ -171,6 +174,7 @@ public class UserAccountController {
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
 				json.put("login", "true");
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
+				registry.addViewController("/**").setViewName("forward:/");
 			} else {
 				System.out.println("FAILED");
 				json.put("login", "false");
@@ -256,5 +260,7 @@ public class UserAccountController {
 	public String firstPage() {
 		return "Hello World";
 	}
+	
+	
 
 }
