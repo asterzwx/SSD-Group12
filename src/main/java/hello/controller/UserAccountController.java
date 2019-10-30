@@ -79,8 +79,10 @@ public class UserAccountController {
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
-	public ResponseEntity create(@RequestBody UserAccount userAccount) {
+	public Map<String, Object> create(@RequestBody UserAccount userAccount) {
 		ResponseEntity<Admin> responseEntity = null;
+		Map<String, Object> json = new HashMap();
+
 		// if user dont exist
 		if (!userService.findById(userAccount.getUsername()).isPresent()) {
 			userAccount.setUsername(userAccount.getUsername());
@@ -97,53 +99,17 @@ public class UserAccountController {
 			userAccount.setPassword_hash(generatedHash_SHA256);
 			userAccount.setSalt(generatedSalt.toString());
 			userService.saveUser(userAccount);
-//			return ResponseEntity.ok(userService.saveUser(userAccount));
-//			return ResponseEntity.ok("account created");
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+			json.put("created", "true");
+
 		} else {
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
+			json.put("created", "false");
+
 		}
 
-		return responseEntity;
+		return json;
 	}
-
-//	@PostMapping("/login")
-//	@Transactional
-//	public Map<String, Object> login(@RequestBody UserAccount userAccount) {
-//		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
-//		Map<String, Object> json = new HashMap();
-//
-//		// if user exists
-//		if (userService.findById(userAccount.getUsername()).isPresent()) {
-//
-//			UserAccount userInfo = user.get();
-//			// get user's paswordhash
-//			String user_password_hash = userInfo.getPassword_hash(); // for comparing later
-//			// do hashing procedure again with the provided password
-//
-//			String password_plus_salt = "" + userAccount.getPassword() + userInfo.getSalt();
-//			// now u hash again
-//			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-//					.toString();
-//
-//			System.out.println("@@@@@@@@@@@@@ " + user_password_hash);
-//			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
-//
-//			// compare this hash with the user's pw hash
-//			if (user_password_hash.equals(generatedHash_SHA256)) {
-//				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
-//				json.put("login", "true");
-//
-//			} else {
-//				System.out.println("FAILED");
-//				json.put("login", "false");
-//
-//			}
-//		} else {
-//			json.put("login", "false");
-//		}
-//		return json;
-//	}
 
 	@PostMapping("/login")
 	@Transactional
@@ -174,7 +140,7 @@ public class UserAccountController {
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
 				json.put("login", "true");
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
-				registry.addViewController("/**").setViewName("forward:/");	
+//				registry.addViewController("/**").setViewName("forward:/");	
 			} else {
 				System.out.println("FAILED");
 				json.put("login", "false");
@@ -232,15 +198,15 @@ public class UserAccountController {
 		return ResponseEntity.ok(userService.saveUser(userAccount));
 	}
 
-	@DeleteMapping("/delete/{username}")
-	public ResponseEntity delete(@PathVariable String username) {
-		if (!userService.findById(username).isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-		userService.deleteById(username);
-
-		return ResponseEntity.ok().build();
-	}
+//	@DeleteMapping("/delete/{username}")
+//	public ResponseEntity delete(@PathVariable String username) {
+//		if (!userService.findById(username).isPresent()) {
+//			ResponseEntity.badRequest().build();
+//		}
+//		userService.deleteById(username);
+//
+//		return ResponseEntity.ok().build();
+//	}
 
 	public byte[] generateSalt() {
 		SecureRandom random = new SecureRandom();

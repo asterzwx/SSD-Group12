@@ -46,21 +46,6 @@ public class AdminController {
 //	public List<Admin> getAllAdmin() {
 //		return adminService.getAll();
 //	}
-
-//	@GetMapping("/{username}")
-//	public ResponseEntity<Admin> findById(@PathVariable String username) {
-//		Optional<Admin> user = adminService.findById(username);
-//		if (!user.isPresent()) {
-//			ResponseEntity.badRequest().build();
-//		}
-//		return ResponseEntity.ok(user.get());
-//	}
-
-//	@GetMapping("/{username}")
-//	public Object findById(@PathVariable String username) {
-//		Object user = adminRepo.getAdminByUsername(username);
-//		return user;
-//	}
 	
 	@GetMapping("/{username}")
 	public List<AdminView> findById(@PathVariable String username) {
@@ -68,11 +53,11 @@ public class AdminController {
 		return json;
 	}
 	
-	
 
 	@PostMapping("/create") // Map ONLY POST Requests
-	public ResponseEntity create(@RequestBody Admin adminAccount) {
+	public Map<String, Object> create(@RequestBody Admin adminAccount) {
 		ResponseEntity<Admin> responseEntity = null;
+		Map<String, Object> json = new HashMap();
 
 		// if user dont exist
 		if (!adminService.findById(adminAccount.getUsername()).isPresent()) {
@@ -91,10 +76,13 @@ public class AdminController {
 			adminService.saveUser(adminAccount);
 //			return ResponseEntity.ok(adminService.saveUser(adminAccount));
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+			json.put("created", "true");
+
 		} else {
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
+			json.put("created", "false");
 		}
-		return responseEntity;
+		return json;
 	}
 
 	@PostMapping("/login")
@@ -171,15 +159,15 @@ public class AdminController {
 		return ResponseEntity.ok(adminService.saveUser(adminAccount));
 	}
 
-	@DeleteMapping("/delete/{username}")
-	public ResponseEntity delete(@PathVariable String username) {
-		if (!adminService.findById(username).isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-		adminService.deleteById(username);
-
-		return ResponseEntity.ok().build();
-	}
+//	@DeleteMapping("/delete/{username}")
+//	public ResponseEntity delete(@PathVariable String username) {
+//		if (!adminService.findById(username).isPresent()) {
+//			ResponseEntity.badRequest().build();
+//		}
+//		adminService.deleteById(username);
+//
+//		return ResponseEntity.ok().build();
+//	}
 
 	public byte[] generateSalt() {
 		SecureRandom random = new SecureRandom();
