@@ -29,4 +29,9 @@ public interface UserInventoryRepo extends JpaRepository<UserInventory, String>{
 	
 	@Query("SELECT i FROM UserInventory i WHERE i.username = :username")
 	List<UserInventory> getUsernamesById(@Param("username") String username);
+	
+	@Query("SELECT i FROM UserInventory i WHERE i.username = :username")
+	List<UserInventory> getItemsOwnedById(@Param("username") String username);
+	
+	
 }
