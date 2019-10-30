@@ -1,9 +1,11 @@
 package hello.controller;
 
+import java.sql.Time;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -53,10 +55,10 @@ public class UserInventoryController {
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserInventory user_inventory) {
-		if (!userInventoryService.findById(user_inventory.getUsername()).isPresent()) {
+//		if (!userInventoryService.findById(user_inventory.getUsername()).isPresent()) {
 			return ResponseEntity.ok(userInventoryService.saveUserInventory(user_inventory));
-		}
-		return null;
+//		}
+//		return null;
 	}
 
 	@PutMapping("/update/{username}")
@@ -119,10 +121,10 @@ public class UserInventoryController {
 	@Transactional
 	@PostMapping("/buy/{username}/{item_id}/{item_cost}") // Map ONLY POST Requests
 	public Map<String, Object> buy(@Valid @PathVariable String username, @Valid @PathVariable int item_id,
-			@Valid @PathVariable int item_cost, @RequestBody UserInventory user_inventory) {
-		Map<String, Object> json = new HashMap();
-
-		int currentUserPoints = user_inventory.getPoints();
+			@Valid @PathVariable int item_cost) {
+		Map<String, Object> json = new HashMap();	
+		
+		int currentUserPoints = userInventoryRepo.getPointsById(username);
 
 		if (currentUserPoints < item_cost || itemOwnedByUser(item_id, username) == true) {
 			json.put("purchase", "false");
@@ -131,10 +133,21 @@ public class UserInventoryController {
 			int latestPoints = currentUserPoints - item_cost;
 			// if purchase success,
 			// 1. create new record in user_inventory with the latest points
+			UserInventory userInventory = new UserInventory();
+			userInventory.setUsername(username);
+			userInventory.setPoints(latestPoints);
+			userInventory.setItem_id(item_id);
+			userInventory.setItem_in_use(false);
+//			userInventoryRepo.save(userInventory);
+			create(userInventory);
+			try {
+				TimeUnit.SECONDS.sleep(3);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// 2. update all record set points = latestpoints where username = username
-
-			user_inventory.setPoints(latestPoints);
-
+			userInventoryRepo.updateUserPoints(latestPoints, username);
 			json.put("purchase", "true");
 		}
 

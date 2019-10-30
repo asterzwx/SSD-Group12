@@ -9,8 +9,12 @@ public class UserInventory {
 	
 	public UserInventory() {}
 	
-	public UserInventory(String username, int points, int item_id, boolean item_in_use) {
+
+
+
+	public UserInventory(int id, String username, int points, int item_id, boolean item_in_use) {
 		super();
+		this.id = id;
 		this.username = username;
 		this.points = points;
 		this.item_id = item_id;
@@ -19,8 +23,12 @@ public class UserInventory {
 
 
 
+
 	@Id
 //	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id")
+	private int id;
+	
 	@Column(name = "username")
 	private String username;
 
@@ -32,6 +40,16 @@ public class UserInventory {
 	
 	@Column(name = "item_in_use")
 	private boolean item_in_use;
+
+	
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public String getUsername() {
 		return username;
