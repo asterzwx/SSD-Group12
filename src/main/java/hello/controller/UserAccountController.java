@@ -68,14 +68,12 @@ public class UserAccountController {
 //		Object user = userAccountRepo.getUserByUsername(username);
 //		return user;
 //	}
-	
+
 	@GetMapping("/{username}")
 	public List<UserAccountView> findById(@PathVariable String username) {
 		List<UserAccountView> json = userAccountRepo.getDetailsByUsername(username);
 		return json;
 	}
-	
-	
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserAccount userAccount) {
@@ -252,6 +250,11 @@ public class UserAccountController {
 	public int banUser(@Valid @PathVariable String username) {
 		System.out.println("FIXED RATE BAN USER");
 		return userAccountRepo.banUser(username, "inactive");
+	}
+
+	@RequestMapping({ "/hello" })
+	public String firstPage() {
+		return "Hello World";
 	}
 
 }
