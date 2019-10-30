@@ -3,6 +3,7 @@ package hello;
 import java.util.List;
 
 import org.apache.catalina.startup.ClassLoaderFactory.Repository;
+import org.hibernate.type.NTextType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -81,7 +82,9 @@ public interface RepositoryInterface {
 	Call<List<API_Player>> listDotaPlayers(@Query("token") String accessToken);
 
 	@GET("lol/series/1839/players")
-	Call<List<API_Player>> listLoLPlayers(@Query("token") String accessToken);
+	Call<List<API_Player>> listLoLPlayers(@Query("token") String accessToken,
+			@Query("per_page") int per_page,
+			@Query("page") int page);
 
 
 }

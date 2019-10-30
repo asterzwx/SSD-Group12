@@ -174,7 +174,7 @@ public class UserAccountController {
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
 				json.put("login", "true");
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
-				registry.addViewController("/**").setViewName("forward:/");
+				registry.addViewController("/**").setViewName("forward:/");	
 			} else {
 				System.out.println("FAILED");
 				json.put("login", "false");

@@ -52,7 +52,7 @@ public class TournamentService implements APIConfiguration {
 					for (API_Tournament u : response.body()) {
 						int id = u.getId();
 						String name = u.getName();
-						String begin_at = u.getBeginAt();
+						String begin_at = "";
 						String end_at = "";
 						int league_id = u.getLeagueId();
 						String series_id = u.getSerieId().toString();
@@ -64,6 +64,11 @@ public class TournamentService implements APIConfiguration {
 								winner_id = "";
 							} else {
 								winner_id = u.getWinnerId().toString();
+							}
+							if (u.getBeginAt().toString().equals(null)) {
+								begin_at = "";
+							} else {
+								begin_at = u.getBeginAt();
 							}
 							if (u.getEndAt().toString().equals(null)) {
 								end_at = "";
@@ -101,7 +106,7 @@ public class TournamentService implements APIConfiguration {
 				for (API_Tournament u : response.body()) {
 					int id = u.getId();
 					String name = u.getName();
-					String begin_at = u.getBeginAt();
+					String begin_at = "";
 					String end_at = "";
 					int league_id = u.getLeagueId();
 					String series_id = u.getSerieId().toString();
@@ -113,6 +118,11 @@ public class TournamentService implements APIConfiguration {
 							winner_id = "";
 						} else {
 							winner_id = u.getWinnerId().toString();
+						}
+						if (u.getBeginAt().toString().equals(null)) {
+							begin_at = "";
+						} else {
+							begin_at = u.getBeginAt();
 						}
 						if (u.getEndAt().toString().equals(null)) {
 							end_at = "";
