@@ -16,6 +16,7 @@ import hello.RepositoryInterface;
 import hello.model.API_Game;
 import hello.model.API_League;
 import hello.model.API_Match;
+import hello.model.API_OpponentMain;
 import hello.model.API_Tournament;
 import hello.model.Game;
 import hello.model.League;
@@ -39,6 +40,8 @@ public class MatchService implements APIConfiguration {
 	GameRepo gameRepo;
 
 	private RepositoryInterface service;
+	OpponentService opponentService;
+	
 	List<API_Match> dotaMatches = null;
 	List<API_Game> dotaGames = null;
 	List<API_Match> lolMatches = null;
@@ -97,6 +100,49 @@ public class MatchService implements APIConfiguration {
 					}
 					saveMatchDetails(match_id, begin_at, end_at, match_type, match_name, num_of_games, league_id,
 							series_id, tournament_id, winner_id, videogame);
+					
+					for (API_OpponentMain g : u.getOpponents()) {
+						int opponent_id = 0;
+						String acronym = "";
+						String opponent_name = "";
+						String image_url = "";
+						
+						try {
+							if (g.getOpponent().getId().toString().equals(null)) {
+								opponent_id = 0;
+							} else {
+								opponent_id = g.getOpponent().getId();
+							}
+							if (g.getOpponent().getName().equals(null)) {
+								opponent_name = "";
+							} else {
+								opponent_name = g.getOpponent().getName();
+							}
+							if (g.getOpponent().getAcronym().equals(null)) {
+								acronym = "";
+							} else {
+								acronym = g.getOpponent().getAcronym();
+							}
+							if (g.getOpponent().getImageUrl().equals(null)) {
+								image_url = "";
+							} else {
+								image_url = g.getOpponent().getImageUrl();
+							}
+						} catch (Exception e) {
+							// TODO: handle exception
+							System.out.println(e.getMessage());
+						}
+						System.out.println("@@@ " + g.getOpponent().getId());
+						System.out.println("@@@ " + g.getOpponent().getAcronym());
+						System.out.println("@@@ " + g.getOpponent().getName());
+						System.out.println("@@@ " + g.getOpponent().getImageUrl());
+						System.out.println("@@@ " + match_id);
+
+						opponentService.saveMatchOpponentDetails(opponent_id,
+								acronym, opponent_name,
+								image_url, u.getId());
+					}
+					
 				}
 				System.out.println("Saved all Dota matches to DB");
 
