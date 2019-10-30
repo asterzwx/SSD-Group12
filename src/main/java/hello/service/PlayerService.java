@@ -37,75 +37,77 @@ public class PlayerService implements APIConfiguration {
 	}
 
 	public List<API_Player> getDotaPlayers() throws IOException {
-		Call<List<API_Player>> call = service.listDotaPlayers(API_KEY);
-		call.enqueue(new Callback<List<API_Player>>() {
-			@Override
-			public void onResponse(Call<List<API_Player>> call, Response<List<API_Player>> response) {
+		for (int i = 1; i < 5; i++) {
+			Call<List<API_Player>> call = service.listDotaPlayers(API_KEY, 100, i);
+			call.enqueue(new Callback<List<API_Player>>() {
+				@Override
+				public void onResponse(Call<List<API_Player>> call, Response<List<API_Player>> response) {
 
-				players = response.body();
-				Gson responseGson = new Gson();
-				responseGson.toJson(response.body());
-				String videogame = "";
-				String image_url = "";
-				String hometown = "";
-				int current_team = 0;
-				String role = "";
+					players = response.body();
+					Gson responseGson = new Gson();
+					responseGson.toJson(response.body());
+					String videogame = "";
+					String image_url = "";
+					String hometown = "";
+					int current_team = 0;
+					String role = "";
 
-				for (API_Player u : response.body()) {
-					int id = u.getId();
-					String name = u.getName();
-					
-					try {
-						if (u.getVideogame().getName().equals(null)) {
-							videogame = "";
-						} else {
-							videogame = u.getVideogame().getName();
-						}
-						if (u.getImage_url().equals(null)) {
-							image_url = "";
-						} else {
-							image_url = u.getImage_url();
-						}
-						if (u.getHometown().equals(null)) {
-							hometown = "";
-						} else {
-							hometown = u.getHometown();
-						}
-						if(u.getCurrent_team().getId() == 0) {
-							current_team = 0;
-						}else {
-							current_team = u.getCurrent_team().getId();
-						}
-						if(u.getRole().equals(null)) {
-							role = "";
-						}else {
-							role = u.getRole();
+					for (API_Player u : response.body()) {
+						int id = u.getId();
+						String name = u.getName();
+
+						try {
+							if (u.getVideogame().getName().equals(null)) {
+								videogame = "";
+							} else {
+								videogame = u.getVideogame().getName();
+							}
+							if (u.getImage_url().equals(null)) {
+								image_url = "";
+							} else {
+								image_url = u.getImage_url();
+							}
+							if (u.getHometown().equals(null)) {
+								hometown = "";
+							} else {
+								hometown = u.getHometown();
+							}
+							if (u.getCurrent_team().getId() == 0) {
+								current_team = 0;
+							} else {
+								current_team = u.getCurrent_team().getId();
+							}
+							if (u.getRole().equals(null)) {
+								role = "";
+							} else {
+								role = u.getRole();
+							}
+
+						} catch (Exception e) {
+							// TODO: handle exception
+							System.out.println("ERROR: " + e.getMessage());
 						}
 
-					} catch (Exception e) {
-						// TODO: handle exception
-						System.out.println("ERROR: " + e.getMessage());
+						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role);
 					}
-
-
-					savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role);
-				}
-				System.out.println("Saved all Dota players to DB");
+					System.out.println("Saved all Dota players to DB");
 //				}				
-			}
+				}
 
-			@Override
-			public void onFailure(Call<List<API_Player>> call, Throwable t) {
-				// TODO Auto-generated method stub
-				System.out.println("ERROR: " + t.getMessage());
-			}
-		});
+				@Override
+				public void onFailure(Call<List<API_Player>> call, Throwable t) {
+					// TODO Auto-generated method stub
+					System.out.println("ERROR: " + t.getMessage());
+				}
+			});
+
+		}
 		return players;
 
 	}
 
 	public List<API_Player> getLoLPlayers() throws IOException {
-		for(int i=1; i<3; i++) {
+		for (int i = 1; i < 3; i++) {
 			Call<List<API_Player>> call = service.listLoLPlayers(API_KEY, 100, i);
 			call.enqueue(new Callback<List<API_Player>>() {
 				@Override
@@ -123,7 +125,7 @@ public class PlayerService implements APIConfiguration {
 					for (API_Player u : response.body()) {
 						int id = u.getId();
 						String name = u.getName();
-						
+
 						try {
 							if (u.getVideogame().getName().equals(null)) {
 								videogame = "";
@@ -140,14 +142,14 @@ public class PlayerService implements APIConfiguration {
 							} else {
 								hometown = u.getHometown();
 							}
-							if(u.getCurrent_team().getId() == 0) {
+							if (u.getCurrent_team().getId() == 0) {
 								current_team = 0;
-							}else {
+							} else {
 								current_team = u.getCurrent_team().getId();
 							}
-							if(u.getRole().equals(null)) {
+							if (u.getRole().equals(null)) {
 								role = "";
-							}else {
+							} else {
 								role = u.getRole();
 							}
 
@@ -169,7 +171,7 @@ public class PlayerService implements APIConfiguration {
 				}
 			});
 		}
-		
+
 		return players;
 
 	}

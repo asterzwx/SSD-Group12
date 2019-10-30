@@ -67,49 +67,49 @@ public class OpponentService implements APIConfiguration {
 
 	// GET OPPONENTS BY MATCH
 
-	public List<API_OpponentMain> getDotaMatchOpponentsById(int match_id) throws IOException {
-		Call<List<API_Match>> call = service.listDotaPastMatches(API_KEY);
-		call.enqueue(new Callback<List<API_Match>>() {
-			@Override
-			public void onResponse(Call<List<API_Match>> call, Response<List<API_Match>> response) {
-				dotaMatches = response.body();
-				Gson responseGson = new Gson();
-				String acronym = "";
-				for (API_Match u : response.body()) {
-
-					if (match_id == u.getId()) {
-						for (API_OpponentMain g : u.getOpponents()) {
-							try {
-								if (g.getOpponent().getAcronym().equals(null)) {
-									acronym = "";
-								} else {
-									acronym = g.getOpponent().getAcronym();
-								}
-							} catch (Exception e) {
-								// TODO: handle exception
-							}
-							System.out.println("@@@ " + g.getOpponent().getId());
-							System.out.println("@@@ " + g.getOpponent().getAcronym());
-							System.out.println("@@@ " + g.getOpponent().getName());
-							System.out.println("@@@ " + g.getOpponent().getImageUrl());
-							System.out.println("@@@ " + u.getId());
-
-							saveMatchOpponentDetails(g.getOpponent().getId(), acronym, g.getOpponent().getName(),
-									g.getOpponent().getImageUrl(), match_id);
-						}
-					}
-				}
-				System.out.println("Saved Dota opponents for " + match_id + " to DB");
-			}
-
-			@Override
-			public void onFailure(Call<List<API_Match>> call, Throwable t) {
-				// TODO Auto-generated method stub
-				System.out.println("ERROR: " + t.getMessage());
-			}
-		});
-		return dotaMatchOpponents;
-	}
+//	public List<API_OpponentMain> getDotaMatchOpponentsById(int match_id) throws IOException {
+//		Call<List<API_Match>> call = service.listAllPastMatches(API_KEY);
+//		call.enqueue(new Callback<List<API_Match>>() {
+//			@Override
+//			public void onResponse(Call<List<API_Match>> call, Response<List<API_Match>> response) {
+//				dotaMatches = response.body();
+//				Gson responseGson = new Gson();
+//				String acronym = "";
+//				for (API_Match u : response.body()) {
+//
+//					if (match_id == u.getId()) {
+//						for (API_OpponentMain g : u.getOpponents()) {
+//							try {
+//								if (g.getOpponent().getAcronym().equals(null)) {
+//									acronym = "";
+//								} else {
+//									acronym = g.getOpponent().getAcronym();
+//								}
+//							} catch (Exception e) {
+//								// TODO: handle exception
+//							}
+//							System.out.println("@@@ " + g.getOpponent().getId());
+//							System.out.println("@@@ " + g.getOpponent().getAcronym());
+//							System.out.println("@@@ " + g.getOpponent().getName());
+//							System.out.println("@@@ " + g.getOpponent().getImageUrl());
+//							System.out.println("@@@ " + u.getId());
+//
+//							saveMatchOpponentDetails(g.getOpponent().getId(), acronym, g.getOpponent().getName(),
+//									g.getOpponent().getImageUrl(), match_id);
+//						}
+//					}
+//				}
+//				System.out.println("Saved Dota opponents for " + match_id + " to DB");
+//			}
+//
+//			@Override
+//			public void onFailure(Call<List<API_Match>> call, Throwable t) {
+//				// TODO Auto-generated method stub
+//				System.out.println("ERROR: " + t.getMessage());
+//			}
+//		});
+//		return dotaMatchOpponents;
+//	}
 
 	public List<API_OpponentMain> getLoLPastMatchOpponentsById(int match_id) throws IOException {
 		Call<List<API_Match>> call = service.listLoLPastMatches(API_KEY);

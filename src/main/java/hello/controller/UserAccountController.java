@@ -48,7 +48,7 @@ import hello.repo.UserAccountRepo;
 import hello.repo.UserAccountView;
 import hello.service.UserAccountService;
 
-@CrossOrigin(origins = { "https://gambit-team12.tk", "http://localhost" })
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 
 @RestController
 @RequestMapping(value = "/rest/useraccount")

@@ -56,8 +56,38 @@ public interface RepositoryInterface {
 	@GET("lol/tournaments/upcoming")
 	Call<List<API_Tournament>> listLoLUpcomingTournaments(@Query("token") String accessToken);
 
+	
+	
+	
 	@GET("matches/past")
-	Call<List<API_Match>> listDotaPastMatches(@Query("token") String accessToken);
+	Call<List<API_Match>> listAllPastMatches(@Query("token") String accessToken,
+			@Query("per_page") int per_page,
+			@Query("page") int page);
+	
+	@GET("matches/running")
+	Call<List<API_Match>> listAllRunningMatches(@Query("token") String accessToken,
+			@Query("per_page") int per_page,
+			@Query("page") int page);
+	
+	@GET("matches/upcoming")
+	Call<List<API_Match>> listAllUpcomingMatches(@Query("token") String accessToken,
+			@Query("per_page") int per_page,
+			@Query("page") int page);
+	
+	
+	
+	@GET("lol/matches")
+	Call<List<API_Match>> listAllLoLMatches(@Query("token") String accessToken, 
+			@Query("per_page") int per_page, @Query("range[begin_at]") String date,
+			@Query("sort") String sort);
+	
+	@GET("dota2/matches")
+	Call<List<API_Match>> listAllDotaMatches(@Query("token") String accessToken, 
+			@Query("per_page") int per_page, @Query("range[begin_at]") String date,
+			@Query("sort") String sort);
+	
+	
+	
 
 	@GET("lol/matches/past")
 	Call<List<API_Match>> listLoLPastMatches(@Query("token") String accessToken);
@@ -79,7 +109,9 @@ public interface RepositoryInterface {
 	
 	
 	@GET("dota2/series/1821/players")
-	Call<List<API_Player>> listDotaPlayers(@Query("token") String accessToken);
+	Call<List<API_Player>> listDotaPlayers(@Query("token") String accessToken,
+			@Query("per_page") int per_page,
+			@Query("page") int page);
 
 	@GET("lol/series/1839/players")
 	Call<List<API_Player>> listLoLPlayers(@Query("token") String accessToken,

@@ -52,45 +52,69 @@ public class MatchController {
 	@Autowired
 	private GameService gameAPIService;
 
-	@GetMapping(path = "dota/past", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Match> getDotaMatches() throws IOException {
-		return matchAPIService.getDotaMatches();
+//	@GetMapping(path = "all/past", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Match> getAllPastMatches() throws IOException {
+//		return matchAPIService.getAllPastMatches();
+//	}
+//	
+//	@GetMapping(path = "all/running", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Match> getAllRunningMatches() throws IOException {
+//		return matchAPIService.getAllRunningMatches();
+//	}
+//	
+//	@GetMapping(path = "all/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Match> getAllUpcomingMatches() throws IOException {
+//		return matchAPIService.getAllUpcomingMatches();
+//	}
+	
+	
+	@GetMapping(path = "all/lol", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Match> getAllLoLMatchesAndOpponentsAndResults() throws IOException {
+		return matchAPIService.getAllLoLMatches();
 	}
+	
+	@GetMapping(path = "all/dota", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Match> getAllDotaMatchesAndOpponentsAndResults() throws IOException {
+		return matchAPIService.getAllDotaMatches();
+	}
+	
+	
+	
 
-	@GetMapping(path = "lol/past", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Match> getLoLPastMatches() throws IOException {
-		return matchAPIService.getLoLPastMatches();
-	}
-
-	@GetMapping(path = "lol/running", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Match> getLoLRunningMatches() throws IOException {
-		return matchAPIService.getLoLRunningMatches();
-	}
-
-	@GetMapping(path = "lol/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Match> getLoLUpcomingMatches() throws IOException {
-		return matchAPIService.getLoLUpcomingMatches();
-	}
+//	@GetMapping(path = "lol/past", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Match> getLoLPastMatches() throws IOException {
+//		return matchAPIService.getLoLPastMatches();
+//	}
+//
+//	@GetMapping(path = "lol/running", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Match> getLoLRunningMatches() throws IOException {
+//		return matchAPIService.getLoLRunningMatches();
+//	}
+//
+//	@GetMapping(path = "lol/upcoming", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Match> getLoLUpcomingMatches() throws IOException {
+//		return matchAPIService.getLoLUpcomingMatches();
+//	}
 	
 	// GAMES
 
-	@GetMapping(path = "dota/games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Game> getDotaGamesById(@Valid @PathVariable int match_id) throws IOException {
-		return matchAPIService.getDotaGamesById(match_id);
-	}
-
-	@GetMapping(path = "lol/games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Game> getLoLGamesById(@Valid @PathVariable int match_id) throws IOException {
-		return matchAPIService.getLoLGamesById(match_id);
-	}
-
-	@PostMapping("/create") // Map ONLY POST Requests
-	public ResponseEntity create(@Valid @RequestBody Match match) {
-//			if (!leagueService.findById(leagueService.getPoll_id()).isPresent()) {			
-		return ResponseEntity.ok(matchService.saveMatch(match));
-//			}
-//			return null;
-	}
+//	@GetMapping(path = "dota/games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Game> getDotaGamesById(@Valid @PathVariable int match_id) throws IOException {
+//		return matchAPIService.getDotaGamesById(match_id);
+//	}
+//
+//	@GetMapping(path = "lol/games/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_Game> getLoLGamesById(@Valid @PathVariable int match_id) throws IOException {
+//		return matchAPIService.getLoLGamesById(match_id);
+//	}
+//
+//	@PostMapping("/create") // Map ONLY POST Requests
+//	public ResponseEntity create(@Valid @RequestBody Match match) {
+////			if (!leagueService.findById(leagueService.getPoll_id()).isPresent()) {			
+//		return ResponseEntity.ok(matchService.saveMatch(match));
+////			}
+////			return null;
+//	}
 
 	// ROUTES FOR RETRIEVING FROM DB
 

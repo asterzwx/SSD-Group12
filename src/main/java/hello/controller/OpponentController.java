@@ -57,10 +57,10 @@ public class OpponentController {
 	@Autowired
 	private OpponentService opponentService;
 
-	@GetMapping(path = "dota/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_OpponentMain> getDotaMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
-		return opponentAPIService.getDotaMatchOpponentsById(match_id);
-	}
+//	@GetMapping(path = "dota/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
+//	public List<API_OpponentMain> getDotaMatchOpponents(@Valid @PathVariable int match_id) throws IOException {
+//		return opponentAPIService.getDotaMatchOpponentsById(match_id);
+//	}
 
 	@GetMapping(path = "lol/past/{match_id}", produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<API_OpponentMain> getLoLPastMatchOpponents(@Valid @PathVariable int match_id) throws IOException {

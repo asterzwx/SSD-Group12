@@ -17,7 +17,7 @@ public class API_Match {
 	public API_Match(String beginAt, Boolean detailedStats, Boolean draw, String endAt, Boolean forfeit,
 			List<API_Game> games, Integer id, API_League league, Integer leagueId, Object liveUrl, String matchType,
 			String modifiedAt, String name, Integer numberOfGames, List<API_OpponentMain> opponents,
-			List<Object> results, String scheduledAt, API_Serie serie, Integer serieId, String slug, String status,
+			List<API_Result> results, String scheduledAt, API_Serie serie, Integer serieId, String slug, String status,
 			API_Tournament tournament, Integer tournamentId, API_Winner winner, Integer winnerId,
 			API_Videogame videogame) {
 		super();
@@ -98,7 +98,7 @@ public class API_Match {
 	public List<API_OpponentMain> opponents = null;
 	@SerializedName("results")
 	@Expose
-	public List<Object> results = null;
+	public List<API_Result> results = null;
 	@SerializedName("scheduled_at")
 	@Expose
 	public String scheduledAt;
@@ -130,6 +130,7 @@ public class API_Match {
 	@SerializedName("videogame")
 	@Expose
 	public API_Videogame videogame;
+	
 	
 	
 	
@@ -223,10 +224,10 @@ public class API_Match {
 	public void setOpponents(List<API_OpponentMain> opponents) {
 		this.opponents = opponents;
 	}
-	public List<Object> getResults() {
+	public List<API_Result> getResults() {
 		return results;
 	}
-	public void setResults(List<Object> results) {
+	public void setResults(List<API_Result> results) {
 		this.results = results;
 	}
 	public String getScheduledAt() {
