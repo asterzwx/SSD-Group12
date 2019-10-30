@@ -44,6 +44,7 @@ import hello.Application;
 import hello.model.Admin;
 import hello.model.UserAccount;
 import hello.repo.UserAccountRepo;
+import hello.repo.UserAccountView;
 import hello.service.UserAccountService;
 
 @CrossOrigin(origins = { "https://gambit-team12.tk", "http://localhost" })
@@ -62,11 +63,19 @@ public class UserAccountController {
 //		return userService.getAll();
 //	}
 
+//	@GetMapping("/{username}")
+//	public Object findById(@PathVariable String username) {
+//		Object user = userAccountRepo.getUserByUsername(username);
+//		return user;
+//	}
+	
 	@GetMapping("/{username}")
-	public Object findById(@PathVariable String username) {
-		Object user = userAccountRepo.getUserByUsername(username);
-		return user;
+	public List<UserAccountView> findById(@PathVariable String username) {
+		List<UserAccountView> json = userAccountRepo.getDetailsByUsername(username);
+		return json;
 	}
+	
+	
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserAccount userAccount) {
@@ -90,11 +99,10 @@ public class UserAccountController {
 //			return ResponseEntity.ok(userService.saveUser(userAccount));
 //			return ResponseEntity.ok("account created");
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
-		}
-		else {
+		} else {
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
 		}
-		
+
 		return responseEntity;
 	}
 
@@ -138,7 +146,7 @@ public class UserAccountController {
 
 	@PostMapping("/login")
 	@Transactional
-	public ResponseEntity<UserAccount> login2(@RequestBody UserAccount userAccount) {
+	public Map<String, Object> login2(@RequestBody UserAccount userAccount) {
 		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		Map<String, Object> json = new HashMap();
 		ResponseEntity<UserAccount> responseEntity = null;
@@ -176,7 +184,14 @@ public class UserAccountController {
 			responseEntity = new ResponseEntity<UserAccount>(HttpStatus.UNAUTHORIZED);
 
 		}
-		return responseEntity;
+//		if (responseEntity.getHeaders().equals(HttpStatus.OK)) {
+//			json.put("login", "true");
+//			return json;
+//		} else {
+//			json.put("login", "false");
+//			return json;
+//		}
+		return json;
 	}
 
 	@PostMapping("/logout")

@@ -29,6 +29,8 @@ import com.google.common.hash.Hashing;
 import hello.model.Admin;
 import hello.model.UserAccount;
 import hello.repo.AdminRepo;
+import hello.repo.AdminView;
+import hello.repo.UserAccountView;
 import hello.service.AdminService;
 
 @CrossOrigin(origins = "https://gambit-team12.tk")
@@ -54,11 +56,19 @@ public class AdminController {
 //		return ResponseEntity.ok(user.get());
 //	}
 
+//	@GetMapping("/{username}")
+//	public Object findById(@PathVariable String username) {
+//		Object user = adminRepo.getAdminByUsername(username);
+//		return user;
+//	}
+	
 	@GetMapping("/{username}")
-	public Object findById(@PathVariable String username) {
-		Object user = adminRepo.getAdminByUsername(username);
-		return user;
+	public List<AdminView> findById(@PathVariable String username) {
+		List<AdminView> json = adminRepo.getDetailsByUsername(username);
+		return json;
 	}
+	
+	
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody Admin adminAccount) {

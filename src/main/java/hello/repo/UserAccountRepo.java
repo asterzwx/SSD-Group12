@@ -28,5 +28,11 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Modifying
 	@Query("UPDATE UserAccount u SET u.status = :status WHERE u.username = :username") 
     int banUser(@Param("username") String username, @Param("status") String status);
+	
+	
+	
+	@Query("SELECT username as username, profile_picture as profile_picture, mobile_number as mobile_number, email as email, status as status"
+			+ " FROM UserAccount u WHERE u.username = :username") 
+	List<UserAccountView> getDetailsByUsername(@Param("username") String username);
 
 }
