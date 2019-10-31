@@ -307,17 +307,23 @@ public class MatchService implements APIConfiguration {
 			public void onResponse(Call<List<API_Match>> call, Response<List<API_Match>> response) {
 				lolMatches = response.body();
 				Gson responseGson = new Gson();
-				int uniqueKey = 0;
+
 				System.out.println("$$$$$$$$$$$$$$ " + response.body().size());
 				for (API_Match u : response.body()) {
 					if (u.getVideogame().getName().equals("LoL")) {
 						if (!u.getResults().isEmpty()) {
+//							for (int i = 0; i < u.getResults().size(); i++) {
+//								String composite = u.getId() + "" + u.getResults().get(i).getTeam_id();
+//								saveMatchResults(Integer.parseInt(composite), u.getId(), Integer.parseInt(composite),
+//										u.getResults().get(i).getScore());
+//							}
 							for (API_Result r : u.getResults()) {
+								String composite = r.getTeam_id() +""+ u.getId();
 
 								try {
 //									String tempString = u.getId() + "" + r.getTeam_id();
 //									uniqueKey = Integer.parseInt(tempString);
-									saveMatchResults(u.getId(), r.getTeam_id(), r.getScore());
+									saveMatchResults(Integer.parseInt(composite),u.getId(), r.getTeam_id(), r.getScore());
 								} catch (Exception e) {
 									// TODO: handle exception
 									System.out.println("%%%% " + e.getMessage());
@@ -352,10 +358,16 @@ public class MatchService implements APIConfiguration {
 				for (API_Match u : response.body()) {
 					if (u.getVideogame().getName().equals("Dota 2")) {
 						if (!u.getResults().isEmpty()) {
+//							for (int i = 0; i < u.getResults().size(); i++) {
+//								String composite = u.getId() + "" + u.getResults().get(i).getTeam_id();
+//								saveMatchResults(Integer.parseInt(composite), u.getId(),
+//										u.getResults().get(i).getTeam_id(), u.getResults().get(i).getScore());
+//							}
 							for (API_Result r : u.getResults()) {
+								String composite = r.getTeam_id() +""+ u.getId();
 
 								try {
-									saveMatchResults(u.getId(), r.getTeam_id(), r.getScore());
+									saveMatchResults(Integer.parseInt(composite), u.getId(), r.getTeam_id(), r.getScore());
 								} catch (Exception e) {
 									// TODO: handle exception
 									System.out.println("%%%% " + e.getMessage());
@@ -990,9 +1002,9 @@ public class MatchService implements APIConfiguration {
 		return opponentRepo.save(opponent);
 	}
 
-	public Result saveMatchResults(int match_id, int team_id, int score) {
+	public Result saveMatchResults(int id, int match_id, int team_id, int score) {
 		Result result = new Result();
-//		result.setId(id);
+		result.setId(id);
 		result.setMatch_id(match_id);
 		result.setTeam_id(team_id);
 		result.setScore(score);
