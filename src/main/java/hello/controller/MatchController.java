@@ -2,6 +2,7 @@ package hello.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -34,6 +35,7 @@ import hello.model.Match;
 import hello.model.Tournament;
 import hello.repo.LeagueRepo;
 import hello.repo.MatchRepo;
+import hello.repo.MatchView;
 import hello.service.GameService;
 import hello.service.LeagueService;
 import hello.service.MatchService;
@@ -78,6 +80,16 @@ public class MatchController {
 		return matchAPIService.getAllDotaMatches();
 	}
 	
+	
+	@GetMapping(path = "all/result/lol", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Match> getAllLoLResults() throws IOException {
+		return matchAPIService.getAllLoLResults();
+	}
+	
+	@GetMapping(path = "all/result/dota", produces = MediaType.APPLICATION_JSON_VALUE)
+	public List<API_Match> getAllDotaResults() throws IOException {
+		return matchAPIService.getAllDotaResults();
+	}
 	
 	
 
@@ -153,7 +165,10 @@ public class MatchController {
 		return matchRepo.findMatchesByTournamentId(tournament_id);
 	}
 	
-	
+	@GetMapping(value = "/results/{match_id}")
+	public List<Map<String, String>> getResultsByMatchId(@Valid @PathVariable int match_id) {
+		return matchRepo.findResultsByMatchId(match_id);
+	}
 	
 
 }

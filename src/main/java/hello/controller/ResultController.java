@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import hello.model.Poll;
 import hello.model.Result;
+import hello.repo.ResultRepo;
 import hello.service.PollService;
 import hello.service.ResultService;
 
@@ -29,11 +30,12 @@ import hello.service.ResultService;
 public class ResultController {
 	@Autowired
 	private ResultService resultService;
+	@Autowired
+	private ResultRepo resultRepo;
 
 	@GetMapping(value = "/all")
 	public List<Result> getAllResult() {
 		return resultService.getAll();
 	}
 	
-
 }

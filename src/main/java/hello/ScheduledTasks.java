@@ -71,7 +71,9 @@ public class ScheduledTasks {
 //			matchController.getLoLUpcomingMatches();
 			
 			matchController.getAllLoLMatchesAndOpponentsAndResults();
-			matchController.getAllDotaMatchesAndOpponentsAndResults();			
+			matchController.getAllDotaMatchesAndOpponentsAndResults();	
+			matchController.getAllLoLResults();
+			matchController.getAllDotaResults();
 			
 			playerController.getDotaPlayers();
 			playerController.getLoLPlayers();

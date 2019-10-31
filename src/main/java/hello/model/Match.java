@@ -24,7 +24,7 @@ public class Match implements Serializable {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Match(String match_id, String begin_at, String end_at, String match_type, String match_name, int num_of_games,
+	public Match(int match_id, String begin_at, String end_at, String match_type, String match_name, int num_of_games,
 			int league_id, String series_id, int tournament_id, String winner_id, String videogame) {
 		super();
 		this.match_id = match_id;
@@ -42,7 +42,7 @@ public class Match implements Serializable {
 
 	@Id
 	@Column(name = "match_id")
-	private String match_id;
+	private int match_id;
 	
 	@Column(name = "begin_at")
 	@Nullable
@@ -77,11 +77,11 @@ public class Match implements Serializable {
 	@Column(name = "videogame")
 	private String videogame;
 
-	public String getMatch_id() {
+	public int getMatch_id() {
 		return match_id;
 	}
 
-	public void setMatch_id(String match_id) {
+	public void setMatch_id(int match_id) {
 		this.match_id = match_id;
 	}
 

@@ -2,9 +2,11 @@ package hello.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.Null;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.YamlJsonParser;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import hello.model.Tournament;
 import hello.repo.LeagueRepo;
 import hello.repo.GameRepo;
 import hello.repo.MatchRepo;
+import hello.repo.MatchView;
 import hello.repo.OpponentRepo;
 import hello.repo.ResultRepo;
 import hello.repo.TournamentRepo;
@@ -82,17 +85,17 @@ public class MatchService implements APIConfiguration {
 				int uniqueKey = 0;
 				for (API_Match u : response.body()) {
 					if (u.getVideogame().getName().equals("LoL")) {
-						for (API_Result r : u.getResults()) {
-							try {
-								String tempString = u.getId() + "" + r.getTeam_id();
-								uniqueKey = Integer.parseInt(tempString);
-								saveMatchResults(uniqueKey, u.getId(), r.getTeam_id(), r.getScore());
-							} catch (Exception e) {
-								// TODO: handle exception
-								System.out.println("%%%% " + e.getMessage());
-							}
-
-						}
+//						for (API_Result r : u.getResults()) {
+//							try {
+//								String tempString = u.getId() + "" + r.getTeam_id();
+//								uniqueKey = Integer.parseInt(tempString);
+//								saveMatchResults(uniqueKey, u.getId(), r.getTeam_id(), r.getScore());
+//							} catch (Exception e) {
+//								// TODO: handle exception
+//								System.out.println("%%%% " + e.getMessage());
+//							}
+//
+//						}
 
 						System.out.println(u.getId());
 						String match_id = u.getId().toString();
@@ -125,8 +128,8 @@ public class MatchService implements APIConfiguration {
 						} catch (Exception e) {
 							System.out.println("ERROR: " + e.getMessage());
 						}
-						saveMatchDetails(match_id, begin_at, end_at, match_type, match_name, num_of_games, league_id,
-								series_id, tournament_id, winner_id, videogame);
+						saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
+								num_of_games, league_id, series_id, tournament_id, winner_id, videogame);
 
 						for (API_OpponentMain g : u.getOpponents()) {
 							int opponent_id = 0;
@@ -196,16 +199,16 @@ public class MatchService implements APIConfiguration {
 
 				for (API_Match u : response.body()) {
 					if (u.getVideogame().getName().equals("Dota 2")) {
-						for (API_Result r : u.getResults()) {
-							try {
-								String tempString = u.getId() + "" + r.getTeam_id();
-								uniqueKey = Integer.parseInt(tempString);
-								saveMatchResults(uniqueKey, u.getId(), r.getTeam_id(), r.getScore());
-							} catch (Exception e) {
-								// TODO: handle exception
-								System.out.println("%%%% " + e.getMessage());
-							}
-						}
+//						for (API_Result r : u.getResults()) {
+//							try {
+//								String tempString = u.getId() + "" + r.getTeam_id();
+//								uniqueKey = Integer.parseInt(tempString);
+//								saveMatchResults(uniqueKey, u.getId(), r.getTeam_id(), r.getScore());
+//							} catch (Exception e) {
+//								// TODO: handle exception
+//								System.out.println("%%%% " + e.getMessage());
+//							}
+//						}
 						System.out.println(u.getId());
 						String match_id = u.getId().toString();
 						String begin_at = "";
@@ -237,8 +240,8 @@ public class MatchService implements APIConfiguration {
 						} catch (Exception e) {
 							System.out.println("ERROR: " + e.getMessage());
 						}
-						saveMatchDetails(match_id, begin_at, end_at, match_type, match_name, num_of_games, league_id,
-								series_id, tournament_id, winner_id, videogame);
+						saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
+								num_of_games, league_id, series_id, tournament_id, winner_id, videogame);
 
 						for (API_OpponentMain g : u.getOpponents()) {
 							int opponent_id = 0;
@@ -296,7 +299,85 @@ public class MatchService implements APIConfiguration {
 		return lolMatches;
 	}
 
-//
+	public List<API_Match> getAllLoLResults() throws IOException {
+		Call<List<API_Match>> call = service.listAllLoLMatches(API_KEY, 100,
+				"2019-10-01T00:00:00Z,2019-11-30T23:59:59Z", "-scheduled_at");
+		call.enqueue(new Callback<List<API_Match>>() {
+			@Override
+			public void onResponse(Call<List<API_Match>> call, Response<List<API_Match>> response) {
+				lolMatches = response.body();
+				Gson responseGson = new Gson();
+				int uniqueKey = 0;
+				System.out.println("$$$$$$$$$$$$$$ " + response.body().size());
+				for (API_Match u : response.body()) {
+					if (u.getVideogame().getName().equals("LoL")) {
+						if (!u.getResults().isEmpty()) {
+							for (API_Result r : u.getResults()) {
+
+								try {
+//									String tempString = u.getId() + "" + r.getTeam_id();
+//									uniqueKey = Integer.parseInt(tempString);
+									saveMatchResults(u.getId(), r.getTeam_id(), r.getScore());
+								} catch (Exception e) {
+									// TODO: handle exception
+									System.out.println("%%%% " + e.getMessage());
+								}
+							}
+						}
+
+					}
+				}
+				System.out.println("Saved all LoL Results to DB");
+			}
+
+			@Override
+			public void onFailure(Call<List<API_Match>> call, Throwable t) {
+				// TODO Auto-generated method stub
+				System.out.println("ERROR: " + t.getMessage());
+			}
+		});
+
+		return lolMatches;
+	}
+
+	public List<API_Match> getAllDotaResults() throws IOException {
+		Call<List<API_Match>> call = service.listAllDotaMatches(API_KEY, 100,
+				"2019-10-01T00:00:00Z,2019-11-30T23:59:59Z", "-scheduled_at");
+		call.enqueue(new Callback<List<API_Match>>() {
+			@Override
+			public void onResponse(Call<List<API_Match>> call, Response<List<API_Match>> response) {
+				lolMatches = response.body();
+				Gson responseGson = new Gson();
+				int uniqueKey = 0;
+				for (API_Match u : response.body()) {
+					if (u.getVideogame().getName().equals("Dota 2")) {
+						if (!u.getResults().isEmpty()) {
+							for (API_Result r : u.getResults()) {
+
+								try {
+									saveMatchResults(u.getId(), r.getTeam_id(), r.getScore());
+								} catch (Exception e) {
+									// TODO: handle exception
+									System.out.println("%%%% " + e.getMessage());
+								}
+							}
+						}
+
+					}
+				}
+				System.out.println("Saved all Dota Results to DB");
+			}
+
+			@Override
+			public void onFailure(Call<List<API_Match>> call, Throwable t) {
+				// TODO Auto-generated method stub
+				System.out.println("ERROR: " + t.getMessage());
+			}
+		});
+
+		return lolMatches;
+	}
+
 //	public List<API_Match> getAllRunningMatches() throws IOException {
 //		for (int i = 1; i < 5; i++) {
 //			Call<List<API_Match>> call = service.listAllRunningMatches(API_KEY, 100, i);
@@ -831,8 +912,8 @@ public class MatchService implements APIConfiguration {
 							} catch (Exception e) {
 								System.out.println("ERROR: " + e.getMessage());
 							}
-							saveMatchDetails(match_id, begin_at, end_at, match_type, match_name, num_of_games,
-									league_id, series_id, tournament_id, winner_id, videogame);
+							saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
+									num_of_games, league_id, series_id, tournament_id, winner_id, videogame);
 						}
 					}
 				}
@@ -855,11 +936,15 @@ public class MatchService implements APIConfiguration {
 		return matchRepo.findAll();
 	}
 
+	public List<Map<String, String>> getResultsByMatchId(int match_id) {
+		return matchRepo.findResultsByMatchId(match_id);
+	}
+
 	public Match saveMatch(Match match) {
 		return matchRepo.save(match);
 	}
 
-	public Match saveMatchDetails(String match_id, String begin_at, String end_at, String match_type, String match_name,
+	public Match saveMatchDetails(int match_id, String begin_at, String end_at, String match_type, String match_name,
 			int num_of_games, int league_id, String series_id, int tournament_id, String winner_id, String videogame) {
 		Match match = new Match();
 		match.setMatch_id(match_id);
@@ -905,9 +990,9 @@ public class MatchService implements APIConfiguration {
 		return opponentRepo.save(opponent);
 	}
 
-	public Result saveMatchResults(int id, int match_id, int team_id, int score) {
+	public Result saveMatchResults(int match_id, int team_id, int score) {
 		Result result = new Result();
-		result.setId(id);
+//		result.setId(id);
 		result.setMatch_id(match_id);
 		result.setTeam_id(team_id);
 		result.setScore(score);
