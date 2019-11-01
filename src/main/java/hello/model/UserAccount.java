@@ -17,7 +17,7 @@ public class UserAccount {
 
 	
 	public UserAccount(String username, String password, String profile_picture, String mobile_number, String email,
-			String status, String password_hash, String salt) {
+			String status, String password_hash, String salt, String token) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -27,6 +27,7 @@ public class UserAccount {
 		this.status = status;
 		this.password_hash = password_hash;
 		this.salt = salt;
+		this.token = token;
 	}
 
 
@@ -56,6 +57,9 @@ public class UserAccount {
 
 	@Column(name = "salt")
 	private String salt;
+	
+	@Column(name = "token")
+	private String token;
 
 	public String getUsername() {
 		return username;
@@ -131,5 +135,17 @@ public class UserAccount {
 	public void setSalt(String salt) {
 		this.salt = salt;
 	}
+
+
+	public String getToken() {
+		return token;
+	}
+
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
+	
 
 }

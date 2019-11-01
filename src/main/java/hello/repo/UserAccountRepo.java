@@ -26,6 +26,10 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
     int updateUserLoginStatus(@Param("username") String username, @Param("status") String status);
 	
 	@Modifying
+	@Query("UPDATE UserAccount u SET u.status = :status, u.token = '' WHERE u.username = :username") 
+    int updateUserLogoutStatus(@Param("username") String username, @Param("status") String status);
+	
+	@Modifying
 	@Query("UPDATE UserAccount u SET u.status = :status WHERE u.username = :username") 
     int banUser(@Param("username") String username, @Param("status") String status);
 	
@@ -34,5 +38,10 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("SELECT username as username, profile_picture as profile_picture, mobile_number as mobile_number, email as email, status as status"
 			+ " FROM UserAccount u WHERE u.username = :username") 
 	List<UserAccountView> getDetailsByUsername(@Param("username") String username);
+	
+	
+	@Modifying
+	@Query("UPDATE UserAccount u SET u.token = :token WHERE u.username = :username") 
+    int updateUserToken(@Param("username") String username, @Param("token") String token);
 
 }

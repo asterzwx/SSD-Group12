@@ -36,6 +36,9 @@ public class AdminService {
 		adminRepo.deleteById(username);
     }
 	
-	
+	@Transactional
+	public void updateAdminToken(String username, String token) {
+        adminRepo.updateAdminToken(username, token);
+	}
 
 }

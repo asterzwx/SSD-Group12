@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.hash.Hashing;
 
+import hello.JwtGenerator;
 import hello.model.Admin;
 import hello.model.UserAccount;
 import hello.repo.AdminRepo;
@@ -35,12 +36,15 @@ import hello.service.AdminService;
 
 @CrossOrigin(origins = "https://gambit-team12.tk")
 @RestController
-@RequestMapping(value = "/rest/admin")
+@RequestMapping(value = "/admin")
 public class AdminController {
 	@Autowired
 	private AdminService adminService;
 	@Autowired
 	AdminRepo adminRepo;
+	
+	private JwtGenerator jwtGenerator;
+
 
 //	@GetMapping(value = "/all")
 //	public List<Admin> getAllAdmin() {
@@ -112,6 +116,12 @@ public class AdminController {
 			if (user_password_hash.equals(generatedHash_SHA256)) {
 				json.put("login", "true");
 				responseEntity = new ResponseEntity<Admin>(HttpStatus.OK);
+				
+				//GENERATE JWT TOKEN
+				String token = jwtGenerator.generateForAdmin(adminAccount).toString();
+				json.put("token", token);
+				adminService.updateAdminToken(adminAccount.getUsername(), token);
+				
 			} else {
 				json.put("login", "false");
 				responseEntity = new ResponseEntity<Admin>(HttpStatus.UNAUTHORIZED);

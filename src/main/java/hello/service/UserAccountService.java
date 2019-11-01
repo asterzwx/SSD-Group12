@@ -40,5 +40,10 @@ public class UserAccountService {
 	public void updateUserLogin(String username, String status) {
         userRepo.updateUserLoginStatus(username, status);
 	}
+	
+	@Transactional
+	public void updateUserToken(String username, String token) {
+        userRepo.updateUserToken(username, token);
+	}
 
 }

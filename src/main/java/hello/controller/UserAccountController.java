@@ -42,6 +42,8 @@ import com.google.common.hash.Hashing;
 import com.google.gson.JsonObject;
 
 import hello.Application;
+import hello.JwtGenerator;
+import hello.JwtUser;
 import hello.model.Admin;
 import hello.model.UserAccount;
 import hello.repo.UserAccountRepo;
@@ -51,7 +53,7 @@ import hello.service.UserAccountService;
 @CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 
 @RestController
-@RequestMapping(value = "/rest/useraccount")
+@RequestMapping(value = "/useraccount")
 public class UserAccountController {
 
 	@Autowired
@@ -60,6 +62,12 @@ public class UserAccountController {
 	UserAccountRepo userAccountRepo;
 	
 	ViewControllerRegistry registry;
+	
+	private JwtGenerator jwtGenerator;
+
+    public UserAccountController(JwtGenerator jwtGenerator) {
+        this.jwtGenerator = jwtGenerator;
+    }
 
 //	@GetMapping(value = "/all")
 //	public List<UserAccount> getAllUsers() {
@@ -141,6 +149,12 @@ public class UserAccountController {
 				json.put("login", "true");
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
 //				registry.addViewController("/**").setViewName("forward:/");	
+				
+				//GENERATE JWT TOKEN
+				String token = jwtGenerator.generateForUser(userAccount).toString();
+				json.put("token", token);
+				userService.updateUserToken(userAccount.getUsername(), token);
+				
 			} else {
 				System.out.println("FAILED");
 				json.put("login", "false");
@@ -170,12 +184,19 @@ public class UserAccountController {
 		// if user exists
 		if (userService.findById(userAccount.getUsername()).isPresent()) {
 			json.put("login", "false");
-			userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "active");
+			userAccountRepo.updateUserLogoutStatus(userAccount.getUsername(), "active");
 			System.out.println(userAccount.getUsername() + " logged out");
+			
+			
 		}
 		return json;
-
 	}
+	
+//	@PostMapping
+//    public String generate(@RequestBody final JwtUser jwtUser) {
+//        return jwtGenerator.generate(jwtUser);
+//
+//    }
 
 	@PutMapping("/updateHashSalt/{username}")
 	public ResponseEntity<UserAccount> updateHashSalt(@PathVariable String username,

@@ -12,13 +12,15 @@ public class Admin {
 	
 	
 
-	public Admin(String username, String password, String profile_picture, String password_hash, String salt) {
+	public Admin(String username, String password, String profile_picture, String password_hash, String salt,
+			String token) {
 		super();
 		this.username = username;
 		this.password = password;
 		this.profile_picture = profile_picture;
 		this.password_hash = password_hash;
 		this.salt = salt;
+		this.token = token;
 	}
 
 
@@ -39,6 +41,9 @@ public class Admin {
 	
 	@Column(name = "salt")
 	private String salt;
+	
+	@Column(name = "token")
+	private String token;
 
 	public String getUsername() {
 		return username;
@@ -78,6 +83,18 @@ public class Admin {
 
 	public void setSalt(String salt) {
 		this.salt = salt;
+	}
+
+
+
+	public String getToken() {
+		return token;
+	}
+
+
+
+	public void setToken(String token) {
+		this.token = token;
 	}
 	
 	
