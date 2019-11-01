@@ -7,6 +7,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.lang.Nullable;
+
 @Entity
 @Table(name = "user_account")
 public class UserAccount {
@@ -59,6 +61,7 @@ public class UserAccount {
 	private String salt;
 	
 	@Column(name = "token")
+	@Nullable
 	private String token;
 
 	public String getUsername() {
