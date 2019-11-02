@@ -40,7 +40,7 @@ import hello.service.GameService;
 import hello.service.LeagueService;
 import hello.service.MatchService;
 
-//@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/rest/match")
 public class MatchController {

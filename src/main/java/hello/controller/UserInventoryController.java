@@ -28,7 +28,7 @@ import hello.repo.UserInventoryRepo;
 import hello.service.PollService;
 import hello.service.UserInventoryService;
 
-@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/rest/userinventory")
 public class UserInventoryController {

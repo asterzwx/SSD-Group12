@@ -23,7 +23,7 @@ public interface MatchRepo extends JpaRepository<Match, Integer> {
 	@Query("SELECT m FROM Match m WHERE cast(m.begin_at as date) = CURDATE()")
 	List<Match> findLoLRunningMatches();
 
-	@Query("SELECT m FROM Match m WHERE cast(m.begin_at as date) > CURDATE()")
+	@Query("SELECT m FROM Match m WHERE cast(m.begin_at as date) > CURDATE() OR m.begin_at = ''")
 	List<Match> findLoLUpcomingMatches();
 
 	@Query("SELECT m FROM Match m WHERE m.tournament_id = :tournament_id")

@@ -34,7 +34,7 @@ import hello.repo.AdminView;
 import hello.repo.UserAccountView;
 import hello.service.AdminService;
 
-@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/admin")
 public class AdminController {

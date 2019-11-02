@@ -21,7 +21,7 @@ import hello.model.Item;
 import hello.repo.ItemRepo;
 import hello.service.ItemService;
 
-@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/rest/item")
 public class ItemController {

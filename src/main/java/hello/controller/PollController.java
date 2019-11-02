@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hello.model.Poll;
 import hello.service.PollService;
 
-@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/rest/poll")
 public class PollController {

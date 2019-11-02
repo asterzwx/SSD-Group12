@@ -32,7 +32,7 @@ import hello.model.Serie;
 import hello.repo.LeagueRepo;
 import hello.service.LeagueService;
 
-//@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/rest/league")
 public class LeagueController {

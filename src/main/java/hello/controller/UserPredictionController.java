@@ -22,7 +22,7 @@ import hello.model.UserPrediction;
 import hello.service.PollService;
 import hello.service.UserPredictionService;
 
-@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/rest/userprediction")
 public class UserPredictionController {

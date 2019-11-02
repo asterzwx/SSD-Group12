@@ -24,7 +24,7 @@ import hello.repo.ResultRepo;
 import hello.service.PollService;
 import hello.service.ResultService;
 
-@CrossOrigin(origins = "https://gambit-team12.tk")
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
 @RestController
 @RequestMapping(value = "/rest/result")
 public class ResultController {
