@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import hello.model.UserAccount;
 
 @RestController
-@RequestMapping("/token")
+@RequestMapping("/rest/token")
 public class TokenController {
 
     private JwtGenerator jwtGenerator;
