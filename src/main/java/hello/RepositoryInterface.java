@@ -17,6 +17,7 @@ import hello.model.API_League;
 import hello.model.API_Match;
 import hello.model.API_Player;
 import hello.model.API_Serie;
+import hello.model.API_Team;
 import hello.model.API_Tournament;
 import hello.model.LeagueAPI;
 import retrofit2.Call;
@@ -119,4 +120,13 @@ public interface RepositoryInterface {
 			@Query("page") int page);
 
 
+	@GET("dota2/series/1821/teams")
+	Call<List<API_Team>> listDotaTeams(@Query("token") String accessToken,
+			@Query("per_page") int per_page,
+			@Query("page") int page);
+	
+	@GET("lol/series/1839/teams")
+	Call<List<API_Team>> listLoLTeams(@Query("token") String accessToken,
+			@Query("per_page") int per_page,
+			@Query("page") int page);
 }

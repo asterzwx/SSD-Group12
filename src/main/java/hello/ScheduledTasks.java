@@ -16,6 +16,7 @@ import hello.controller.LeagueController;
 import hello.controller.MatchController;
 import hello.controller.PlayerController;
 import hello.controller.SerieController;
+import hello.controller.TeamController;
 import hello.controller.TournamentController;
 import hello.controller.UserAccountController;
 import hello.repo.LeagueRepo;
@@ -36,16 +37,18 @@ public class ScheduledTasks {
 	TournamentController tournamentController;
 	MatchController matchController;
 	PlayerController playerController;
+	TeamController teamController;
 
 	public ScheduledTasks(SerieController serieController, LeagueController leagueController,
 			TournamentController tournamentController, MatchController matchController,
-			PlayerController playerController) {
+			PlayerController playerController, TeamController teamController) {
 		super();
 		this.serieController = serieController;
 		this.leagueController = leagueController;
 		this.tournamentController = tournamentController;
 		this.matchController = matchController;
 		this.playerController = playerController;
+		this.teamController = teamController;
 	}
 
 	@Scheduled(fixedRate = 36000000)
@@ -63,12 +66,7 @@ public class ScheduledTasks {
 			tournamentController.getDotaTournaments();
 			tournamentController.getLoLPastTournaments();
 			tournamentController.getLoLRunningTournaments();
-			tournamentController.getLoLUpcomingTournaments();
-			
-//			matchController.getDotaMatches();
-//			matchController.getLoLPastMatches();
-//			matchController.getLoLRunningMatches();
-//			matchController.getLoLUpcomingMatches();
+			tournamentController.getLoLUpcomingTournaments();			
 			
 			matchController.getAllLoLMatchesAndOpponentsAndResults();
 			matchController.getAllDotaMatchesAndOpponentsAndResults();	
@@ -77,6 +75,9 @@ public class ScheduledTasks {
 			
 			playerController.getDotaPlayers();
 			playerController.getLoLPlayers();
+			
+			teamController.getDotaTeams();
+			teamController.getLoLTeams();
 			
 			System.out.println("\n Functions executed!\n");
 

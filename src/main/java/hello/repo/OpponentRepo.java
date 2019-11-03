@@ -14,6 +14,8 @@ public interface OpponentRepo extends JpaRepository<Opponent, Integer>{
 	
 	@Query("SELECT o FROM Opponent o WHERE o.match_id = :match_id")
 	List<Opponent> findOpponentByMatchId(@Param("match_id") int match_id);
+	
+	
 
 
 }

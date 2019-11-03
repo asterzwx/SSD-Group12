@@ -59,7 +59,8 @@ public class SerieService implements APIConfiguration {
 				Gson responseGson = new Gson();
 				String winner_id = "";
 				String begin_at = "";
-				String end_at = "";				
+				String end_at = "";
+				String name = "";
 				
 				for (API_Serie u : response.body()) {
 					System.out.println(u.getId());
@@ -71,6 +72,11 @@ public class SerieService implements APIConfiguration {
 							winner_id = "";
 						} else {
 							winner_id = u.getWinnerId().toString();
+						}
+						if (u.getFullName().toString().equals(null)) {
+							name = "";
+						} else {
+							name = u.getFullName().toString();
 						}
 						if (u.getBeginAt().toString().equals(null)) {
 							begin_at = "";
@@ -85,7 +91,7 @@ public class SerieService implements APIConfiguration {
 					} catch (Exception e) {
 						System.out.println("ERROR: " + e.getMessage());
 					}
-					saveSerieDetails(serie_id, begin_at, end_at, league_id, winner_id, year,
+					saveSerieDetails(serie_id, name, begin_at, end_at, league_id, winner_id, year,
 							u.getVideogame().getName());
 				}
 				System.out.println("Saved all Dota series to DB");
@@ -111,7 +117,8 @@ public class SerieService implements APIConfiguration {
 				Gson responseGson = new Gson();
 				String winner_id = "";
 				String begin_at = "";
-				String end_at = "";				
+				String end_at = "";	
+				String name = "";
 				
 				for (API_Serie u : response.body()) {
 					System.out.println(u.getId());
@@ -123,6 +130,11 @@ public class SerieService implements APIConfiguration {
 							winner_id = "";
 						} else {
 							winner_id = u.getWinnerId().toString();
+						}
+						if (u.getFullName().toString().equals(null)) {
+							name = "";
+						} else {
+							name = u.getFullName().toString();
 						}
 						if (u.getBeginAt().toString().equals(null)) {
 							begin_at = "";
@@ -137,7 +149,7 @@ public class SerieService implements APIConfiguration {
 					} catch (Exception e) {
 						System.out.println("ERROR: " + e.getMessage());
 					}
-					saveSerieDetails(serie_id, begin_at, end_at, league_id, winner_id, year,
+					saveSerieDetails(serie_id, name, begin_at, end_at, league_id, winner_id, year,
 							u.getVideogame().getName());
 				}
 				System.out.println("Saved all LoL series to DB");
@@ -164,10 +176,11 @@ public class SerieService implements APIConfiguration {
 		return serieRepo.save(serie);
 	}
 	
-	public Serie saveSerieDetails(int serie_id, String begin_at, String end_at,
+	public Serie saveSerieDetails(int serie_id, String name, String begin_at, String end_at,
 			int league_id, String winner_id, int year, String videogame) {
 		Serie serie = new Serie();
 		serie.setSerie_id(serie_id);
+		serie.setName(name);
 		serie.setBegin_at(begin_at);
 		serie.setEnd_at(end_at);
 		serie.setLeague_id(league_id);
