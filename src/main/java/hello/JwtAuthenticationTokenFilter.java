@@ -20,8 +20,8 @@ public class JwtAuthenticationTokenFilter extends AbstractAuthenticationProcessi
 	        String header = httpServletRequest.getHeader("Authorization");
 
 
-//	        if (header == null || !header.startsWith("Token ")) {
-	        if (header == null) {
+	        if (header == null || !header.startsWith("Bearer ")) {
+//	        if (header == null) {
 	            throw new RuntimeException("JWT Token is missing");
 	        }
 

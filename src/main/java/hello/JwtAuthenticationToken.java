@@ -10,7 +10,7 @@ public class JwtAuthenticationToken extends UsernamePasswordAuthenticationToken{
         super(null, null);
         this.token = token;
     }
-
+    
     public String getToken() {
         return token;
     }
