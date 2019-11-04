@@ -109,6 +109,7 @@ public class MatchService implements APIConfiguration {
 						int tournament_id = u.getTournamentId();
 						String winner_id = "";
 						String videogame = u.getVideogame().getName();
+						String scheduled_at = u.getScheduledAt();
 						try {
 							if (u.getWinnerId().toString().equals(null)) {
 								winner_id = "";
@@ -125,11 +126,18 @@ public class MatchService implements APIConfiguration {
 							} else {
 								end_at = u.getEndAt();
 							}
+							if (u.getScheduledAt().equals(null)) {
+								scheduled_at = "";
+							} else {
+								scheduled_at = u.getScheduledAt();
+							}
+							
 						} catch (Exception e) {
 							System.out.println("ERROR: " + e.getMessage());
 						}
 						saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
-								num_of_games, league_id, series_id, tournament_id, winner_id, videogame);
+								num_of_games, league_id, series_id, tournament_id, winner_id, videogame,
+								scheduled_at);
 
 						for (API_OpponentMain g : u.getOpponents()) {
 							int opponent_id = 0;
@@ -221,6 +229,7 @@ public class MatchService implements APIConfiguration {
 						int tournament_id = u.getTournamentId();
 						String winner_id = "";
 						String videogame = u.getVideogame().getName();
+						String scheduled_at = u.getScheduledAt();
 						try {
 							if (u.getWinnerId().toString().equals(null)) {
 								winner_id = "";
@@ -237,11 +246,22 @@ public class MatchService implements APIConfiguration {
 							} else {
 								end_at = u.getEndAt();
 							}
+							if (u.getScheduledAt().equals(null)) {
+								scheduled_at = "";
+							} else {
+								scheduled_at = u.getScheduledAt();
+							}
+							if (u.getScheduledAt().equals(null)) {
+								scheduled_at = "";
+							} else {
+								scheduled_at = u.getScheduledAt();
+							}
 						} catch (Exception e) {
 							System.out.println("ERROR: " + e.getMessage());
 						}
 						saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
-								num_of_games, league_id, series_id, tournament_id, winner_id, videogame);
+								num_of_games, league_id, series_id, tournament_id, winner_id, videogame,
+								scheduled_at);
 
 						for (API_OpponentMain g : u.getOpponents()) {
 							int opponent_id = 0;
@@ -905,6 +925,7 @@ public class MatchService implements APIConfiguration {
 							int tournament_id = u.getTournamentId();
 							String winner_id = "";
 							String videogame = u.getVideogame().getName();
+							String scheduled_at = u.getScheduledAt();
 							try {
 								if (u.getWinnerId().toString().equals(null)) {
 									winner_id = "";
@@ -921,11 +942,17 @@ public class MatchService implements APIConfiguration {
 								} else {
 									end_at = u.getEndAt();
 								}
+								if (u.getScheduledAt().equals(null)) {
+									scheduled_at = "";
+								} else {
+									scheduled_at = u.getScheduledAt();
+								}
 							} catch (Exception e) {
 								System.out.println("ERROR: " + e.getMessage());
 							}
 							saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
-									num_of_games, league_id, series_id, tournament_id, winner_id, videogame);
+									num_of_games, league_id, series_id, tournament_id, winner_id, videogame,
+									scheduled_at);
 						}
 					}
 				}
@@ -957,7 +984,8 @@ public class MatchService implements APIConfiguration {
 	}
 
 	public Match saveMatchDetails(int match_id, String begin_at, String end_at, String match_type, String match_name,
-			int num_of_games, int league_id, String series_id, int tournament_id, String winner_id, String videogame) {
+			int num_of_games, int league_id, String series_id, int tournament_id, String winner_id, String videogame,
+			String scheduled_at) {
 		Match match = new Match();
 		match.setMatch_id(match_id);
 		match.setBegin_at(begin_at);
@@ -970,6 +998,7 @@ public class MatchService implements APIConfiguration {
 		match.setTournament_id(tournament_id);
 		match.setWinner_id(winner_id);
 		match.setVideogame(videogame);
+		match.setScheduled_at(scheduled_at);
 		return matchRepo.save(match);
 	}
 
