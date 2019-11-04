@@ -43,14 +43,19 @@ public class UserInventoryController {
 		return userInventoryService.getAll();
 	}
 
+//	@GetMapping("/{username}")
+//	public ResponseEntity<UserInventory> findById(@PathVariable String username) {
+//		Optional<UserInventory> user_inventory = userInventoryService.findById(username);
+//		if (!user_inventory.isPresent()) {
+//			ResponseEntity.badRequest().build();
+//		}
+//
+//		return ResponseEntity.ok(user_inventory.get());
+//	}
+	
 	@GetMapping("/{username}")
-	public ResponseEntity<UserInventory> findById(@PathVariable String username) {
-		Optional<UserInventory> user_inventory = userInventoryService.findById(username);
-		if (!user_inventory.isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-
-		return ResponseEntity.ok(user_inventory.get());
+	public List<UserInventory> getInventoryByUsername(@PathVariable String username) {
+		return userInventoryRepo.getItemsOwnedById(username);
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
