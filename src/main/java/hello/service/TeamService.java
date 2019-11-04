@@ -74,7 +74,7 @@ public class TeamService implements APIConfiguration {
 							else {
 								name = u.getName();
 							}
-							if(u.getImage_url().equals(null)) {
+							if(u.getImage_url().equals("null") || u.getImage_url().equals(null)) {
 								image_url = "";
 							}
 							else {
@@ -86,17 +86,18 @@ public class TeamService implements APIConfiguration {
 							else {
 								videogame = u.getVideogame().getName();
 							}
-							
-							id = u.getId();
-							acronym = u.getAcronym();
-							name = u.getName();
-							image_url = u.getImage_url();
-							videogame = u.getVideogame().getName();
+//							
+//							id = u.getId();
+//							acronym = u.getAcronym();
+//							name = u.getName();
+//							image_url = u.getImage_url();
+//							videogame = u.getVideogame().getName();
+							saveTeamDetails(id, acronym, name, image_url, videogame);
+
 						} catch (Exception e) {
 							// TODO: handle exception
 							System.out.println("ERROR in TEAMS" + e.getMessage());
 						}
-						saveTeamDetails(id, acronym, name, image_url, videogame);
 					}
 					System.out.println("Saved all Dota teams to DB");
 //				}				
@@ -163,16 +164,17 @@ public class TeamService implements APIConfiguration {
 								videogame = u.getVideogame().getName();
 							}
 							
-							id = u.getId();
-							acronym = u.getAcronym();
-							name = u.getName();
-							image_url = u.getImage_url();
-							videogame = u.getVideogame().getName();
+//							id = u.getId();
+//							acronym = u.getAcronym();
+//							name = u.getName();
+//							image_url = u.getImage_url();
+//							videogame = u.getVideogame().getName();
+							saveTeamDetails(id, acronym, name, image_url, videogame);
 						} catch (Exception e) {
 							// TODO: handle exception
 							System.out.println("ERROR in TEAMS" + e.getMessage());
 						}
-						saveTeamDetails(id, acronym, name, image_url, videogame);
+						
 					}
 					System.out.println("Saved all Dota teams to DB");
 //				}				
