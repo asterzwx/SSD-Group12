@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import hello.model.UserPrediction;
+import hello.repo.UserPredictionRepo;
 import hello.model.UserPrediction;
 import hello.service.PollService;
 import hello.service.UserPredictionService;
@@ -29,20 +30,31 @@ public class UserPredictionController {
 	
 	@Autowired
 	private UserPredictionService userPredictionService;
+	@Autowired
+	private UserPredictionRepo userPredictionRepo;
 
 	@GetMapping(value = "/all")
 	public List<UserPrediction> getAllUserPredictions() {
 		return userPredictionService.getAll();
 	}
+
+//	@GetMapping("/{id}")
+//	public ResponseEntity<UserPrediction> findById(@PathVariable int id) {
+//		Optional<UserPrediction> poll = userPredictionService.findById(id);
+//		if (!poll.isPresent()) {
+//			ResponseEntity.badRequest().build();
+//		}
+//		return ResponseEntity.ok(poll.get());
+//	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<UserPrediction> findById(@PathVariable int id) {
-		Optional<UserPrediction> poll = userPredictionService.findById(id);
-		if (!poll.isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-		return ResponseEntity.ok(poll.get());
+	@GetMapping("/{username}")
+	public List<UserPrediction> findByUsername(@Valid @PathVariable String username) {
+		return userPredictionRepo.getPredictionsByUsername(username);		
+		
 	}
+
+	
+	
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserPrediction userPrediction) {
