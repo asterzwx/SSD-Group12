@@ -63,7 +63,7 @@ public class ScheduledPredictionCheck {
 		try {
 			// retrieve all match id from db userprediction
 			List<UserPrediction> predictions = userPredictionController.getAllUserPredictions();
-			List<API_Match> pastLoLMatches = matchController.getAllLoLMatchesAndOpponentsAndResults();
+			List<API_Match> pastLoLMatches = matchController.getAllLoLMatchesAndOpponents();
 			for (int i = 0; i < predictions.size(); i++) {
 				// retrieve all match id from api
 				for (int j = 0; j < pastLoLMatches.size(); j++) {

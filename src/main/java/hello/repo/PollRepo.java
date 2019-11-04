@@ -10,5 +10,9 @@ import hello.model.Poll;
 import hello.model.Serie;
 
 public interface PollRepo extends JpaRepository<Poll, Integer>{
+	
+	@Query("SELECT p FROM Poll p WHERE p.match_id = :match_id")
+	List<Poll> findPollByMatchId(@Param("match_id") int match_id);
+
 
 }

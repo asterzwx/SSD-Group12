@@ -19,10 +19,6 @@ public class UserInventoryService {
 	@Autowired
 	UserInventoryRepo userInventoryRepo;
 	
-	
-	
-	
-
 	public List<UserInventory> getAll() {
 		// TODO Auto-generated method stub				
 		return userInventoryRepo.findAll();

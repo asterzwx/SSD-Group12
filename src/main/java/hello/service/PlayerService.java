@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 
 import hello.APIConfiguration;
@@ -37,7 +38,7 @@ public class PlayerService implements APIConfiguration {
 	}
 
 	public List<API_Player> getDotaPlayers() throws IOException {
-		for (int i = 1; i < 5; i++) {
+		for (int i = 1; i < 3; i++) {
 			Call<List<API_Player>> call = service.listDotaPlayers(API_KEY, 100, i);
 			call.enqueue(new Callback<List<API_Player>>() {
 				@Override
@@ -54,62 +55,32 @@ public class PlayerService implements APIConfiguration {
 					String first_name = "";
 					String last_name = "";
 					String team_name = "";
-
+					String name = "";
 					for (API_Player u : response.body()) {
 						int id = u.getId();
-						String name = u.getName();
+						videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
 
-						try {
-							if (u.getVideogame().getName().equals(null)) {
-								videogame = "";
-							} else {
-								videogame = u.getVideogame().getName();
-							}
-							if (u.getImage_url().equals(null)) {
-								image_url = "";
-							} else {
-								image_url = u.getImage_url();
-							}
-							if (u.getHometown().equals(null)) {
-								hometown = "";
-							} else {
-								hometown = u.getHometown();
-							}
-							if (u.getCurrent_team().getId() == 0) {
-								current_team = 0;
-							} else {
-								current_team = u.getCurrent_team().getId();
-							}
-							if (u.getRole().equals(null)) {
-								role = "";
-							} else {
-								role = u.getRole();
-							}
-							if(u.getFirst_name().equals(null)) {
-								first_name = "";							
-							}else {
-								first_name = u.getFirst_name();
-							}
-							if(u.getLast_name().equals(null)) {
-								last_name = "";
-							}
-							else {
-								last_name = u.getLast_name();
-							}
-							if(u.getCurrent_team().getName().equals(null)) {
-								team_name = u.getCurrent_team().getName();
-							}
-							else {
-								team_name = u.getCurrent_team().getName();
+						if (!videogame.equals(null)) {
+							try {
+								name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+								current_team = Optional.fromNullable(u.getCurrent_team().getId()).or(NULL_INT);
+								videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+								hometown = Optional.fromNullable(u.getHometown()).or(NULL_STRING);
+								image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+								role = Optional.fromNullable(u.getRole()).or(NULL_STRING);
+								first_name = Optional.fromNullable(u.getFirst_name()).or(NULL_STRING);
+								last_name = Optional.fromNullable(u.getLast_name()).or(NULL_STRING);
+								team_name = Optional.fromNullable(u.getCurrent_team().getName()).or(NULL_STRING);
+
+							} catch (Exception e) {
+								// TODO: handle exception
+								System.out.println("ERROR: getDotaPlayers " + e.getMessage());
 							}
 
-						} catch (Exception e) {
-							// TODO: handle exception
-							System.out.println("ERROR: " + e.getMessage());
+							savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role, first_name,
+									last_name, team_name);
 						}
 
-						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role,
-								first_name, last_name, team_name);
 					}
 					System.out.println("Saved all Dota players to DB");
 //				}				
@@ -145,62 +116,28 @@ public class PlayerService implements APIConfiguration {
 					String first_name = "";
 					String last_name = "";
 					String team_name = "";
-
+					String name = "";
 					for (API_Player u : response.body()) {
 						int id = u.getId();
-						String name = u.getName();
 
 						try {
-							if (u.getVideogame().getName().equals(null)) {
-								videogame = "";
-							} else {
-								videogame = u.getVideogame().getName();
-							}
-							if (u.getImage_url().equals(null)) {
-								image_url = "";
-							} else {
-								image_url = u.getImage_url();
-							}
-							if (u.getHometown().equals(null)) {
-								hometown = "";
-							} else {
-								hometown = u.getHometown();
-							}
-							if (u.getCurrent_team().getId() == 0) {
-								current_team = 0;
-							} else {
-								current_team = u.getCurrent_team().getId();
-							}
-							if (u.getRole().equals(null)) {
-								role = "";
-							} else {
-								role = u.getRole();
-							}
-							if(u.getFirst_name().equals(null)) {
-								first_name = "";							
-							}else {
-								first_name = u.getFirst_name();
-							}
-							if(u.getLast_name().equals(null)) {
-								last_name = "";
-							}
-							else {
-								last_name = u.getLast_name();
-							}
-							if(u.getCurrent_team().getName().equals(null)) {
-								team_name = u.getCurrent_team().getName();
-							}
-							else {
-								team_name = u.getCurrent_team().getName();
-							}
+							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+							current_team = Optional.fromNullable(u.getCurrent_team().getId()).or(NULL_INT);
+							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+							hometown = Optional.fromNullable(u.getHometown()).or(NULL_STRING);
+							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+							role = Optional.fromNullable(u.getRole()).or(NULL_STRING);
+							first_name = Optional.fromNullable(u.getFirst_name()).or(NULL_STRING);
+							last_name = Optional.fromNullable(u.getLast_name()).or(NULL_STRING);
+							team_name = Optional.fromNullable(u.getCurrent_team().getName()).or(NULL_STRING);
 
 						} catch (Exception e) {
 							// TODO: handle exception
-							System.out.println("ERROR: " + e.getMessage());
+							System.out.println("ERROR: getLoLPlayers " + e.getMessage());
 						}
 
-						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role,
-								first_name, last_name, team_name);
+						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role, first_name,
+								last_name, team_name);
 					}
 					System.out.println("Saved all LoL players to DB");
 //					}				

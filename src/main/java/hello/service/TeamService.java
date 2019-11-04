@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 
 import hello.APIConfiguration;
@@ -56,47 +57,17 @@ public class TeamService implements APIConfiguration {
 					System.out.println("@@@@@@@@@@@@@@@@");
 					for (API_Team u : response.body()) {						
 						try {
-							if(u.getId() == 0) {
-								id = 0;
-							}
-							else {
-								id = u.getId();
-							}
-							if(u.getAcronym().equals(null)) {	
-								acronym = "";
-							}
-							else {
-								acronym = u.getAcronym();
-							}
-							if(u.getName().equals(null)) {
-								name = "";
-							}
-							else {
-								name = u.getName();
-							}
-							if(u.getImage_url().equals("null") || u.getImage_url().equals(null)) {
-								image_url = "";
-							}
-							else {
-								image_url = u.getImage_url();
-							}
-							if(u.getVideogame().getName().equals(null)) {
-								videogame = "";
-							}
-							else {
-								videogame = u.getVideogame().getName();
-							}
-//							
-//							id = u.getId();
-//							acronym = u.getAcronym();
-//							name = u.getName();
-//							image_url = u.getImage_url();
-//							videogame = u.getVideogame().getName();
+							id = Optional.fromNullable(u.getId()).or(NULL_INT);
+							acronym = Optional.fromNullable(u.getAcronym()).or(NULL_STRING);
+							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+						
 							saveTeamDetails(id, acronym, name, image_url, videogame);
 
 						} catch (Exception e) {
 							// TODO: handle exception
-							System.out.println("ERROR in TEAMS" + e.getMessage());
+							System.out.println("ERROR getDotaTeams " + e.getMessage());
 						}
 					}
 					System.out.println("Saved all Dota teams to DB");
@@ -130,49 +101,19 @@ public class TeamService implements APIConfiguration {
 					String acronym = "";
 					int id = 0;
 					String name = "";
-					System.out.println("@@@@@@@@@@@@@@@@");
+					
 					for (API_Team u : response.body()) {						
 						try {
-							if(u.getId() == 0) {
-								id = 0;
-							}
-							else {
-								id = u.getId();
-							}
-							if(u.getAcronym().equals(null)) {	
-								acronym = "";
-							}
-							else {
-								acronym = u.getAcronym();
-							}
-							if(u.getName().equals(null)) {
-								name = "";
-							}
-							else {
-								name = u.getName();
-							}
-							if(u.getImage_url().equals(null)) {
-								image_url = "";
-							}
-							else {
-								image_url = u.getImage_url();
-							}
-							if(u.getVideogame().getName().equals(null)) {
-								videogame = "";
-							}
-							else {
-								videogame = u.getVideogame().getName();
-							}
+							id = Optional.fromNullable(u.getId()).or(NULL_INT);
+							acronym = Optional.fromNullable(u.getAcronym()).or(NULL_STRING);
+							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
 							
-//							id = u.getId();
-//							acronym = u.getAcronym();
-//							name = u.getName();
-//							image_url = u.getImage_url();
-//							videogame = u.getVideogame().getName();
 							saveTeamDetails(id, acronym, name, image_url, videogame);
 						} catch (Exception e) {
 							// TODO: handle exception
-							System.out.println("ERROR in TEAMS" + e.getMessage());
+							System.out.println("ERROR getLoLTeams" + e.getMessage());
 						}
 						
 					}
@@ -191,12 +132,7 @@ public class TeamService implements APIConfiguration {
 		return teams;
 
 	}
-	
-	
-	
-	
-	
-	
+		
 	public List<Team> getAll() {
 		// TODO Auto-generated method stub
 		return teamRepo.findAll();

@@ -71,12 +71,12 @@ public class MatchController {
 	
 	
 	@GetMapping(path = "all/lol", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Match> getAllLoLMatchesAndOpponentsAndResults() throws IOException {
+	public List<API_Match> getAllLoLMatchesAndOpponents() throws IOException {
 		return matchAPIService.getAllLoLMatches();
 	}
 	
 	@GetMapping(path = "all/dota", produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<API_Match> getAllDotaMatchesAndOpponentsAndResults() throws IOException {
+	public List<API_Match> getAllDotaMatchesAndOpponents() throws IOException {
 		return matchAPIService.getAllDotaMatches();
 	}
 	

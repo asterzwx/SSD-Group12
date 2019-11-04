@@ -8,6 +8,7 @@ import javax.validation.constraints.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 
 import hello.APIConfiguration;
@@ -60,23 +61,12 @@ public class TournamentService implements APIConfiguration {
 						String videogame = u.getVideogame().getName();
 
 						try {
-							if (u.getWinnerId().toString().equals(null)) {
-								winner_id = "";
-							} else {
-								winner_id = u.getWinnerId().toString();
-							}
-							if (u.getBeginAt().toString().equals(null)) {
-								begin_at = "";
-							} else {
-								begin_at = u.getBeginAt();
-							}
-							if (u.getEndAt().toString().equals(null)) {
-								end_at = "";
-							} else {
-								end_at = u.getEndAt();
-							}
+							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
+							begin_at = Optional.fromNullable(u.getBeginAt().toString()).or(NULL_STRING);
+							end_at = Optional.fromNullable(u.getEndAt().toString()).or(NULL_STRING);
+					
 						} catch (Exception e) {
-							System.out.println("ERROR: " + e.getMessage());
+							System.out.println("ERROR getDotaTournaments: " + e.getMessage());
 						}
 						saveTournamentDetails(id, name, begin_at, end_at, league_id, series_id, winner_id, videogame);
 					}
@@ -114,23 +104,12 @@ public class TournamentService implements APIConfiguration {
 					String videogame = u.getVideogame().getName();
 
 					try {
-						if (u.getWinnerId().toString().equals(null)) {
-							winner_id = "";
-						} else {
-							winner_id = u.getWinnerId().toString();
-						}
-						if (u.getBeginAt().toString().equals(null)) {
-							begin_at = "";
-						} else {
-							begin_at = u.getBeginAt();
-						}
-						if (u.getEndAt().toString().equals(null)) {
-							end_at = "";
-						} else {
-							end_at = u.getEndAt();
-						}
+						winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
+						begin_at = Optional.fromNullable(u.getBeginAt().toString()).or(NULL_STRING);
+						end_at = Optional.fromNullable(u.getEndAt().toString()).or(NULL_STRING);
+						
 					} catch (Exception e) {
-						System.out.println("ERROR: " + e.getMessage());
+						System.out.println("ERROR getLoLPastTournaments: " + e.getMessage());
 					}
 					saveTournamentDetails(id, name, begin_at, end_at, league_id, series_id, winner_id, videogame);
 				}
@@ -161,7 +140,7 @@ public class TournamentService implements APIConfiguration {
 					for (API_Tournament u : response.body()) {
 						int id = u.getId();
 						String name = u.getName();
-						String begin_at = u.getBeginAt();
+						String begin_at = "";
 						String end_at = "";
 						int league_id = u.getLeagueId();
 						String series_id = u.getSerieId().toString();
@@ -169,18 +148,12 @@ public class TournamentService implements APIConfiguration {
 						String videogame = u.getVideogame().getName();
 
 						try {
-							if (u.getWinnerId().toString().equals(null)) {
-								winner_id = "";
-							} else {
-								winner_id = u.getWinnerId().toString();
-							}
-							if (u.getEndAt().toString().equals(null)) {
-								end_at = "";
-							} else {
-								end_at = u.getEndAt();
-							}
+							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
+							begin_at = Optional.fromNullable(u.getBeginAt().toString()).or(NULL_STRING);
+							end_at = Optional.fromNullable(u.getEndAt().toString()).or(NULL_STRING);
+							
 						} catch (Exception e) {
-							System.out.println("ERROR: " + e.getMessage());
+							System.out.println("ERROR getLoLRunningTournaments: " + e.getMessage());
 						}
 						saveTournamentDetails(id, name, begin_at, end_at, league_id, series_id, winner_id, videogame);
 					}
@@ -211,7 +184,7 @@ public class TournamentService implements APIConfiguration {
 					for (API_Tournament u : response.body()) {
 						int id = u.getId();
 						String name = u.getName();
-						String begin_at = u.getBeginAt();
+						String begin_at = "";
 						String end_at = "";
 						int league_id = u.getLeagueId();
 						String series_id = u.getSerieId().toString();
@@ -219,18 +192,11 @@ public class TournamentService implements APIConfiguration {
 						String videogame = u.getVideogame().getName();
 
 						try {
-							if (u.getWinnerId().toString().equals(null)) {
-								winner_id = "";
-							} else {
-								winner_id = u.getWinnerId().toString();
-							}
-							if (u.getEndAt().toString().equals(null)) {
-								end_at = "";
-							} else {
-								end_at = u.getEndAt();
-							}
+							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
+							begin_at = Optional.fromNullable(u.getBeginAt().toString()).or(NULL_STRING);
+							end_at = Optional.fromNullable(u.getEndAt().toString()).or(NULL_STRING);
 						} catch (Exception e) {
-							System.out.println("ERROR: " + e.getMessage());
+							System.out.println("ERROR getLoLUpcomingTournaments: " + e.getMessage());
 						}
 						saveTournamentDetails(id, name, begin_at, end_at, league_id, series_id, winner_id, videogame);
 					}

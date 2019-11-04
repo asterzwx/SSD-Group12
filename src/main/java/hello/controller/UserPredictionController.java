@@ -58,10 +58,10 @@ public class UserPredictionController {
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserPrediction userPrediction) {
-		if (!userPredictionService.findById(userPrediction.getId()).isPresent()) {			
+//		if (!userPredictionService.findById(userPrediction.getId()).isPresent()) {			
 			return ResponseEntity.ok(userPredictionService.saveUserPrediction(userPrediction));
-		}
-		return null;
+//		}
+//		return null;	
 	}
 	
 	@PutMapping("/update/{id}")

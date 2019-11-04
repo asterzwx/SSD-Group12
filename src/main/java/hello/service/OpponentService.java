@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.YamlJsonParser;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 
 import hello.APIConfiguration;
@@ -119,27 +120,22 @@ public class OpponentService implements APIConfiguration {
 				dotaMatches = response.body();
 				Gson responseGson = new Gson();
 				String acronym = "";
+				String image_url = "";
 				for (API_Match u : response.body()) {
 
 					if (match_id == u.getId()) {
 						for (API_OpponentMain g : u.getOpponents()) {
 							try {
-								if (g.getOpponent().getAcronym().equals(null)) {
-									acronym = "";
-								} else {
-									acronym = g.getOpponent().getAcronym();
-								}
+								acronym = Optional.fromNullable(g.getOpponent().getAcronym()).or(NULL_STRING);
+								image_url = Optional.fromNullable(g.getOpponent().getImageUrl()).or(NULL_IMAGE);							
+								
 							} catch (Exception e) {
 								// TODO: handle exception
+								System.out.println("ERROR getLoLPastMatchOpponentsById" + e.getMessage());
 							}
-							System.out.println("@@@ " + g.getOpponent().getId());
-							System.out.println("@@@ " + g.getOpponent().getAcronym());
-							System.out.println("@@@ " + g.getOpponent().getName());
-							System.out.println("@@@ " + g.getOpponent().getImageUrl());
-							System.out.println("@@@ " + u.getId());
-
+							
 							saveMatchOpponentDetails(g.getOpponent().getId(), acronym, g.getOpponent().getName(),
-									g.getOpponent().getImageUrl(), match_id);
+									image_url, match_id);
 						}
 					}
 				}
@@ -163,27 +159,21 @@ public class OpponentService implements APIConfiguration {
 				dotaMatches = response.body();
 				Gson responseGson = new Gson();
 				String acronym = "";
+				String image_url = "";
 				for (API_Match u : response.body()) {
 
 					if (match_id == u.getId()) {
 						for (API_OpponentMain g : u.getOpponents()) {
 							try {
-								if (g.getOpponent().getAcronym().equals(null)) {
-									acronym = "";
-								} else {
-									acronym = g.getOpponent().getAcronym();
-								}
+								acronym = Optional.fromNullable(g.getOpponent().getAcronym()).or(NULL_STRING);
+								image_url = Optional.fromNullable(g.getOpponent().getImageUrl()).or(NULL_IMAGE);							
+								
 							} catch (Exception e) {
-								// TODO: handle exception
+							System.out.println("ERROR getLoLRunningMatchOpponentsById: " + e.getMessage());	
 							}
-							System.out.println("@@@ " + g.getOpponent().getId());
-							System.out.println("@@@ " + g.getOpponent().getAcronym());
-							System.out.println("@@@ " + g.getOpponent().getName());
-							System.out.println("@@@ " + g.getOpponent().getImageUrl());
-							System.out.println("@@@ " + u.getId());
 
 							saveMatchOpponentDetails(g.getOpponent().getId(), acronym, g.getOpponent().getName(),
-									g.getOpponent().getImageUrl(), match_id);
+									image_url, match_id);
 						}
 					}
 				}
@@ -207,27 +197,30 @@ public class OpponentService implements APIConfiguration {
 				dotaMatches = response.body();
 				Gson responseGson = new Gson();
 				String acronym = "";
+				String image_url = "";
 				for (API_Match u : response.body()) {
 
 					if (match_id == u.getId()) {
 						for (API_OpponentMain g : u.getOpponents()) {
 							try {
 								if (g.getOpponent().getAcronym().equals(null)) {
-									acronym = "";
+									acronym = NULL_STRING;
 								} else {
 									acronym = g.getOpponent().getAcronym();
 								}
+								if(g.getOpponent().getImageUrl().equals(null)) {
+									image_url = NULL_IMAGE;
+								}
+								else {
+									image_url = g.getOpponent().getImageUrl();
+								}
 							} catch (Exception e) {
-								// TODO: handle exception
+								System.out.println("ERROR getLoLUpcomingMatchOpponentsById: " + e.getMessage());
 							}
-							System.out.println("@@@ " + g.getOpponent().getId());
-							System.out.println("@@@ " + g.getOpponent().getAcronym());
-							System.out.println("@@@ " + g.getOpponent().getName());
-							System.out.println("@@@ " + g.getOpponent().getImageUrl());
-							System.out.println("@@@ " + u.getId());
+							
 
 							saveMatchOpponentDetails(g.getOpponent().getId(), acronym, g.getOpponent().getName(),
-									g.getOpponent().getImageUrl(), match_id);
+									image_url, match_id);
 						}
 					}
 				}
@@ -258,20 +251,12 @@ public class OpponentService implements APIConfiguration {
 					if (tournament_id == t.getId()) {
 						for (API_Opponent o : t.getTeams()) {
 							try {
-								if (o.getAcronym().equals(null)) {
-									acronym = "";
-								} else {
-									acronym = o.getAcronym();
-								}	
-								if (o.getImageUrl().equals(null)) {
-									image_url = "";
-								} else {
-									image_url = o.getImageUrl();
-								}	
+								acronym = Optional.fromNullable(o.getAcronym()).or(NULL_STRING);
+								image_url = Optional.fromNullable(o.getImageUrl()).or(NULL_IMAGE);							
 								
 							} catch (Exception e) {
 								// TODO: handle exception
-								System.out.println("ERROR: " + e.getMessage());
+								System.out.println("ERROR: getDotaTournamentOpponentsById " + e.getMessage());
 							}					
 							saveTournamentOpponentDetails(
 									o.getId(), acronym, o.getName(), image_url,
@@ -309,20 +294,13 @@ public class OpponentService implements APIConfiguration {
 					if (tournament_id == t.getId()) {
 						for (API_Opponent o : t.getTeams()) {
 							try {
-								if (o.getAcronym().equals(null)) {
-									acronym = "";
-								} else {
-									acronym = o.getAcronym();
-								}	
-								if (o.getImageUrl().equals(null)) {
-									image_url = "";
-								} else {
-									image_url = o.getImageUrl();
-								}	
+								acronym = Optional.fromNullable(o.getAcronym()).or(NULL_STRING);
+								image_url = Optional.fromNullable(o.getImageUrl()).or(NULL_IMAGE);							
+									
 								
 							} catch (Exception e) {
 								// TODO: handle exception
-								System.out.println("ERROR: " + e.getMessage());
+								System.out.println("ERROR: getLoLPastTournamentOpponentsById " + e.getMessage());
 							}					
 							saveTournamentOpponentDetails(
 									o.getId(), acronym, o.getName(), image_url,
@@ -359,20 +337,12 @@ public class OpponentService implements APIConfiguration {
 					if (tournament_id == t.getId()) {
 						for (API_Opponent o : t.getTeams()) {
 							try {
-								if (o.getAcronym().equals(null)) {
-									acronym = "";
-								} else {
-									acronym = o.getAcronym();
-								}	
-								if (o.getImageUrl().equals(null)) {
-									image_url = "";
-								} else {
-									image_url = o.getImageUrl();
-								}	
+								acronym = Optional.fromNullable(o.getAcronym()).or(NULL_STRING);
+								image_url = Optional.fromNullable(o.getImageUrl()).or(NULL_IMAGE);							
 								
 							} catch (Exception e) {
 								// TODO: handle exception
-								System.out.println("ERROR: " + e.getMessage());
+								System.out.println("ERROR: getLoLRunningTournamentOpponentsById " + e.getMessage());
 							}					
 							saveTournamentOpponentDetails(
 									o.getId(), acronym, o.getName(), image_url,
@@ -409,25 +379,17 @@ public class OpponentService implements APIConfiguration {
 					if (tournament_id == t.getId()) {
 						for (API_Opponent o : t.getTeams()) {
 							try {
-								if (o.getAcronym().equals(null)) {
-									acronym = "";
-								} else {
-									acronym = o.getAcronym();
-								}	
-								if (o.getImageUrl().equals(null)) {
-									image_url = "";
-								} else {
-									image_url = o.getImageUrl();
-								}	
+								acronym = Optional.fromNullable(o.getAcronym()).or(NULL_STRING);
+								image_url = Optional.fromNullable(o.getImageUrl()).or(NULL_IMAGE);							
+								
 								
 							} catch (Exception e) {
 								// TODO: handle exception
-								System.out.println("ERROR: " + e.getMessage());
+								System.out.println("ERROR: getLoLUpcomingTournamentOpponentsById " + e.getMessage());
 							}					
 							saveTournamentOpponentDetails(
 									o.getId(), acronym, o.getName(), image_url,
-									tournament_id);
-							
+									tournament_id);							
 						}
 						
 					}

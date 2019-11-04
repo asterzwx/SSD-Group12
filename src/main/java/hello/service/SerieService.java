@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.YamlJsonParser;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
 import com.google.gson.Gson;
 
 import hello.APIConfiguration;
@@ -38,10 +39,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class SerieService implements APIConfiguration {
 	@Autowired
 	SerieRepo serieRepo;
-	
+
 	private RepositoryInterface service;
 	List<API_Serie> series = null;
-	
 
 	public SerieService() {
 		Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.pandascore.co/")
@@ -61,35 +61,20 @@ public class SerieService implements APIConfiguration {
 				String begin_at = "";
 				String end_at = "";
 				String name = "";
-				
+
 				for (API_Serie u : response.body()) {
 					System.out.println(u.getId());
-					int serie_id = u.getId();					
+					int serie_id = u.getId();
 					int league_id = u.getLeagueId();
 					int year = u.getYear();
 					try {
-						if (u.getWinnerId().toString().equals(null)) {
-							winner_id = "";
-						} else {
-							winner_id = u.getWinnerId().toString();
-						}
-						if (u.getFullName().toString().equals(null)) {
-							name = "";
-						} else {
-							name = u.getFullName().toString();
-						}
-						if (u.getBeginAt().toString().equals(null)) {
-							begin_at = "";
-						} else {
-							begin_at = u.getBeginAt();
-						}
-						if (u.getEndAt().toString().equals(null)) {
-							end_at = "";
-						} else {
-							end_at = u.getEndAt();
-						}
+						winner_id = Optional.fromNullable(u.getWinnerId()).or(NULL_STRING);
+						begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
+						end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
+						name = Optional.fromNullable(u.getFullName()).or(NULL_STRING);						
+						
 					} catch (Exception e) {
-						System.out.println("ERROR: " + e.getMessage());
+						System.out.println("ERROR getDotaSeries: " + e.getMessage());
 					}
 					saveSerieDetails(serie_id, name, begin_at, end_at, league_id, winner_id, year,
 							u.getVideogame().getName());
@@ -106,7 +91,7 @@ public class SerieService implements APIConfiguration {
 		});
 		return series;
 	}
-	
+
 	public List<API_Serie> getLoLSeries() throws IOException {
 		Call<List<API_Serie>> call = service.listLoLSeries(API_KEY);
 		call.enqueue(new Callback<List<API_Serie>>() {
@@ -117,40 +102,25 @@ public class SerieService implements APIConfiguration {
 				Gson responseGson = new Gson();
 				String winner_id = "";
 				String begin_at = "";
-				String end_at = "";	
+				String end_at = "";
 				String name = "";
-				
+
 				for (API_Serie u : response.body()) {
 					System.out.println(u.getId());
-					int serie_id = u.getId();					
+					int serie_id = u.getId();
 					int league_id = u.getLeagueId();
 					int year = u.getYear();
-					try {
-						if (u.getWinnerId().toString().equals(null)) {
-							winner_id = "";
-						} else {
-							winner_id = u.getWinnerId().toString();
-						}
-						if (u.getFullName().toString().equals(null)) {
-							name = "";
-						} else {
-							name = u.getFullName().toString();
-						}
-						if (u.getBeginAt().toString().equals(null)) {
-							begin_at = "";
-						} else {
-							begin_at = u.getBeginAt();
-						}
-						if (u.getEndAt().toString().equals(null)) {
-							end_at = "";
-						} else {
-							end_at = u.getEndAt();
-						}
+					try {						
+						winner_id = Optional.fromNullable(u.getWinnerId()).or(NULL_STRING);
+						begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
+						end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
+						name = Optional.fromNullable(u.getFullName()).or(NULL_STRING);		
+						saveSerieDetails(serie_id, name, begin_at, end_at, league_id, winner_id, year,
+								u.getVideogame().getName());
 					} catch (Exception e) {
-						System.out.println("ERROR: " + e.getMessage());
+						System.out.println("ERROR: getLoLSeries " + e.getMessage());
 					}
-					saveSerieDetails(serie_id, name, begin_at, end_at, league_id, winner_id, year,
-							u.getVideogame().getName());
+					
 				}
 				System.out.println("Saved all LoL series to DB");
 
@@ -164,9 +134,7 @@ public class SerieService implements APIConfiguration {
 		});
 		return series;
 	}
-	
-	
-	
+
 	public List<Serie> getAll() {
 		// TODO Auto-generated method stub
 		return serieRepo.findAll();
@@ -175,9 +143,9 @@ public class SerieService implements APIConfiguration {
 	public Serie saveSerie(Serie serie) {
 		return serieRepo.save(serie);
 	}
-	
-	public Serie saveSerieDetails(int serie_id, String name, String begin_at, String end_at,
-			int league_id, String winner_id, int year, String videogame) {
+
+	public Serie saveSerieDetails(int serie_id, String name, String begin_at, String end_at, int league_id,
+			String winner_id, int year, String videogame) {
 		Serie serie = new Serie();
 		serie.setSerie_id(serie_id);
 		serie.setName(name);
@@ -189,6 +157,5 @@ public class SerieService implements APIConfiguration {
 		serie.setVideogame(videogame);
 		return serieRepo.save(serie);
 	}
-
 
 }

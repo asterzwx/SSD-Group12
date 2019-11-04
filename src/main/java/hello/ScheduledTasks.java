@@ -60,7 +60,7 @@ public class ScheduledTasks {
 		try {
 			serieController.getDotaSeries();
 			serieController.getLoLSeries();
-			
+
 			leagueController.getLeagues();
 			
 			tournamentController.getDotaTournaments();
@@ -68,13 +68,13 @@ public class ScheduledTasks {
 			tournamentController.getLoLRunningTournaments();
 			tournamentController.getLoLUpcomingTournaments();			
 			
-			matchController.getAllLoLMatchesAndOpponentsAndResults();
-			matchController.getAllDotaMatchesAndOpponentsAndResults();	
+			matchController.getAllLoLMatchesAndOpponents();
+			matchController.getAllDotaMatchesAndOpponents();	
 			matchController.getAllLoLResults();
 			matchController.getAllDotaResults();
-			
+		
 			playerController.getDotaPlayers();
-			playerController.getLoLPlayers();
+			playerController.getLoLPlayers();		
 			
 			teamController.getDotaTeams();
 			teamController.getLoLTeams();

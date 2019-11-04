@@ -27,7 +27,7 @@ public class Result implements Serializable {
 	}
 
 	
-	public Result(int id, int match_id, int team_id, int score) {
+	public Result(String id, int match_id, int team_id, int score) {
 		super();
 		this.id = id;
 		this.match_id = match_id;
@@ -39,7 +39,7 @@ public class Result implements Serializable {
 	@Id
 //	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private int id;
+	private String id;
 
 	@Column(name = "match_id")
 	@Nullable
@@ -77,11 +77,11 @@ public class Result implements Serializable {
 		this.score = score;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	

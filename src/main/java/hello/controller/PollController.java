@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import hello.model.Poll;
+import hello.repo.PollRepo;
 import hello.service.PollService;
 
 @CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
@@ -27,6 +28,8 @@ import hello.service.PollService;
 public class PollController {
 	@Autowired
 	private PollService pollService;
+	@Autowired
+	PollRepo pollRepo;
 
 	@GetMapping(value = "/all")
 	public List<Poll> getAllPoll() {
@@ -39,8 +42,12 @@ public class PollController {
 		if (!poll.isPresent()) {
 			ResponseEntity.badRequest().build();
 		}
-
 		return ResponseEntity.ok(poll.get());
+	}
+	
+	@GetMapping("/{match_id}")
+	public List<Poll> findPollByMatchId(@PathVariable int match_id) {		
+		return pollRepo.findPollByMatchId(match_id); 
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests

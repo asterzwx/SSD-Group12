@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class API_Result {
 	
 	
-	public API_Result(int team_id, int score) {
+	public API_Result(Integer team_id, Integer score) {
 		super();
 		this.team_id = team_id;
 		this.score = score;
@@ -16,25 +16,25 @@ public class API_Result {
 	
 	@SerializedName("team_id")
 	@Expose
-	public int team_id;
+	public Integer team_id;
 	
 	@SerializedName("score")
 	@Expose
-	public int score;
+	public Integer score;
 
-	public int getTeam_id() {
+	public Integer getTeam_id() {
 		return team_id;
 	}
 
-	public void setTeam_id(int team_id) {
+	public void setTeam_id(Integer team_id) {
 		this.team_id = team_id;
 	}
 
-	public int getScore() {
+	public Integer getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
+	public void setScore(Integer score) {
 		this.score = score;
 	}
 	
