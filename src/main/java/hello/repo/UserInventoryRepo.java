@@ -2,6 +2,8 @@ package hello.repo;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -36,8 +38,10 @@ public interface UserInventoryRepo extends JpaRepository<UserInventory, String>{
 	@Query("SELECT i.points as points FROM UserInventory i WHERE i.username = :username")
 	int getPointsById(@Param("username") String username);
 	
-//	@Modifying
-//	@Query("INSERT INTO UserInventory VALUES (:username, :points, :item_id, :item_in_use)")
-//	int createNewRecord(@Param("username") String username, 
-//			@Param("points") int points, @Param("item_id") int item_id, @Param("item_in_use") boolean item_in_use );
+	@Modifying
+    @Query(value = "insert into user_inventory (username,points,item_id,item_in_use) VALUES "
+    		+ "(:username,:points,:item_id,:item_in_use)", nativeQuery = true)
+    @Transactional
+    void createNewRecord(@Param("username") String username, @Param("points") int id,
+    		@Param("item_id") int item_id, @Param("item_in_use") boolean item_in_use);
 }

@@ -48,6 +48,7 @@ import hello.model.Admin;
 import hello.model.UserAccount;
 import hello.repo.UserAccountRepo;
 import hello.repo.UserAccountView;
+import hello.repo.UserInventoryRepo;
 import hello.service.UserAccountService;
 
 @CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
@@ -60,6 +61,8 @@ public class UserAccountController {
 	private UserAccountService userService;
 	@Autowired
 	UserAccountRepo userAccountRepo;
+	@Autowired
+	UserInventoryRepo userInventoryRepo;
 	
 	ViewControllerRegistry registry;
 	
@@ -107,7 +110,12 @@ public class UserAccountController {
 			userAccount.setPassword_hash(generatedHash_SHA256);
 			userAccount.setSalt(generatedSalt.toString());
 			userService.saveUser(userAccount);
-			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+
+			//at the same time, create a record for this new user in user_inventory
+			userInventoryRepo.createNewRecord(userAccount.getUsername(), 0, 0, false);
+			
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);			
+			
 			json.put("created", "true");
 
 		} else {
