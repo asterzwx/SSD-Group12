@@ -51,6 +51,9 @@ public class PlayerService implements APIConfiguration {
 					String hometown = "";
 					int current_team = 0;
 					String role = "";
+					String first_name = "";
+					String last_name = "";
+					String team_name = "";
 
 					for (API_Player u : response.body()) {
 						int id = u.getId();
@@ -82,13 +85,31 @@ public class PlayerService implements APIConfiguration {
 							} else {
 								role = u.getRole();
 							}
+							if(u.getFirst_name().equals(null)) {
+								first_name = "";							
+							}else {
+								first_name = u.getFirst_name();
+							}
+							if(u.getLast_name().equals(null)) {
+								last_name = "";
+							}
+							else {
+								last_name = u.getLast_name();
+							}
+							if(u.getCurrent_team().getName().equals(null)) {
+								team_name = u.getCurrent_team().getName();
+							}
+							else {
+								team_name = u.getCurrent_team().getName();
+							}
 
 						} catch (Exception e) {
 							// TODO: handle exception
 							System.out.println("ERROR: " + e.getMessage());
 						}
 
-						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role);
+						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role,
+								first_name, last_name, team_name);
 					}
 					System.out.println("Saved all Dota players to DB");
 //				}				
@@ -121,6 +142,9 @@ public class PlayerService implements APIConfiguration {
 					String hometown = "";
 					int current_team = 0;
 					String role = "";
+					String first_name = "";
+					String last_name = "";
+					String team_name = "";
 
 					for (API_Player u : response.body()) {
 						int id = u.getId();
@@ -152,13 +176,31 @@ public class PlayerService implements APIConfiguration {
 							} else {
 								role = u.getRole();
 							}
+							if(u.getFirst_name().equals(null)) {
+								first_name = "";							
+							}else {
+								first_name = u.getFirst_name();
+							}
+							if(u.getLast_name().equals(null)) {
+								last_name = "";
+							}
+							else {
+								last_name = u.getLast_name();
+							}
+							if(u.getCurrent_team().getName().equals(null)) {
+								team_name = u.getCurrent_team().getName();
+							}
+							else {
+								team_name = u.getCurrent_team().getName();
+							}
 
 						} catch (Exception e) {
 							// TODO: handle exception
 							System.out.println("ERROR: " + e.getMessage());
 						}
 
-						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role);
+						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role,
+								first_name, last_name, team_name);
 					}
 					System.out.println("Saved all LoL players to DB");
 //					}				
@@ -186,7 +228,7 @@ public class PlayerService implements APIConfiguration {
 	}
 
 	public Player savePlayerDetails(int id, String name, int current_team, String videogame, String hometown,
-			String image_url, String role) {
+			String image_url, String role, String first_name, String last_name, String team_name) {
 		Player player = new Player();
 		player.setId(id);
 		player.setName(name);
@@ -195,6 +237,9 @@ public class PlayerService implements APIConfiguration {
 		player.setHometown(hometown);
 		player.setImage_url(image_url);
 		player.setRole(role);
+		player.setFirst_name(first_name);
+		player.setLast_name(last_name);
+		player.setTeam_name(team_name);
 		return playerRepo.save(player);
 	}
 

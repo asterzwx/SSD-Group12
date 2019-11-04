@@ -6,14 +6,20 @@ import javax.persistence.Id;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class API_Player {
-	
-	
-	public API_Player(int id, String name, Opponent current_team, API_Videogame videogame, String hometown, 
-			String role, String image_url) {
+public class API_Player {	
+
+	public API_Player() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public API_Player(int id, String name, String first_name, String last_name, Team current_team,
+			API_Videogame videogame, String hometown, String role, String image_url) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.first_name = first_name;
+		this.last_name = last_name;
 		this.current_team = current_team;
 		this.videogame = videogame;
 		this.hometown = hometown;
@@ -29,9 +35,18 @@ public class API_Player {
 	@Expose
 	private String name;
 	
+	@SerializedName("first_name")
+	@Expose
+	private String first_name;
+	
+	@SerializedName("last_name")
+	@Expose
+	private String last_name;
+	
+	
 	@SerializedName("current_team")
 	@Expose
-	private Opponent current_team;
+	private Team current_team;
 	
 	@SerializedName("current_videogame")
 	@Expose
@@ -64,12 +79,29 @@ public class API_Player {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 
-	public Opponent getCurrent_team() {
+	public String getFirst_name() {
+		return first_name;
+	}
+
+	public void setFirst_name(String first_name) {
+		this.first_name = first_name;
+	}
+
+	public String getLast_name() {
+		return last_name;
+	}
+
+	public void setLast_name(String last_name) {
+		this.last_name = last_name;
+	}
+
+	public Team getCurrent_team() {
 		return current_team;
 	}
 
-	public void setCurrent_team(Opponent current_team) {
+	public void setCurrent_team(Team current_team) {
 		this.current_team = current_team;
 	}
 
