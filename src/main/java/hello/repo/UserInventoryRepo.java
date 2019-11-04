@@ -36,7 +36,7 @@ public interface UserInventoryRepo extends JpaRepository<UserInventory, String>{
 	List<UserInventory> getItemsOwnedById(@Param("username") String username);
 	
 	@Query("SELECT i.points as points FROM UserInventory i WHERE i.username = :username")
-	int getPointsById(@Param("username") String username);
+	Integer getPointsById(@Param("username") String username);
 	
 	@Modifying
     @Query(value = "insert into user_inventory (username,points,item_id,item_in_use) VALUES "

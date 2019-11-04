@@ -124,7 +124,19 @@ public class UserInventoryController {
 			@Valid @PathVariable int item_cost) {
 		Map<String, Object> json = new HashMap();	
 		
-		int currentUserPoints = userInventoryRepo.getPointsById(username);
+		int currentUserPoints = 0;
+		try {
+			currentUserPoints = userInventoryRepo.getPointsById(username);
+			if (currentUserPoints == 0) {
+				json.put("purchase", "false");
+				return json;
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			json.put("purchase", "false");
+			return json;
+		}	
+		
 
 		if (currentUserPoints < item_cost || itemOwnedByUser(item_id, username) == true) {
 			json.put("purchase", "false");
