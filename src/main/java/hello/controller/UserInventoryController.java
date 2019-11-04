@@ -107,6 +107,19 @@ public class UserInventoryController {
 		return userInventoryRepo.updateUserItemInUse(true, username, item_id);
 	}
 
+	@Transactional
+	@PutMapping("/useflair/{username}/{item_id}")
+	public int useFlair(@Valid @PathVariable String username, @PathVariable int item_id) {
+		updateOtherItemsNotInUse(username);
+		try {
+			TimeUnit.SECONDS.sleep(3);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return updateItemInUse(username, item_id);
+	}
+	
 	// check if item id exist in table where username = username
 	@GetMapping("/{item_id}/{username}")
 	public boolean itemOwnedByUser(@PathVariable int item_id, @PathVariable String username) {
