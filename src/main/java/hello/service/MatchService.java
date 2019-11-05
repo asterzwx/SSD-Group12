@@ -68,6 +68,9 @@ public class MatchService implements APIConfiguration {
 	List<API_Match> pastMatches = null;
 	List<API_Match> runningMatches = null;
 	List<API_Match> upcomingMatches = null;
+	
+	PlayerService playerService = new PlayerService();
+
 
 	public MatchService() {
 		Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.pandascore.co/")
@@ -101,15 +104,35 @@ public class MatchService implements APIConfiguration {
 						String winner_id = "";
 						String videogame = u.getVideogame().getName();
 						String scheduled_at = u.getScheduledAt();
-						try {
-							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
-							begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
-							end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
-							scheduled_at = Optional.fromNullable(u.getScheduledAt()).or(NULL_STRING);						
-
-						} catch (Exception e) {
-							System.out.println("ERROR getAllLoLMatches: " + e.getMessage());
+//						try {
+						try {							
+							winner_id = playerService.checkNullString(u.getWinnerId().toString());
+						} catch (Exception e) {							
+							winner_id = NULL_STRING;
 						}
+						try {
+							begin_at = playerService.checkNullString(u.getBeginAt().toString());
+						} catch (Exception e) {
+							begin_at = NULL_STRING;
+						}
+						try {
+							end_at = playerService.checkNullString(u.getEndAt().toString());
+						} catch (Exception e) {
+							end_at = NULL_STRING;
+						}
+						try {
+							scheduled_at = playerService.checkNullString(u.getScheduledAt());
+						} catch (Exception e) {
+							scheduled_at = NULL_STRING;
+						}
+//							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
+//							begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
+//							end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
+//							scheduled_at = Optional.fromNullable(u.getScheduledAt()).or(NULL_STRING);						
+
+//						} catch (Exception e) {
+//							System.out.println("ERROR getAllLoLMatches: " + e.getMessage());
+//						}
 						saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
 								num_of_games, league_id, series_id, tournament_id, winner_id, videogame, scheduled_at);
 
@@ -119,22 +142,39 @@ public class MatchService implements APIConfiguration {
 							String opponent_name = "";
 							String image_url = "";
 
+//							try {
 							try {
-								opponent_id = Optional.fromNullable(g.getOpponent().getId()).or(NULL_INT);
-								opponent_name = Optional.fromNullable(g.getOpponent().getName()).or(NULL_STRING);
-								acronym = Optional.fromNullable(g.getOpponent().getAcronym()).or(NULL_STRING);
-								image_url = Optional.fromNullable(g.getOpponent().getImageUrl()).or(NULL_IMAGE);
-								
+								opponent_id = playerService.checkNullInt(g.getOpponent().getId());
 							} catch (Exception e) {
-								// TODO: handle exception
-								System.out.println(e.getMessage());
+								opponent_id = NULL_INT;
 							}
 							try {
+								opponent_name = playerService.checkNullString(g.getOpponent().getName());
+							} catch (Exception e) {
+								opponent_name = NULL_STRING;
+							}
+							try {
+								acronym = playerService.checkNullString(g.getOpponent().getAcronym());
+							} catch (Exception e) {
+								acronym = NULL_STRING;
+							}
+							try {
+								image_url = playerService.checkNullImage(g.getOpponent().getImageUrl());
+							} catch (Exception e) {
+								image_url = NULL_IMAGE;
+							}
+//								opponent_id = Optional.fromNullable(g.getOpponent().getId()).or(NULL_INT);
+//								opponent_name = Optional.fromNullable(g.getOpponent().getName()).or(NULL_STRING);
+//								acronym = Optional.fromNullable(g.getOpponent().getAcronym()).or(NULL_STRING);
+//								image_url = Optional.fromNullable(g.getOpponent().getImageUrl()).or(NULL_IMAGE);
+//								
+//							} catch (Exception e) {
+//								// TODO: handle exception
+//								System.out.println(e.getMessage());
+//							}
+							
 								saveMatchOpponentDetails(opponent_id, acronym, opponent_name, image_url, u.getId());
-							} catch (Exception e) {
-								// TODO: handle exception
-								System.out.println("ERROR getAllLoLMatches Opponents " + e.getMessage());
-							}
+							
 
 						}
 
@@ -180,17 +220,42 @@ public class MatchService implements APIConfiguration {
 						String winner_id = "";
 						String videogame = u.getVideogame().getName();
 						String scheduled_at = u.getScheduledAt();
-						try {
-							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
-							begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
-							end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
-							scheduled_at = Optional.fromNullable(u.getScheduledAt()).or(NULL_STRING);	
-							
-						} catch (Exception e) {
-							System.out.println("ERROR: getAllDotaMatches " + e.getMessage());
+//						try {
+//							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
+//							begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
+//							end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
+//							scheduled_at = Optional.fromNullable(u.getScheduledAt()).or(NULL_STRING);	
+//							
+//						} catch (Exception e) {
+//							System.out.println("ERROR: getAllDotaMatches " + e.getMessage());
+//						}
+						try {							
+							winner_id = playerService.checkNullString(u.getWinnerId().toString());
+						} catch (Exception e) {							
+							winner_id = NULL_STRING;
 						}
-						saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
-								num_of_games, league_id, series_id, tournament_id, winner_id, videogame, scheduled_at);
+						try {
+							begin_at = playerService.checkNullString(u.getBeginAt().toString());
+						} catch (Exception e) {
+							begin_at = NULL_STRING;
+						}
+						try {
+							end_at = playerService.checkNullString(u.getEndAt().toString());
+						} catch (Exception e) {
+							end_at = NULL_STRING;
+						}
+						try {
+							scheduled_at = playerService.checkNullString(u.getScheduledAt());
+						} catch (Exception e) {
+							scheduled_at = NULL_STRING;
+						}
+						try {
+							saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
+									num_of_games, league_id, series_id, tournament_id, winner_id, videogame, scheduled_at);	
+						} catch (Exception e) {
+							System.out.println("ERROR getAllDotaMatches " + e.getMessage() );
+						}
+						
 
 						for (API_OpponentMain g : u.getOpponents()) {
 							int opponent_id = 0;
@@ -198,15 +263,35 @@ public class MatchService implements APIConfiguration {
 							String opponent_name = "";
 							String image_url = "";
 
+//							try {
+//								opponent_id = Optional.fromNullable(g.getOpponent().getId()).or(NULL_INT);
+//								opponent_name = Optional.fromNullable(g.getOpponent().getName()).or(NULL_STRING);
+//								acronym = Optional.fromNullable(g.getOpponent().getAcronym()).or(NULL_STRING);
+//								image_url = Optional.fromNullable(g.getOpponent().getImageUrl()).or(NULL_IMAGE);
+//								
+//							} catch (Exception e) {
+//								// TODO: handle exception
+//								System.out.println(e.getMessage());
+//							}
 							try {
-								opponent_id = Optional.fromNullable(g.getOpponent().getId()).or(NULL_INT);
-								opponent_name = Optional.fromNullable(g.getOpponent().getName()).or(NULL_STRING);
-								acronym = Optional.fromNullable(g.getOpponent().getAcronym()).or(NULL_STRING);
-								image_url = Optional.fromNullable(g.getOpponent().getImageUrl()).or(NULL_IMAGE);
-								
+								opponent_id = playerService.checkNullInt(g.getOpponent().getId());
 							} catch (Exception e) {
-								// TODO: handle exception
-								System.out.println(e.getMessage());
+								opponent_id = NULL_INT;
+							}
+							try {
+								opponent_name = playerService.checkNullString(g.getOpponent().getName());
+							} catch (Exception e) {
+								opponent_name = NULL_STRING;
+							}
+							try {
+								acronym = playerService.checkNullString(g.getOpponent().getAcronym());
+							} catch (Exception e) {
+								acronym = NULL_STRING;
+							}
+							try {
+								image_url = playerService.checkNullImage(g.getOpponent().getImageUrl());
+							} catch (Exception e) {
+								image_url = NULL_IMAGE;
 							}
 							try {
 								saveMatchOpponentDetails(opponent_id, acronym, opponent_name, image_url, u.getId());
@@ -336,18 +421,43 @@ public class MatchService implements APIConfiguration {
 							String winner_id = "";
 							String videogame = u.getVideogame().getName();
 							String scheduled_at = u.getScheduledAt();
-							try {
-								winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
-								begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
-								end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
-								scheduled_at = Optional.fromNullable(u.getScheduledAt()).or(NULL_STRING);							
-								
-							} catch (Exception e) {
-								System.out.println("ERROR: getMatchesByTournamentId " + e.getMessage());
+//							try {
+//								winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
+//								begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);
+//								end_at = Optional.fromNullable(u.getEndAt()).or(NULL_STRING);
+//								scheduled_at = Optional.fromNullable(u.getScheduledAt()).or(NULL_STRING);							
+//								
+//							} catch (Exception e) {
+//								System.out.println("ERROR: getMatchesByTournamentId " + e.getMessage());
+//							}
+							try {							
+								winner_id = playerService.checkNullString(u.getWinnerId().toString());
+							} catch (Exception e) {							
+								winner_id = NULL_STRING;
 							}
-							saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
-									num_of_games, league_id, series_id, tournament_id, winner_id, videogame,
-									scheduled_at);
+							try {
+								begin_at = playerService.checkNullString(u.getBeginAt().toString());
+							} catch (Exception e) {
+								begin_at = NULL_STRING;
+							}
+							try {
+								end_at = playerService.checkNullString(u.getEndAt().toString());
+							} catch (Exception e) {
+								end_at = NULL_STRING;
+							}
+							try {
+								scheduled_at = playerService.checkNullString(u.getScheduledAt());
+							} catch (Exception e) {
+								scheduled_at = NULL_STRING;
+							}
+							try {
+								saveMatchDetails(Integer.parseInt(match_id), begin_at, end_at, match_type, match_name,
+										num_of_games, league_id, series_id, tournament_id, winner_id, videogame,
+										scheduled_at);
+							} catch (Exception e) {
+								System.out.println("ERROR in getMatchesByTournamentId " + e.getMessage());
+							}
+							
 						}
 					}
 				}

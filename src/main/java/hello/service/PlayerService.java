@@ -3,6 +3,7 @@ package hello.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.hibernate.query.criteria.internal.expression.function.AggregationFunction.COUNT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,26 +57,83 @@ public class PlayerService implements APIConfiguration {
 					String last_name = "";
 					String team_name = "";
 					String name = "";
+					int count = 0;
 					for (API_Player u : response.body()) {
 						int id = u.getId();
-						videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+						
 
-						if (!videogame.equals(null)) {
-							try {
-								name = Optional.fromNullable(u.getName()).or(NULL_STRING);
-								current_team = Optional.fromNullable(u.getCurrent_team().getId()).or(NULL_INT);
-								videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
-								hometown = Optional.fromNullable(u.getHometown()).or(NULL_STRING);
-								image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
-								role = Optional.fromNullable(u.getRole()).or(NULL_STRING);
-								first_name = Optional.fromNullable(u.getFirst_name()).or(NULL_STRING);
-								last_name = Optional.fromNullable(u.getLast_name()).or(NULL_STRING);
-								team_name = Optional.fromNullable(u.getCurrent_team().getName()).or(NULL_STRING);
+						if (!videogame.equals(null) && !u.getName().equals(null)) {
+//							try {
+								System.out.println("=============");
+//								System.out.println(checkNull(u.getHometown()));
+//								name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+//								current_team = Optional.fromNullable(u.getCurrent_team().getId()).or(NULL_INT);
+//								videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+//								hometown = Optional.fromNullable(u.getHometown()).or(NULL_STRING);
+//								image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+//								role = Optional.fromNullable(u.getRole()).or(NULL_STRING);
+//								first_name = Optional.fromNullable(u.getFirst_name()).or(NULL_STRING);
+//								last_name = Optional.fromNullable(u.getLast_name()).or(NULL_STRING);
+//								team_name = Optional.fromNullable(u.getCurrent_team().getName()).or(NULL_STRING);
+								try {
+									name = checkNullString(u.getName());
+								} catch (Exception e) {
+									// TODO: handle exception
+									name = NULL_STRING;
+								}
+								try {
+									current_team = checkNullInt(u.getCurrent_team().getId());
 
-							} catch (Exception e) {
-								// TODO: handle exception
-								System.out.println("ERROR: getDotaPlayers " + e.getMessage());
-							}
+								} catch (Exception e) {									
+									current_team = NULL_INT;				
+								}
+								try {
+									videogame = checkNullString(u.getVideogame().getName());
+
+								} catch (Exception e) {								
+									videogame = NULL_STRING;
+								}
+								try {
+									hometown = checkNullString(u.getHometown());
+
+								} catch (Exception e) {
+									hometown = NULL_STRING;
+								}
+								try {
+									image_url = checkNullImage(u.getImage_url());
+
+								} catch (Exception e) {
+									image_url = NULL_IMAGE;
+								}
+								try {
+									role = checkNullString(u.getRole());
+
+								} catch (Exception e) {
+									role = NULL_STRING;
+								}
+								try {
+									first_name = checkNullString(u.getFirst_name());
+
+								} catch (Exception e) {
+									first_name = NULL_STRING;
+								}
+								try {
+									last_name = checkNullString(u.getLast_name());
+
+								} catch (Exception e) {
+									last_name = NULL_STRING;
+								}
+								try {
+									team_name =	checkNullString(u.getCurrent_team().getName());	
+
+								} catch (Exception e) {
+									team_name = NULL_STRING;
+								}
+								
+//							} catch (Exception e) {
+//								// TODO: handle exception
+//								System.out.println("ERROR: getDotaPlayers " + e.getMessage());
+//							}
 
 							savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role, first_name,
 									last_name, team_name);
@@ -98,6 +156,16 @@ public class PlayerService implements APIConfiguration {
 
 	}
 
+	public String checkNullString(String x) {
+		if(x == null || x == "" || x.equals("") || x.equals(null)) {
+			return NULL_STRING;
+		}
+		return x;
+	}
+	
+	
+	
+	
 	public List<API_Player> getLoLPlayers() throws IOException {
 		for (int i = 1; i < 3; i++) {
 			Call<List<API_Player>> call = service.listLoLPlayers(API_KEY, 100, i);
@@ -120,21 +188,75 @@ public class PlayerService implements APIConfiguration {
 					for (API_Player u : response.body()) {
 						int id = u.getId();
 
-						try {
-							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
-							current_team = Optional.fromNullable(u.getCurrent_team().getId()).or(NULL_INT);
-							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
-							hometown = Optional.fromNullable(u.getHometown()).or(NULL_STRING);
-							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
-							role = Optional.fromNullable(u.getRole()).or(NULL_STRING);
-							first_name = Optional.fromNullable(u.getFirst_name()).or(NULL_STRING);
-							last_name = Optional.fromNullable(u.getLast_name()).or(NULL_STRING);
-							team_name = Optional.fromNullable(u.getCurrent_team().getName()).or(NULL_STRING);
+//						try {
+//							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+//							current_team = Optional.fromNullable(u.getCurrent_team().getId()).or(NULL_INT);
+//							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+//							hometown = Optional.fromNullable(u.getHometown()).or(NULL_STRING);
+//							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+//							role = Optional.fromNullable(u.getRole()).or(NULL_STRING);
+//							first_name = Optional.fromNullable(u.getFirst_name()).or(NULL_STRING);
+//							last_name = Optional.fromNullable(u.getLast_name()).or(NULL_STRING);
+//							team_name = Optional.fromNullable(u.getCurrent_team().getName()).or(NULL_STRING);
 
-						} catch (Exception e) {
-							// TODO: handle exception
-							System.out.println("ERROR: getLoLPlayers " + e.getMessage());
-						}
+							try {
+								name = checkNullString(u.getName());
+							} catch (Exception e) {
+								// TODO: handle exception
+								name = NULL_STRING;
+							}
+							try {
+								current_team = checkNullInt(u.getCurrent_team().getId());
+
+							} catch (Exception e) {									
+								current_team = NULL_INT;				
+							}
+							try {
+								videogame = checkNullString(u.getVideogame().getName());
+
+							} catch (Exception e) {								
+								videogame = NULL_STRING;
+							}
+							try {
+								hometown = checkNullString(u.getHometown());
+
+							} catch (Exception e) {
+								hometown = NULL_STRING;
+							}
+							try {
+								image_url = checkNullImage(u.getImage_url());
+
+							} catch (Exception e) {
+								image_url = NULL_IMAGE;
+							}
+							try {
+								role = checkNullString(u.getRole());
+
+							} catch (Exception e) {
+								role = NULL_STRING;
+							}
+							try {
+								first_name = checkNullString(u.getFirst_name());
+
+							} catch (Exception e) {
+								first_name = NULL_STRING;
+							}
+							try {
+								last_name = checkNullString(u.getLast_name());
+
+							} catch (Exception e) {
+								last_name = NULL_STRING;
+							}
+							try {
+								team_name =	checkNullString(u.getCurrent_team().getName());	
+
+							} catch (Exception e) {
+								team_name = NULL_STRING;
+							}
+//						} catch (Exception e) {
+//							// TODO: handle exception
+//							System.out.println("ERROR: getLoLPlayers " + e.getMessage());
+//						}
 
 						savePlayerDetails(id, name, current_team, videogame, hometown, image_url, role, first_name,
 								last_name, team_name);
@@ -155,6 +277,22 @@ public class PlayerService implements APIConfiguration {
 
 	}
 
+	public int checkNullInt(Integer x) {
+		x.toString();
+		if(x.toString() == null || x.toString() == "" || x.toString().equals("") || x.toString().equals(null)) {
+			return NULL_INT;
+		}
+		return x;
+	}
+	
+	public String checkNullImage(String x) {
+		if(x == null || x == "" || x.equals("") || x.equals(null)) {
+			return NULL_IMAGE;
+		}
+		return x;
+	}
+	
+	
 	public List<Player> getAll() {
 		// TODO Auto-generated method stub
 		return playerRepo.findAll();

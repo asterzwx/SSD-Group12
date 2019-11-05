@@ -32,6 +32,7 @@ public class TeamService implements APIConfiguration {
 	private RepositoryInterface service;
 	List<API_Team> teams = null;
 	
+	PlayerService playerService = new PlayerService();
 
 	public TeamService() {
 		Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.pandascore.co/")
@@ -57,11 +58,36 @@ public class TeamService implements APIConfiguration {
 					System.out.println("@@@@@@@@@@@@@@@@");
 					for (API_Team u : response.body()) {						
 						try {
-							id = Optional.fromNullable(u.getId()).or(NULL_INT);
-							acronym = Optional.fromNullable(u.getAcronym()).or(NULL_STRING);
-							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
-							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
-							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+							try {
+								id = playerService.checkNullInt(u.getId());
+							} catch (Exception e) {
+								id = NULL_INT;
+							}
+							try {
+								acronym = playerService.checkNullString(u.getAcronym());
+							} catch (Exception e) {
+								acronym = NULL_STRING;
+							}
+							try {
+								name = playerService.checkNullString(u.getName());
+							} catch (Exception e) {
+								name = NULL_STRING;
+							}
+							try {
+								image_url = playerService.checkNullImage(u.getImage_url());
+							} catch (Exception e) {
+								image_url = NULL_IMAGE;
+							}
+							try {
+								videogame = playerService.checkNullString(u.getVideogame().getName());
+							} catch (Exception e) {
+								videogame = NULL_STRING;
+							}
+//							id = Optional.fromNullable(u.getId()).or(NULL_INT);
+//							acronym = Optional.fromNullable(u.getAcronym()).or(NULL_STRING);
+//							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+//							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+//							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
 						
 							saveTeamDetails(id, acronym, name, image_url, videogame);
 
@@ -104,12 +130,36 @@ public class TeamService implements APIConfiguration {
 					
 					for (API_Team u : response.body()) {						
 						try {
-							id = Optional.fromNullable(u.getId()).or(NULL_INT);
-							acronym = Optional.fromNullable(u.getAcronym()).or(NULL_STRING);
-							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
-							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
-							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
-							
+//							id = Optional.fromNullable(u.getId()).or(NULL_INT);
+//							acronym = Optional.fromNullable(u.getAcronym()).or(NULL_STRING);
+//							name = Optional.fromNullable(u.getName()).or(NULL_STRING);
+//							image_url = Optional.fromNullable(u.getImage_url()).or(NULL_IMAGE);
+//							videogame = Optional.fromNullable(u.getVideogame().getName()).or(NULL_STRING);
+							try {
+								id = playerService.checkNullInt(u.getId());
+							} catch (Exception e) {
+								id = NULL_INT;
+							}
+							try {
+								acronym = playerService.checkNullString(u.getAcronym());
+							} catch (Exception e) {
+								acronym = NULL_STRING;
+							}
+							try {
+								name = playerService.checkNullString(u.getName());
+							} catch (Exception e) {
+								name = NULL_STRING;
+							}
+							try {
+								image_url = playerService.checkNullImage(u.getImage_url());
+							} catch (Exception e) {
+								image_url = NULL_IMAGE;
+							}
+							try {
+								videogame = playerService.checkNullString(u.getVideogame().getName());
+							} catch (Exception e) {
+								videogame = NULL_STRING;
+							}
 							saveTeamDetails(id, acronym, name, image_url, videogame);
 						} catch (Exception e) {
 							// TODO: handle exception
