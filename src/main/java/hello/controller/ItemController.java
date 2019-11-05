@@ -1,10 +1,12 @@
 package hello.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonObject;
+
 import hello.model.Item;
 import hello.repo.ItemRepo;
 import hello.service.ItemService;
@@ -28,6 +32,8 @@ public class ItemController {
 	
 	@Autowired
 	private ItemService itemService;
+	@Autowired
+	private ItemRepo itemRepo;
 
 	@GetMapping(value = "/all")
 	public List<Item> getAllItem() {
@@ -42,6 +48,11 @@ public class ItemController {
 		}
 
 		return ResponseEntity.ok(item.get());
+	}
+	
+	@GetMapping(value = "/all/{username}")
+	public List<Object[]> getItemsByUsername(@Valid @PathVariable String username) {
+		return itemRepo.findItemsByUsername(username);
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
