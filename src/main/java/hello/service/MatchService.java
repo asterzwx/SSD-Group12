@@ -195,7 +195,7 @@ public class MatchService implements APIConfiguration {
 	}
 
 	public List<API_Match> getAllDotaMatches() throws IOException {
-		Call<List<API_Match>> call = service.listAllDotaMatches(API_KEY, 20,
+		Call<List<API_Match>> call = service.listAllDotaMatches(API_KEY, 100,
 				"2019-10-01T00:00:00Z,2019-11-30T23:59:59Z", "-scheduled_at");
 		call.enqueue(new Callback<List<API_Match>>() {
 			@Override
@@ -220,6 +220,8 @@ public class MatchService implements APIConfiguration {
 						String winner_id = "";
 						String videogame = u.getVideogame().getName();
 						String scheduled_at = u.getScheduledAt();
+						System.out.println("-----------");
+						System.out.println(u.getBeginAt());
 //						try {
 //							winner_id = Optional.fromNullable(u.getWinnerId().toString()).or(NULL_STRING);
 //							begin_at = Optional.fromNullable(u.getBeginAt()).or(NULL_STRING);

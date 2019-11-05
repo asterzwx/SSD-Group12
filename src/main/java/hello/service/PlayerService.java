@@ -64,7 +64,7 @@ public class PlayerService implements APIConfiguration {
 
 						if (!videogame.equals(null) && !u.getName().equals(null)) {
 //							try {
-								System.out.println("=============");
+								
 //								System.out.println(checkNull(u.getHometown()));
 //								name = Optional.fromNullable(u.getName()).or(NULL_STRING);
 //								current_team = Optional.fromNullable(u.getCurrent_team().getId()).or(NULL_INT);
