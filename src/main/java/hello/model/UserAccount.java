@@ -18,8 +18,9 @@ public class UserAccount {
 	}
 
 	
+
 	public UserAccount(String username, String password, String profile_picture, String mobile_number, String email,
-			String status, String password_hash, String salt, String token) {
+			String status, String password_hash, String salt, String token, boolean role) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -30,6 +31,7 @@ public class UserAccount {
 		this.password_hash = password_hash;
 		this.salt = salt;
 		this.token = token;
+		this.role = role;
 	}
 
 
@@ -63,6 +65,10 @@ public class UserAccount {
 	@Column(name = "token")
 	@Nullable
 	private String token;
+	
+	@Column(name = "role")
+	@Nullable
+	private boolean role;
 
 	public String getUsername() {
 		return username;
@@ -147,6 +153,16 @@ public class UserAccount {
 
 	public void setToken(String token) {
 		this.token = token;
+	}
+
+
+	public boolean getRole() {
+		return role;
+	}
+
+
+	public void setRole(boolean role) {
+		this.role = role;
 	}
 	
 	
