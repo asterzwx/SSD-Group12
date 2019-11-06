@@ -17,10 +17,9 @@ public class UserAccount {
 
 	}
 
-	
 
 	public UserAccount(String username, String password, String profile_picture, String mobile_number, String email,
-			String status, String password_hash, String salt, String token, boolean role) {
+			String status, String password_hash, String salt, String token, boolean role, String reset_password) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -32,8 +31,8 @@ public class UserAccount {
 		this.salt = salt;
 		this.token = token;
 		this.role = role;
+		this.reset_password = reset_password;
 	}
-
 
 
 	@Id
@@ -69,6 +68,11 @@ public class UserAccount {
 	@Column(name = "role")
 	@Nullable
 	private boolean role;
+	
+	@Column(name = "reset_password")
+	@Nullable
+	private String reset_password;
+	
 
 	public String getUsername() {
 		return username;
@@ -164,6 +168,18 @@ public class UserAccount {
 	public void setRole(boolean role) {
 		this.role = role;
 	}
+
+
+	public String getReset_password() {
+		return reset_password;
+	}
+
+
+	public void setReset_password(String reset_password) {
+		this.reset_password = reset_password;
+	}
+
+
 	
 	
 

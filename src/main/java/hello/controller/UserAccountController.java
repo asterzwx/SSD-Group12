@@ -2,6 +2,7 @@ package hello.controller;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Random;
 
 import javax.transaction.Transactional;
@@ -18,9 +20,13 @@ import org.apache.catalina.User;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,7 +57,7 @@ import hello.repo.UserAccountView;
 import hello.repo.UserInventoryRepo;
 import hello.service.UserAccountService;
 
-@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
+@CrossOrigin(origins = { "https://gambit-team12.tk", "http://localhost:4200" })
 
 @RestController
 @RequestMapping(value = "/useraccount")
@@ -63,14 +69,35 @@ public class UserAccountController {
 	UserAccountRepo userAccountRepo;
 	@Autowired
 	UserInventoryRepo userInventoryRepo;
-	
+
 	ViewControllerRegistry registry;
-	
+
 	private JwtGenerator jwtGenerator;
 
-    public UserAccountController(JwtGenerator jwtGenerator) {
-        this.jwtGenerator = jwtGenerator;
-    }
+	@Autowired
+	private JavaMailSender javaMailSender;
+
+	@Bean
+	public JavaMailSender getJavaMailSender() {
+		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+		mailSender.setHost("smtp.gmail.com");
+		mailSender.setPort(587);
+
+		mailSender.setUsername("ssdgroup12@gmail.com");
+		mailSender.setPassword("dmkimdgswosawvyq");
+
+		Properties props = mailSender.getJavaMailProperties();
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.debug", "true");
+
+		return mailSender;
+	}
+
+	public UserAccountController(JwtGenerator jwtGenerator) {
+		this.jwtGenerator = jwtGenerator;
+	}
 
 //	@GetMapping(value = "/all")
 //	public List<UserAccount> getAllUsers() {
@@ -109,13 +136,15 @@ public class UserAccountController {
 
 			userAccount.setPassword_hash(generatedHash_SHA256);
 			userAccount.setSalt(generatedSalt.toString());
-			userService.saveUser(userAccount);
+//			userService.saveUser(userAccount);
+			userAccountRepo.createNormalUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+					userAccount.getMobile_number(), userAccount.getEmail(), "active", false);
 
-			//at the same time, create a record for this new user in user_inventory
+			// at the same time, create a record for this new user in user_inventory
 			userInventoryRepo.createNewRecord(userAccount.getUsername(), 0, 0, false);
-			
-			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);			
-			
+
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+
 			json.put("created", "true");
 
 		} else {
@@ -157,12 +186,12 @@ public class UserAccountController {
 				json.put("login", "true");
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
 //				registry.addViewController("/**").setViewName("forward:/");	
-				
-				//GENERATE JWT TOKEN
+
+				// GENERATE JWT TOKEN
 				String token = jwtGenerator.generateForUser(userAccount).toString();
 				json.put("token", token);
 				userService.updateUserToken(userAccount.getUsername(), token);
-				
+
 			} else {
 				System.out.println("FAILED");
 				json.put("login", "false");
@@ -174,14 +203,76 @@ public class UserAccountController {
 			responseEntity = new ResponseEntity<UserAccount>(HttpStatus.UNAUTHORIZED);
 
 		}
-//		if (responseEntity.getHeaders().equals(HttpStatus.OK)) {
-//			json.put("login", "true");
-//			return json;
-//		} else {
-//			json.put("login", "false");
-//			return json;
-//		}
 		return json;
+	}
+
+	@PostMapping("/forgetpassword")
+	@Transactional
+	public Map<String, Object> forgetPassword(@RequestBody UserAccount userAccount) {
+//		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
+		Map<String, Object> json = new HashMap();
+		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
+		// if email exists
+		if (userAccount.getEmail().equals(getEmailString)) {
+			// generate new password
+			String reset_password = "WTF";
+//			userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
+			userService.updateResetPassword(userAccount.getUsername(), reset_password);
+			// send email
+			sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
+			json.put("reset", "true");
+			return json;
+		} else {
+			json.put("reset", "false");
+			return json;
+		}
+	}
+
+	@PostMapping("/updatepassword")
+	@Transactional
+	public Map<String, Object> updatePassword(@RequestBody UserAccount userAccount) {
+		Map<String, Object> json = new HashMap();
+		//check that reset_password field is not null, proves that he has requested to forget/reset password		
+		if(!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(null)) {
+			// 1. generate salt
+			// generate salt value
+			String generatedSalt = generateSalt().toString();
+			// 2. hash the user's password with the salt (X)
+			String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+			// 3. use sha256 to hash X
+			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+					.toString();
+
+			userAccount.setPassword_hash(generatedHash_SHA256);
+			userAccount.setSalt(generatedSalt.toString());
+			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt);
+			json.put("updated", "true");
+			return json;
+		}		
+		else {
+			json.put("updated", "false");
+			return json;	
+		}
+		
+	}
+
+	public String givenUsingPlainJava_whenGeneratingRandomStringUnbounded_thenCorrect() {
+		byte[] array = new byte[7]; // length is bounded by 7
+		new Random().nextBytes(array);
+		String generatedString = new String(array, Charset.forName("UTF-8"));
+		return generatedString;
+	}
+
+	void sendEmail(String email, String username, String password) {
+
+		SimpleMailMessage msg = new SimpleMailMessage();
+		msg.setTo(email);
+
+		msg.setSubject("Reset Password for Gambit");
+		msg.setText("Hello " + username + "," + " \n Your new password is: " + password);
+
+		javaMailSender.send(msg);
+
 	}
 
 //	@PostMapping("/logout")
@@ -198,7 +289,7 @@ public class UserAccountController {
 //		}
 //		return json;
 //	}
-	
+
 	@PostMapping("/logout/{username}")
 	@Transactional
 	public Map<String, Object> logout(@PathVariable String username) {
@@ -208,34 +299,28 @@ public class UserAccountController {
 		if (userService.findById(username).isPresent()) {
 			json.put("login", "false");
 			userAccountRepo.updateUserLogoutStatus(username, "active");
-			System.out.println(username + " logged out");				
-		}
-		else {
+			System.out.println(username + " logged out");
+		} else {
 			json.put("login", "invalid user");
 		}
 		return json;
 	}
-	
-	
-	
-	
-	
-	
+
 //	@PostMapping
 //    public String generate(@RequestBody final JwtUser jwtUser) {
 //        return jwtGenerator.generate(jwtUser);
 //
 //    }
 
-	@PutMapping("/updateHashSalt/{username}")
-	public ResponseEntity<UserAccount> updateHashSalt(@PathVariable String username,
-			@RequestBody UserAccount userAccount) {
-		if (!userService.findById(username).isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-
-		return ResponseEntity.ok(userService.saveUser(userAccount));
-	}
+//	@PutMapping("/updateHashSalt/{username}")
+//	public ResponseEntity<UserAccount> updateHashSalt(@PathVariable String username,
+//			@RequestBody UserAccount userAccount) {
+//		if (!userService.findById(username).isPresent()) {
+//			ResponseEntity.badRequest().build();
+//		}
+//
+//		return ResponseEntity.ok(userService.saveUser(userAccount));
+//	}
 
 	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
@@ -276,7 +361,5 @@ public class UserAccountController {
 	public String firstPage() {
 		return "Hello World";
 	}
-	
-	
 
 }

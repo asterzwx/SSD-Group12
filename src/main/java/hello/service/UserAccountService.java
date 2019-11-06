@@ -45,5 +45,10 @@ public class UserAccountService {
 	public void updateUserToken(String username, String token) {
         userRepo.updateUserToken(username, token);
 	}
+	
+	@Transactional
+	public void updateResetPassword(String username, String reset_password) {
+        userRepo.updateResetPassword(username, reset_password);
+	}
 
 }
