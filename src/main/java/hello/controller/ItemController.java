@@ -51,7 +51,7 @@ public class ItemController {
 	}
 	
 	@GetMapping(value = "/all/{username}")
-	public List<Object[]> getItemsByUsername(@Valid @PathVariable String username) {
+	public List<Map<String, String>> getItemsByUsername(@Valid @PathVariable String username) {
 		return itemRepo.findItemsByUsername(username);
 	}
 

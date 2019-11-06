@@ -15,8 +15,8 @@ import hello.model.Item;
 public interface ItemRepo extends JpaRepository<Item, Integer>{
 	
 
-	@Query("SELECT u.item_id, i.name, i.image FROM Item i, UserInventory u " + 
+	@Query("SELECT u.item_id as item_id, i.name as name, i.image as image, i.cost as cost FROM Item i, UserInventory u " + 
 			"WHERE i.item_id = u.item_id AND u.username = :username")			
-	List<Object[]> findItemsByUsername(String username);
+	List<Map<String, String>> findItemsByUsername(String username);
 
 }
