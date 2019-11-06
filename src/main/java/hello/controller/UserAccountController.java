@@ -184,21 +184,42 @@ public class UserAccountController {
 		return json;
 	}
 
-	@PostMapping("/logout")
+//	@PostMapping("/logout")
+//	@Transactional
+//	public Map<String, Object> logout(@RequestBody UserAccount userAccount) {
+//		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
+//		Map<String, Object> json = new HashMap();
+//		// if user exists
+//		if (userService.findById(userAccount.getUsername()).isPresent()) {
+//			json.put("login", "false");
+//			userAccountRepo.updateUserLogoutStatus(userAccount.getUsername(), "active");
+//			System.out.println(userAccount.getUsername() + " logged out");	
+//			
+//		}
+//		return json;
+//	}
+	
+	@PostMapping("/logout/{username}")
 	@Transactional
-	public Map<String, Object> logout(@RequestBody UserAccount userAccount) {
-		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
+	public Map<String, Object> logout(@PathVariable String username) {
+//		Optional<UserAccount> user = userService.findById(username);
 		Map<String, Object> json = new HashMap();
 		// if user exists
-		if (userService.findById(userAccount.getUsername()).isPresent()) {
+		if (userService.findById(username).isPresent()) {
 			json.put("login", "false");
-			userAccountRepo.updateUserLogoutStatus(userAccount.getUsername(), "active");
-			System.out.println(userAccount.getUsername() + " logged out");
-			
-			
+			userAccountRepo.updateUserLogoutStatus(username, "active");
+			System.out.println(username + " logged out");				
+		}
+		else {
+			json.put("login", "invalid user");
 		}
 		return json;
 	}
+	
+	
+	
+	
+	
 	
 //	@PostMapping
 //    public String generate(@RequestBody final JwtUser jwtUser) {
