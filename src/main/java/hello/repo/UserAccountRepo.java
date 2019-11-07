@@ -62,11 +62,16 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
     		@Param("status") String status, @Param("role") boolean role);
 	
 	@Modifying
-	@Query("UPDATE UserAccount u SET u.password_hash = :password_hash, u.salt = :salt, u.reset_password = NULL "
+	@Query("UPDATE UserAccount u SET u.password_hash = :password_hash, u.salt = :salt, u.reset_password = :reset_password "
 			+ " WHERE u.username = :username") 
     int updateNewPassword(@Param("username") String username, @Param("password_hash") String password_hash,
-    		@Param("salt") String salt);
+    		@Param("salt") String salt, @Param("reset_password") String reset_password );
 	
 	@Query("SELECT u.reset_password as reset_password FROM UserAccount u WHERE u.username = :username") 
 	String checkResetPasswordNull(@Param("username") String username);
+	
+	@Modifying
+	@Query("UPDATE UserAccount u SET u.password_hash = '', u.salt = '' WHERE u.username = :username") 
+    int removePasswordHashAndSalt(@Param("username") String username);
+	
 }

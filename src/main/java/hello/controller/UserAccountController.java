@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,14 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
 
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
@@ -77,6 +86,11 @@ public class UserAccountController {
 	@Autowired
 	private JavaMailSender javaMailSender;
 
+	Properties props;
+	
+	static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	static SecureRandom rnd = new SecureRandom();
+
 	@Bean
 	public JavaMailSender getJavaMailSender() {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -86,7 +100,7 @@ public class UserAccountController {
 		mailSender.setUsername("ssdgroup12@gmail.com");
 		mailSender.setPassword("dmkimdgswosawvyq");
 
-		Properties props = mailSender.getJavaMailProperties();
+		props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.starttls.enable", "true");
@@ -120,9 +134,19 @@ public class UserAccountController {
 	public Map<String, Object> create(@RequestBody UserAccount userAccount) {
 		ResponseEntity<Admin> responseEntity = null;
 		Map<String, Object> json = new HashMap();
+		boolean regexPassed = false;
+		// check regex first
+		RegexChecker regexChecker = new RegexChecker();
+		if (regexChecker.validateInputs(userAccount.getUsername(), userAccount.getEmail(),
+				userAccount.getMobile_number(), userAccount.getPassword(), userAccount.getPassword())) {
+			regexPassed = true;
+		} else {
+			regexPassed = false;
+			json.put("created", "false");
 
+		}
 		// if user dont exist
-		if (!userService.findById(userAccount.getUsername()).isPresent()) {
+		if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
 			userAccount.setUsername(userAccount.getUsername());
 
 			// 1. generate salt
@@ -166,7 +190,6 @@ public class UserAccountController {
 
 		// if user exists
 		if (userService.findById(userAccount.getUsername()).isPresent()) {
-
 			UserAccount userInfo = user.get();
 			// get user's paswordhash
 			String user_password_hash = userInfo.getPassword_hash(); // for comparing later
@@ -183,7 +206,7 @@ public class UserAccountController {
 			// compare this hash with the user's pw hash
 			if (user_password_hash.equals(generatedHash_SHA256)) {
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
-				json.put("login", "true");
+
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
 //				registry.addViewController("/**").setViewName("forward:/");	
 
@@ -191,6 +214,15 @@ public class UserAccountController {
 				String token = jwtGenerator.generateForUser(userAccount).toString();
 				json.put("token", token);
 				userService.updateUserToken(userAccount.getUsername(), token);
+
+				// if reset_password not null means requested new password but havent change to
+				// new password
+				if (!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(null)) {
+					json.put("allow_change_new_password", "true");
+				} 
+				else {
+					json.put("login", "true");
+				}
 
 			} else {
 				System.out.println("FAILED");
@@ -215,80 +247,128 @@ public class UserAccountController {
 		// if email exists
 		if (userAccount.getEmail().equals(getEmailString)) {
 			// generate new password
-			String reset_password = "WTF";
+
+			String reset_password = getRandomNumberString(8);
 //			userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
-			userService.updateResetPassword(userAccount.getUsername(), reset_password);
 			// send email
 			sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
-			json.put("reset", "true");
-			return json;
-		} else {
-			json.put("reset", "false");
-			return json;
-		}
-	}
 
-	@PostMapping("/updatepassword")
-	@Transactional
-	public Map<String, Object> updatePassword(@RequestBody UserAccount userAccount) {
-		Map<String, Object> json = new HashMap();
-		//check that reset_password field is not null, proves that he has requested to forget/reset password		
-		if(!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(null)) {
-			// 1. generate salt
+			// then, hash this new password as per normal
 			// generate salt value
 			String generatedSalt = generateSalt().toString();
 			// 2. hash the user's password with the salt (X)
-			String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+			String password_plus_salt = "" + reset_password + generatedSalt;
 			// 3. use sha256 to hash X
 			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
 					.toString();
 
-			userAccount.setPassword_hash(generatedHash_SHA256);
-			userAccount.setSalt(generatedSalt.toString());
-			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt);
-			json.put("updated", "true");
+			// replace old password_hash and salt
+			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+					"generated");
+
+			json.put("email_sent", "true");
 			return json;
-		}		
-		else {
-			json.put("updated", "false");
-			return json;	
+		} else {
+			json.put("email_sent", "false");
+			return json;
 		}
-		
 	}
 
-	public String givenUsingPlainJava_whenGeneratingRandomStringUnbounded_thenCorrect() {
-		byte[] array = new byte[7]; // length is bounded by 7
-		new Random().nextBytes(array);
-		String generatedString = new String(array, Charset.forName("UTF-8"));
-		return generatedString;
+	// when changing new password
+	@PostMapping("/updatepassword")
+	@Transactional
+	public Map<String, Object> updatePassword(@RequestBody UserAccount userAccount) {
+		Map<String, Object> json = new HashMap();
+		// check that reset_password field is not null, proves that he has requested to
+		// forget/reset password
+		try {
+			if (!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(null)) {
+				// 1. generate salt
+				// generate salt value
+				String generatedSalt = generateSalt().toString();
+				// 2. hash the user's password with the salt (X)
+				String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+				// 3. use sha256 to hash X
+				String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+						.toString();
+
+				userAccount.setPassword_hash(generatedHash_SHA256);
+				userAccount.setSalt(generatedSalt.toString());
+				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, null);
+				// update reset_password to null
+//				userService.updateResetPassword(userAccount.getUsername(), null);
+				json.put("updated", "true");
+				return json;
+			} else {
+				json.put("updated", "false");
+				return json;
+			}
+
+		} catch (Exception e) {
+			json.put("updated", "false");
+		}
+		return json;
+
 	}
 
-	void sendEmail(String email, String username, String password) {
-
-		SimpleMailMessage msg = new SimpleMailMessage();
-		msg.setTo(email);
-
-		msg.setSubject("Reset Password for Gambit");
-		msg.setText("Hello " + username + "," + " \n Your new password is: " + password);
-
-		javaMailSender.send(msg);
-
+	public static String getRandomNumberString(int len) {
+		 StringBuilder sb = new StringBuilder( len );
+		   for( int i = 0; i < len; i++ ) 
+		      sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
+		   return sb.toString();
 	}
 
-//	@PostMapping("/logout")
-//	@Transactional
-//	public Map<String, Object> logout(@RequestBody UserAccount userAccount) {
-//		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
-//		Map<String, Object> json = new HashMap();
-//		// if user exists
-//		if (userService.findById(userAccount.getUsername()).isPresent()) {
-//			json.put("login", "false");
-//			userAccountRepo.updateUserLogoutStatus(userAccount.getUsername(), "active");
-//			System.out.println(userAccount.getUsername() + " logged out");	
-//			
-//		}
-//		return json;
-//	}
+	public void sendEmail(String email, String username, String password) {
+//		SimpleMailMessage msg = new SimpleMailMessage();
+////        Message msg = new MimeMessage(session);
+//
+//		msg.setTo(email);
+//
+//		msg.setSubject("Reset Password for Gambit");
+//		msg.setText("<h2>Hello " + username + ",</h2> \n "
+//				+ "<h3>Your new password is <h1><b>" + password + "</b></h1></h3>");
+//		javaMailSender.send(msg);
+
+		// sets SMTP server properties
+		Properties properties = new Properties();
+		properties.put("mail.smtp.host", "smtp.gmail.com");
+		properties.put("mail.smtp.port", 587);
+		properties.put("mail.smtp.auth", "true");
+		properties.put("mail.smtp.starttls.enable", "true");
+
+		// creates a new session with an authenticator
+		Authenticator auth = new Authenticator() {
+			public PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication("ssdgroup12@gmail.com", "dmkimdgswosawvyq");
+			}
+		};
+
+		Session session = Session.getInstance(properties, auth);
+
+		// creates a new e-mail message
+		Message msg = new MimeMessage(session);
+		try {
+			msg.setFrom(new InternetAddress("ssdgroup12@gmail.com"));
+			InternetAddress[] toAddresses = { new InternetAddress(email) };
+			msg.setRecipients(Message.RecipientType.TO, toAddresses);
+			msg.setSubject("GAMBIT Reset Password");
+			msg.setSentDate(new Date());
+			// set plain text message
+			EmailTemplate emailTemplate = new EmailTemplate();
+			msg.setContent(emailTemplate.template(password), "text/html");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		// sends the e-mail
+		try {
+			Transport.send(msg);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 	@PostMapping("/logout/{username}")
 	@Transactional
@@ -306,22 +386,6 @@ public class UserAccountController {
 		return json;
 	}
 
-//	@PostMapping
-//    public String generate(@RequestBody final JwtUser jwtUser) {
-//        return jwtGenerator.generate(jwtUser);
-//
-//    }
-
-//	@PutMapping("/updateHashSalt/{username}")
-//	public ResponseEntity<UserAccount> updateHashSalt(@PathVariable String username,
-//			@RequestBody UserAccount userAccount) {
-//		if (!userService.findById(username).isPresent()) {
-//			ResponseEntity.badRequest().build();
-//		}
-//
-//		return ResponseEntity.ok(userService.saveUser(userAccount));
-//	}
-
 	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
 		userAccount.setUsername(username);
@@ -332,16 +396,6 @@ public class UserAccountController {
 		userAccount.setSalt("updatedsaltvaluehere");
 		return ResponseEntity.ok(userService.saveUser(userAccount));
 	}
-
-//	@DeleteMapping("/delete/{username}")
-//	public ResponseEntity delete(@PathVariable String username) {
-//		if (!userService.findById(username).isPresent()) {
-//			ResponseEntity.badRequest().build();
-//		}
-//		userService.deleteById(username);
-//
-//		return ResponseEntity.ok().build();
-//	}
 
 	public byte[] generateSalt() {
 		SecureRandom random = new SecureRandom();
