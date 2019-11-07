@@ -27,5 +27,5 @@ public interface UserPredictionRepo extends JpaRepository<UserPrediction, Intege
 	@Query("SELECT p FROM UserPrediction p WHERE p.username = :username")
 	List<UserPrediction> getPredictionsByUsername(@Param("username") String username);
 	
-
+	
 }

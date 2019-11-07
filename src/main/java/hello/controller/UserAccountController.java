@@ -94,6 +94,7 @@ public class UserAccountController {
 	static SecureRandom rnd = new SecureRandom();
 
 	boolean otpEnabled = false;
+	long newTime;
 
 	@Bean
 	public JavaMailSender getJavaMailSender() {
@@ -245,19 +246,25 @@ public class UserAccountController {
 	@PostMapping("/forgetpassword")
 	@Transactional
 	public Map<String, Object> forgetPassword(@RequestBody UserAccount userAccount) {
+		newTime = System.currentTimeMillis() + 10000;
 //		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		Map<String, Object> json = new HashMap();
 		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
 		// if email exists
-		if (otpEnabled == true) {
 
-			if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 4) {
+		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 4) {
+
+			// get current user otp count
+			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
+			count = count + 1;
+			// once email is sent, run timer and update user's otp count
+			timerCheckUserOTPStatus(count);
+			if(otpEnabled == true) {
 				// generate new password
-
 				String reset_password = getRandomNumberString(8);
-//			userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
-//			 send email
-				sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
+//				userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
+//				 send email
+//					sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
 
 				// then, hash this new password as per normal
 				// generate salt value
@@ -271,11 +278,6 @@ public class UserAccountController {
 				// replace old password_hash and salt
 				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 1);
 
-				// get current user otp count
-				int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
-				count = count + 1;
-				// once email is sent, run timer and update user's otp count
-				timerCheckUserOTPStatus(count);
 				userAccountRepo.updateOTPCount(count, userAccount.getUsername());
 
 				if (otpEnabled == true) {
@@ -284,19 +286,16 @@ public class UserAccountController {
 					userAccountRepo.updateStatus("locked", userAccount.getUsername());
 					json.put("email_sent", "locked");
 				}
+			}		
 
 //			json.put("email_sent", "true");
-				return json;
-			} else {
-				json.put("email_sent", "false");
-				return json;
-			}
-		}
-		else {
+			return json;
+		} else {
 			json.put("email_sent", "false");
 			return json;
 		}
 		
+
 	}
 
 	// when changing new password
@@ -334,9 +333,7 @@ public class UserAccountController {
 		}
 		return json;
 	}
-	
-	
-  
+
 	@PutMapping("/changepassword")
 	@Transactional
 	public Map<String, Object> changePassword(@RequestBody UserAccount userAccount) {
@@ -372,8 +369,6 @@ public class UserAccountController {
 		return json;
 
 	}
-	
-	
 
 	public static String getRandomNumberString(int len) {
 		StringBuilder sb = new StringBuilder(len);
@@ -441,7 +436,7 @@ public class UserAccountController {
 		return json;
 	}
 
-	public boolean timerCheckUserOTPStatus(int count) {
+	public void timerCheckUserOTPStatus(int count) {
 		TimerTask repeatedTask = new TimerTask() {
 			public void run() {
 				System.out.println("Task performed on " + new Date());
@@ -456,11 +451,11 @@ public class UserAccountController {
 		Map<String, Object> json = new HashMap();
 
 		long current = System.currentTimeMillis();
-		long pastTime = current - period;
+		
 
-		// lock user out when count reaches 3
-		if (current >= pastTime) {
+		if (newTime < current) {
 			otpEnabled = true;
+			// lock user out when count reaches 4
 			if (count >= 4) {
 				otpEnabled = false;
 			} else {
@@ -470,7 +465,6 @@ public class UserAccountController {
 			otpEnabled = false;
 		}
 
-		return otpEnabled;
 	}
 
 	@PutMapping("/update/{username}")

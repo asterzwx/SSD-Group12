@@ -1,6 +1,8 @@
 package hello.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -56,13 +58,33 @@ public class UserPredictionController {
 	
 	
 
+//	@PostMapping("/create") // Map ONLY POST Requests
+//	public ResponseEntity create(@RequestBody UserPrediction userPrediction) {
+////		if (!userPredictionService.findById(userPrediction.getId()).isPresent()) {			
+//			return ResponseEntity.ok(userPredictionService.saveUserPrediction(userPrediction));
+////		}
+////		return null;	
+//	}
+	
+	
 	@PostMapping("/create") // Map ONLY POST Requests
-	public ResponseEntity create(@RequestBody UserPrediction userPrediction) {
-//		if (!userPredictionService.findById(userPrediction.getId()).isPresent()) {			
-			return ResponseEntity.ok(userPredictionService.saveUserPrediction(userPrediction));
-//		}
-//		return null;	
+	public Map<String, Object> create(@RequestBody UserPrediction userPrediction) {
+		Map<String, Object> json = new HashMap();
+		boolean x = true;
+		for(UserPrediction u: userPredictionRepo.getPredictionsByUsername(userPrediction.getUsername())) {
+			if(u.getMatch_id() == userPrediction.getMatch_id()&& x) {
+				json.put("created", "false");	
+				x = false;
+			}
+			else if(x) {
+				userPredictionService.saveUserPrediction(userPrediction);
+				json.put("created", "true");
+			}			
+		}
+		return json;
 	}
+	
+	
 	
 	@PutMapping("/update/{id}")
 	public ResponseEntity<UserPrediction> update(@Valid @PathVariable int id, @RequestBody UserPrediction userPrediction) {
