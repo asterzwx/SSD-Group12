@@ -93,6 +93,8 @@ public class UserAccountController {
 	static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	static SecureRandom rnd = new SecureRandom();
 
+	boolean otpEnabled = false;
+
 	@Bean
 	public JavaMailSender getJavaMailSender() {
 		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -219,8 +221,9 @@ public class UserAccountController {
 
 				// if reset_password not null means requested new password but havent change to
 				// new password
-				if (!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(0)) {
+				if (!(userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0)) {
 					json.put("login", "resetted");
+					
 				} else {
 					json.put("login", "true");
 				}
@@ -246,13 +249,13 @@ public class UserAccountController {
 		Map<String, Object> json = new HashMap();
 		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
 		// if email exists
-		if (userAccount.getEmail().equals(getEmailString)) {
+		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 3) {
 			// generate new password
 
 			String reset_password = getRandomNumberString(8);
 //			userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
-			// send email
-			//sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
+//			 send email
+			 sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
 
 			// then, hash this new password as per normal
 			// generate salt value
@@ -264,26 +267,24 @@ public class UserAccountController {
 					.toString();
 
 			// replace old password_hash and salt
-			//userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 1);
-			// update
-
-			//get current user otp count
+			 userAccountRepo.updateNewPassword(userAccount.getUsername(),
+			 generatedHash_SHA256, generatedSalt, 1);
+			
+			// get current user otp count
 			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
-//			if(count < 4) {
-//				// once email is sent, run timer and update user's otp count	
-////				timerCheckUserOTPStatus();			
-//				userAccountRepo.updateOTPCount(userAccount.getOtp_count()+1, userAccount.getUsername());
-//
-//				json.put("email_sent", "true");
-//			}else {
-//				userAccountRepo.updateStatus("locked", userAccount.getUsername());	
-//
-//				json.put("email_sent", "locked");
-//			}
-			
-			
+			count = count + 1;
+			// once email is sent, run timer and update user's otp count
+			timerCheckUserOTPStatus(count);
+			userAccountRepo.updateOTPCount(count, userAccount.getUsername());
 
-			json.put("email_sent", "true");
+			if (otpEnabled == true) {
+				json.put("email_sent", "true");
+			} else {
+				userAccountRepo.updateStatus("locked", userAccount.getUsername());
+				json.put("email_sent", "locked");
+			}
+
+//			json.put("email_sent", "true");
 			return json;
 		} else {
 			json.put("email_sent", "false");
@@ -299,7 +300,7 @@ public class UserAccountController {
 		// check that reset_password field is not null, proves that he has requested to
 		// forget/reset password
 		try {
-			if (!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(null)) {
+			if (!(userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0)) {
 				// 1. generate salt
 				// generate salt value
 				String generatedSalt = generateSalt().toString();
@@ -394,8 +395,7 @@ public class UserAccountController {
 		return json;
 	}
 
-	
-	public void timerCheckUserOTPStatus() {
+	public boolean timerCheckUserOTPStatus(int count) {
 		TimerTask repeatedTask = new TimerTask() {
 			public void run() {
 				System.out.println("Task performed on " + new Date());
@@ -404,15 +404,21 @@ public class UserAccountController {
 		Timer timer = new Timer("Timer");
 
 		long delay = 1000L;
-		long period = 1000L;
+		long period = 3000L;
 		timer.scheduleAtFixedRate(repeatedTask, delay, period);
+
+		Map<String, Object> json = new HashMap();
+
+		// lock user out when count reaches 3
+		if (count >= 3) {
+			otpEnabled = false;
+		} else {
+			otpEnabled = true;
+		}
+		return otpEnabled;
+
 	}
 
-	
-	
-	
-	
-	
 	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
 		userAccount.setUsername(username);
