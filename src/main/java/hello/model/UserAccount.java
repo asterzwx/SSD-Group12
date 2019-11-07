@@ -19,7 +19,8 @@ public class UserAccount {
 
 
 	public UserAccount(String username, String password, String profile_picture, String mobile_number, String email,
-			String status, String password_hash, String salt, String token, boolean role, String reset_password) {
+			String status, String password_hash, String salt, String token, boolean role, String reset_password,
+			int otp_count) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -32,6 +33,7 @@ public class UserAccount {
 		this.token = token;
 		this.role = role;
 		this.reset_password = reset_password;
+		this.otp_count = otp_count;
 	}
 
 
@@ -72,6 +74,11 @@ public class UserAccount {
 	@Column(name = "reset_password")
 	@Nullable
 	private String reset_password;
+	
+	@Column(name = "otp_count")
+	@Nullable
+	private int otp_count;
+	
 	
 
 	public String getUsername() {
@@ -177,6 +184,16 @@ public class UserAccount {
 
 	public void setReset_password(String reset_password) {
 		this.reset_password = reset_password;
+	}
+
+
+	public int getOtp_count() {
+		return otp_count;
+	}
+
+
+	public void setOtp_count(int otp_count) {
+		this.otp_count = otp_count;
 	}
 
 

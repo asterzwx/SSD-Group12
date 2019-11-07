@@ -212,17 +212,18 @@ public class UserAccountController {
 
 				// GENERATE JWT TOKEN
 				String token = jwtGenerator.generateForUser(userAccount).toString();
-				json.put("token", token);
+				json.put("token", "Bearer " + token);
 				userService.updateUserToken(userAccount.getUsername(), token);
 
 				// if reset_password not null means requested new password but havent change to
 				// new password
-				if (!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(null)) {
+				if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) != "0") {
 					json.put("allow_change_new_password", "true");
 				} 
 				else {
 					json.put("login", "true");
 				}
+				
 
 			} else {
 				System.out.println("FAILED");
@@ -265,7 +266,9 @@ public class UserAccountController {
 			// replace old password_hash and salt
 			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
 					"generated");
-
+			//update 
+			
+			
 			json.put("email_sent", "true");
 			return json;
 		} else {
@@ -294,7 +297,7 @@ public class UserAccountController {
 
 				userAccount.setPassword_hash(generatedHash_SHA256);
 				userAccount.setSalt(generatedSalt.toString());
-				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, null);
+				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, "0");
 				// update reset_password to null
 //				userService.updateResetPassword(userAccount.getUsername(), null);
 				json.put("updated", "true");

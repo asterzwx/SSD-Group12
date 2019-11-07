@@ -74,4 +74,8 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("UPDATE UserAccount u SET u.password_hash = '', u.salt = '' WHERE u.username = :username") 
     int removePasswordHashAndSalt(@Param("username") String username);
 	
+	@Modifying
+	@Query("UPDATE UserAccount u SET u.otp_count = :otp_count WHERE u.username = :username") 
+    int updateOTPCount(@Param("otp_count") int otp_count, @Param("username") String username);
+	
 }
