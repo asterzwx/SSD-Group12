@@ -57,34 +57,34 @@ public class ScheduledUnlockUser {
 	public void create() {
 		final LocalDateTime start = LocalDateTime.now();
 //		userAccountRepo.banUser("ast97", "inactive");
-		try {
-			serieController.getDotaSeries();
-			serieController.getLoLSeries();
-
-			leagueController.getLeagues();
-			
-			tournamentController.getDotaTournaments();
-			tournamentController.getLoLPastTournaments();
-			tournamentController.getLoLRunningTournaments();
-			tournamentController.getLoLUpcomingTournaments();			
-			
-			matchController.getAllLoLMatchesAndOpponents();
-			matchController.getAllDotaMatchesAndOpponents();	
-			matchController.getAllLoLResults();
-			matchController.getAllDotaResults();
-		
-			playerController.getDotaPlayers();
-			playerController.getLoLPlayers();		
-			
-			teamController.getDotaTeams();
-			teamController.getLoLTeams();
-			
-			System.out.println("\n Functions executed!\n");
-
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
+//		try {
+//			serieController.getDotaSeries();
+//			serieController.getLoLSeries();
+//
+//			leagueController.getLeagues();
+//			
+//			tournamentController.getDotaTournaments();
+//			tournamentController.getLoLPastTournaments();
+//			tournamentController.getLoLRunningTournaments();
+//			tournamentController.getLoLUpcomingTournaments();			
+//			
+//			matchController.getAllLoLMatchesAndOpponents();
+//			matchController.getAllDotaMatchesAndOpponents();	
+//			matchController.getAllLoLResults();
+//			matchController.getAllDotaResults();
+//		
+//			playerController.getDotaPlayers();
+//			playerController.getLoLPlayers();		
+//			
+//			teamController.getDotaTeams();
+//			teamController.getLoLTeams();
+//			
+//			System.out.println("\n Functions executed!\n");
+//
+//			
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}		
 	}
 }
