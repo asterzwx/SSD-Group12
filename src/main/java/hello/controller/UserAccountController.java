@@ -218,7 +218,7 @@ public class UserAccountController {
 				// if reset_password not null means requested new password but havent change to
 				// new password
 				if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) != "0") {
-					json.put("allow_change_new_password", "true");
+					json.put("allow_change_new_password", "true");   
 				} 
 				else {
 					json.put("login", "true");
