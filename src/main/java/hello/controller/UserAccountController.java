@@ -249,7 +249,7 @@ public class UserAccountController {
 		Map<String, Object> json = new HashMap();
 		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
 		// if email exists
-		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 3) {
+		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 4) {
 			// generate new password
 
 			String reset_password = getRandomNumberString(8);
@@ -326,8 +326,51 @@ public class UserAccountController {
 			json.put("updated", "false");
 		}
 		return json;
+	}
+	
+	
+	@PostMapping("/changepassword")
+	@Transactional
+	public Map<String, Object> changePassword(@RequestBody UserAccount userAccount) {
+		Map<String, Object> json = new HashMap();
+		// check that reset_password field is not null, proves that he has requested to
+		// forget/reset password
+		try {
+			if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0) {
+				// 1. generate salt
+				// generate salt value
+				String generatedSalt = generateSalt().toString();
+				// 2. hash the user's password with the salt (X)
+				String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+				// 3. use sha256 to hash X
+				String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+						.toString();
+
+				userAccount.setPassword_hash(generatedHash_SHA256);
+				userAccount.setSalt(generatedSalt.toString());
+				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 0);
+				// update reset_password to null
+//				userService.updateResetPassword(userAccount.getUsername(), null);
+				json.put("updated", "true");
+				return json;
+			} else {
+				json.put("updated", "false");
+				return json;
+			}
+
+		} catch (Exception e) {
+			json.put("updated", "false");
+		}
+		return json;
 
 	}
+	
+	
+	
+	
+	
+	
+	
 
 	public static String getRandomNumberString(int len) {
 		StringBuilder sb = new StringBuilder(len);
@@ -410,14 +453,17 @@ public class UserAccountController {
 		Map<String, Object> json = new HashMap();
 
 		// lock user out when count reaches 3
-		if (count >= 3) {
+		if (count >= 4) {
 			otpEnabled = false;
 		} else {
 			otpEnabled = true;
 		}
 		return otpEnabled;
-
 	}
+	
+	
+	
+	
 
 	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {

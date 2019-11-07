@@ -24,8 +24,8 @@ import hello.repo.SerieRepo;
 import hello.repo.UserAccountRepo;
 
 @Component
-public class ScheduledTasks {
-	private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
+public class ScheduledUnlockUser {
+	private static final Logger logger = LoggerFactory.getLogger(ScheduledUnlockUser.class);
 	private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
 //	UserAccountController userAccountController;
@@ -39,7 +39,7 @@ public class ScheduledTasks {
 	PlayerController playerController;
 	TeamController teamController;
 
-	public ScheduledTasks(SerieController serieController, LeagueController leagueController,
+	public ScheduledUnlockUser(SerieController serieController, LeagueController leagueController,
 			TournamentController tournamentController, MatchController matchController,
 			PlayerController playerController, TeamController teamController) {
 		super();
@@ -57,34 +57,34 @@ public class ScheduledTasks {
 	public void create() {
 		final LocalDateTime start = LocalDateTime.now();
 //		userAccountRepo.banUser("ast97", "inactive");
-//		try {
-//			serieController.getDotaSeries();
-//			serieController.getLoLSeries();
-//
-//			leagueController.getLeagues();
-//			
-//			tournamentController.getDotaTournaments();
-//			tournamentController.getLoLPastTournaments();
-//			tournamentController.getLoLRunningTournaments();
-//			tournamentController.getLoLUpcomingTournaments();			
-//			
-//			matchController.getAllLoLMatchesAndOpponents();
-//			matchController.getAllDotaMatchesAndOpponents();	
-//			matchController.getAllLoLResults();
-//			matchController.getAllDotaResults();
-//		
-//			playerController.getDotaPlayers();
-//			playerController.getLoLPlayers();		
-//			
-//			teamController.getDotaTeams();
-//			teamController.getLoLTeams();
-//			
-//			System.out.println("\n Functions executed!\n");
-//
-//			
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}		
+		try {
+			serieController.getDotaSeries();
+			serieController.getLoLSeries();
+
+			leagueController.getLeagues();
+			
+			tournamentController.getDotaTournaments();
+			tournamentController.getLoLPastTournaments();
+			tournamentController.getLoLRunningTournaments();
+			tournamentController.getLoLUpcomingTournaments();			
+			
+			matchController.getAllLoLMatchesAndOpponents();
+			matchController.getAllDotaMatchesAndOpponents();	
+			matchController.getAllLoLResults();
+			matchController.getAllDotaResults();
+		
+			playerController.getDotaPlayers();
+			playerController.getLoLPlayers();		
+			
+			teamController.getDotaTeams();
+			teamController.getLoLTeams();
+			
+			System.out.println("\n Functions executed!\n");
+
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 }
