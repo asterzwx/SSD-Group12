@@ -11,7 +11,7 @@ public class EmailTemplate {
 				"\r\n" + 
 				"        <div style='font-family: Arial; border-color: #bce8f1;'>\r\n" + 
 				"\r\n" + 
-				"<div style='vertical-align:middle; text-align:center;'>\r\n" + 
+				"<div style='vertical-align:middle; text-align:center; font-family: Tahoma;'>\r\n" + 
 				"<h1>\r\n" + 
 				"Your new password is: <br>\r\n" + password +
 				"</h1>\r\n" + 

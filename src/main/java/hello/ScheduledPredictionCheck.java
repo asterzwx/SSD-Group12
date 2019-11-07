@@ -92,7 +92,7 @@ public class ScheduledPredictionCheck {
 											points = u.getPoints();
 										}
 										//update everyone's points in userinventory table
-										userInventoryRepo.updateUserPoints(points+1, p.getUsername());
+										userInventoryRepo.updateUserPoints(points+5, p.getUsername());
 										//update points_allocated to be 1
 										userPredictionRepo.updatePointsAllocatedForMatch(matchid);
 									}

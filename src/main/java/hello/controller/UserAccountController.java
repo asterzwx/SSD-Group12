@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.mail.Authenticator;
 import javax.mail.Message;
@@ -87,7 +89,7 @@ public class UserAccountController {
 	private JavaMailSender javaMailSender;
 
 	Properties props;
-	
+
 	static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	static SecureRandom rnd = new SecureRandom();
 
@@ -219,11 +221,9 @@ public class UserAccountController {
 				// new password
 				if (!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(0)) {
 					json.put("login", "resetted");
-				} 
-				else {
+				} else {
 					json.put("login", "true");
 				}
-				
 
 			} else {
 				System.out.println("FAILED");
@@ -252,7 +252,7 @@ public class UserAccountController {
 			String reset_password = getRandomNumberString(8);
 //			userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
 			// send email
-			sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
+			//sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
 
 			// then, hash this new password as per normal
 			// generate salt value
@@ -264,11 +264,25 @@ public class UserAccountController {
 					.toString();
 
 			// replace old password_hash and salt
-			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
-					1);
-			//update 
+			//userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 1);
+			// update
+
+			//get current user otp count
+			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
+//			if(count < 4) {
+//				// once email is sent, run timer and update user's otp count	
+////				timerCheckUserOTPStatus();			
+//				userAccountRepo.updateOTPCount(userAccount.getOtp_count()+1, userAccount.getUsername());
+//
+//				json.put("email_sent", "true");
+//			}else {
+//				userAccountRepo.updateStatus("locked", userAccount.getUsername());	
+//
+//				json.put("email_sent", "locked");
+//			}
 			
 			
+
 			json.put("email_sent", "true");
 			return json;
 		} else {
@@ -315,22 +329,13 @@ public class UserAccountController {
 	}
 
 	public static String getRandomNumberString(int len) {
-		 StringBuilder sb = new StringBuilder( len );
-		   for( int i = 0; i < len; i++ ) 
-		      sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );
-		   return sb.toString();
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < len; i++)
+			sb.append(AB.charAt(rnd.nextInt(AB.length())));
+		return sb.toString();
 	}
 
 	public void sendEmail(String email, String username, String password) {
-//		SimpleMailMessage msg = new SimpleMailMessage();
-////        Message msg = new MimeMessage(session);
-//
-//		msg.setTo(email);
-//
-//		msg.setSubject("Reset Password for Gambit");
-//		msg.setText("<h2>Hello " + username + ",</h2> \n "
-//				+ "<h3>Your new password is <h1><b>" + password + "</b></h1></h3>");
-//		javaMailSender.send(msg);
 
 		// sets SMTP server properties
 		Properties properties = new Properties();
@@ -389,6 +394,25 @@ public class UserAccountController {
 		return json;
 	}
 
+	
+	public void timerCheckUserOTPStatus() {
+		TimerTask repeatedTask = new TimerTask() {
+			public void run() {
+				System.out.println("Task performed on " + new Date());
+			}
+		};
+		Timer timer = new Timer("Timer");
+
+		long delay = 1000L;
+		long period = 1000L;
+		timer.scheduleAtFixedRate(repeatedTask, delay, period);
+	}
+
+	
+	
+	
+	
+	
 	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
 		userAccount.setUsername(username);

@@ -78,4 +78,11 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("UPDATE UserAccount u SET u.otp_count = :otp_count WHERE u.username = :username") 
     int updateOTPCount(@Param("otp_count") int otp_count, @Param("username") String username);
 	
+	@Query("SELECT u.otp_count as otp_count FROM UserAccount u WHERE u.username = :username") 
+	int getCurrentOTPCount(@Param("username") String username);
+	
+	@Modifying
+	@Query("UPDATE UserAccount u SET u.status = :status WHERE u.username = :username") 
+    String updateStatus(@Param("status") String status, @Param("username") String username);
+
 }
