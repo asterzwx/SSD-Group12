@@ -47,7 +47,7 @@ public class UserAccountService {
 	}
 	
 	@Transactional
-	public void updateResetPassword(String username, String reset_password) {
+	public void updateResetPassword(String username, int reset_password) {
         userRepo.updateResetPassword(username, reset_password);
 	}
 

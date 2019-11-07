@@ -47,7 +47,7 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	
 	@Modifying
 	@Query("UPDATE UserAccount u SET u.reset_password = :reset_password WHERE u.username = :username") 
-    int updateResetPassword(@Param("username") String username, @Param("reset_password") String reset_password);
+    int updateResetPassword(@Param("username") String username, @Param("reset_password") int reset_password);
 	
 	@Query("SELECT u.email as email FROM UserAccount u WHERE u.username = :username") 
 	String getEmailByUsername(@Param("username") String username);
@@ -65,7 +65,7 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("UPDATE UserAccount u SET u.password_hash = :password_hash, u.salt = :salt, u.reset_password = :reset_password "
 			+ " WHERE u.username = :username") 
     int updateNewPassword(@Param("username") String username, @Param("password_hash") String password_hash,
-    		@Param("salt") String salt, @Param("reset_password") String reset_password );
+    		@Param("salt") String salt, @Param("reset_password") int reset_password );
 	
 	@Query("SELECT u.reset_password as reset_password FROM UserAccount u WHERE u.username = :username") 
 	String checkResetPasswordNull(@Param("username") String username);

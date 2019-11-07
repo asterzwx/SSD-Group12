@@ -19,7 +19,7 @@ public class UserAccount {
 
 
 	public UserAccount(String username, String password, String profile_picture, String mobile_number, String email,
-			String status, String password_hash, String salt, String token, boolean role, String reset_password,
+			String status, String password_hash, String salt, String token, boolean role, int reset_password,
 			int otp_count) {
 		super();
 		this.username = username;
@@ -73,7 +73,7 @@ public class UserAccount {
 	
 	@Column(name = "reset_password")
 	@Nullable
-	private String reset_password;
+	private int reset_password;
 	
 	@Column(name = "otp_count")
 	@Nullable
@@ -177,12 +177,12 @@ public class UserAccount {
 	}
 
 
-	public String getReset_password() {
+	public int getReset_password() {
 		return reset_password;
 	}
 
 
-	public void setReset_password(String reset_password) {
+	public void setReset_password(int reset_password) {
 		this.reset_password = reset_password;
 	}
 

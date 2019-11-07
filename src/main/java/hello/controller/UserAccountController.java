@@ -217,8 +217,8 @@ public class UserAccountController {
 
 				// if reset_password not null means requested new password but havent change to
 				// new password
-				if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) != "0") {
-					json.put("allow_change_new_password", "true");   
+				if (!userAccountRepo.checkResetPasswordNull(userAccount.getUsername()).equals(0)) {
+					json.put("allow_change_new_password", "true");
 				} 
 				else {
 					json.put("login", "true");
@@ -265,7 +265,7 @@ public class UserAccountController {
 
 			// replace old password_hash and salt
 			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
-					"generated");
+					1);
 			//update 
 			
 			
@@ -297,7 +297,7 @@ public class UserAccountController {
 
 				userAccount.setPassword_hash(generatedHash_SHA256);
 				userAccount.setSalt(generatedSalt.toString());
-				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, "0");
+				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 0);
 				// update reset_password to null
 //				userService.updateResetPassword(userAccount.getUsername(), null);
 				json.put("updated", "true");
