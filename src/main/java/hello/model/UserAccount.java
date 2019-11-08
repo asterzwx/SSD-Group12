@@ -18,9 +18,10 @@ public class UserAccount {
 	}
 
 
+
 	public UserAccount(String username, String password, String profile_picture, String mobile_number, String email,
 			String status, String password_hash, String salt, String token, boolean role, int reset_password,
-			int otp_count) {
+			int otp_count, String datetime_locked) {
 		super();
 		this.username = username;
 		this.password = password;
@@ -34,7 +35,9 @@ public class UserAccount {
 		this.role = role;
 		this.reset_password = reset_password;
 		this.otp_count = otp_count;
+		this.datetime_locked = datetime_locked;
 	}
+
 
 
 	@Id
@@ -79,6 +82,9 @@ public class UserAccount {
 	@Nullable
 	private int otp_count;
 	
+	@Column(name = "datetime_locked")
+	@Nullable
+	private String datetime_locked;
 	
 
 	public String getUsername() {
@@ -194,6 +200,16 @@ public class UserAccount {
 
 	public void setOtp_count(int otp_count) {
 		this.otp_count = otp_count;
+	}
+
+
+	public String getDatetime_locked() {
+		return datetime_locked;
+	}
+
+
+	public void setDatetime_locked(String datetime_locked) {
+		this.datetime_locked = datetime_locked;
 	}
 
 

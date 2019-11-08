@@ -54,13 +54,13 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	String getEmailByUsername(@Param("username") String username);
 	
 	@Modifying
-    @Query(value = "insert into user_account (username,password_hash,salt,mobile_number,email,status,role) VALUES "
-    		+ "(:username,:password_hash,:salt,:mobile_number,:email,:status,:role)", nativeQuery = true)
+    @Query(value = "insert into user_account (username,password_hash,salt,mobile_number,email,status,role,reset_password,otp_count,datetime_locked) VALUES "
+    		+ "(:username,:password_hash,:salt,:mobile_number,:email,:status,:role,0,0,'0')", nativeQuery = true)
     @Transactional
-    void createNormalUser(@Param("username") String username,@Param("password_hash") String password_hash,
+    void createUser(@Param("username") String username,@Param("password_hash") String password_hash,
     		@Param("salt") String salt,
     		@Param("mobile_number") String mobile_number, @Param("email") String email,
-    		@Param("status") String status, @Param("role") boolean role);
+    		@Param("status") String status, @Param("role") boolean role );
 	
 	@Modifying
 	@Query("UPDATE UserAccount u SET u.password_hash = :password_hash, u.salt = :salt, u.reset_password = :reset_password "

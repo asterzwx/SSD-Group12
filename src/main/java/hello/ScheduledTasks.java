@@ -38,10 +38,12 @@ public class ScheduledTasks {
 	MatchController matchController;
 	PlayerController playerController;
 	TeamController teamController;
+	UserAccountController userAccountController;
 
 	public ScheduledTasks(SerieController serieController, LeagueController leagueController,
 			TournamentController tournamentController, MatchController matchController,
-			PlayerController playerController, TeamController teamController) {
+			PlayerController playerController, TeamController teamController,
+			UserAccountController userAccountController) {
 		super();
 		this.serieController = serieController;
 		this.leagueController = leagueController;
@@ -49,6 +51,7 @@ public class ScheduledTasks {
 		this.matchController = matchController;
 		this.playerController = playerController;
 		this.teamController = teamController;
+		this.userAccountController = userAccountController;
 	}
 
 	@Scheduled(fixedRate = 36000000)
@@ -78,6 +81,8 @@ public class ScheduledTasks {
 			
 			teamController.getDotaTeams();
 			teamController.getLoLTeams();
+			
+			userAccountController.timerCheckUserOTPStatus();
 			
 			System.out.println("\n Functions executed!\n");
 

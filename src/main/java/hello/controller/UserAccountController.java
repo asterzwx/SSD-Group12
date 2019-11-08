@@ -93,8 +93,9 @@ public class UserAccountController {
 	static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 	static SecureRandom rnd = new SecureRandom();
 
-	boolean otpEnabled = false;
+	boolean otpEnabled = true;
 	long newTime;
+	boolean emailSent = false;
 
 	@Bean
 	public JavaMailSender getJavaMailSender() {
@@ -136,7 +137,7 @@ public class UserAccountController {
 	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
-	public Map<String, Object> create(@RequestBody UserAccount userAccount) {
+	public Map<String, Object> createNormalUser(@RequestBody UserAccount userAccount) {
 		ResponseEntity<Admin> responseEntity = null;
 		Map<String, Object> json = new HashMap();
 		boolean regexPassed = false;
@@ -166,11 +167,11 @@ public class UserAccountController {
 			userAccount.setPassword_hash(generatedHash_SHA256);
 			userAccount.setSalt(generatedSalt.toString());
 //			userService.saveUser(userAccount);
-			userAccountRepo.createNormalUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+			userAccountRepo.createUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
 					userAccount.getMobile_number(), userAccount.getEmail(), "active", false);
 
 			// at the same time, create a record for this new user in user_inventory
-			userInventoryRepo.createNewRecord(userAccount.getUsername(), 0, 0, false);
+			userInventoryRepo.createNewRecord(userAccount.getUsername(), 500, 0, false);
 
 			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
 
@@ -184,6 +185,61 @@ public class UserAccountController {
 
 		return json;
 	}
+	
+	
+	@PostMapping("/create/admin") // Map ONLY POST Requests
+	public Map<String, Object> createAdminUser(@RequestBody UserAccount userAccount) {
+		ResponseEntity<Admin> responseEntity = null;
+		Map<String, Object> json = new HashMap();
+		boolean regexPassed = false;
+		// check regex first
+		RegexChecker regexChecker = new RegexChecker();
+		if (regexChecker.validateInputs(userAccount.getUsername(), userAccount.getEmail(),
+				userAccount.getMobile_number(), userAccount.getPassword(), userAccount.getPassword())) {
+			regexPassed = true;
+		} else {
+			regexPassed = false;
+			json.put("created", "false");
+
+		}
+		// if user dont exist
+		if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
+			userAccount.setUsername(userAccount.getUsername());
+
+			// 1. generate salt
+			// generate salt value
+			String generatedSalt = generateSalt().toString();
+			// 2. hash the user's password with the salt (X)
+			String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+			// 3. use sha256 to hash X
+			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+					.toString();
+
+			userAccount.setPassword_hash(generatedHash_SHA256);
+			userAccount.setSalt(generatedSalt.toString());
+//			userService.saveUser(userAccount);
+			userAccountRepo.createUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+					userAccount.getMobile_number(), userAccount.getEmail(), "active", true);
+
+			// at the same time, create a record for this new user in user_inventory
+			userInventoryRepo.createNewRecord(userAccount.getUsername(), 500, 0, false);
+
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+
+			json.put("created", "true");
+
+		} else {
+			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
+			json.put("created", "false");
+
+		}
+
+		return json;
+	}
+	
+	
+	
+	
 
 	@PostMapping("/login")
 	@Transactional
@@ -246,55 +302,55 @@ public class UserAccountController {
 	@PostMapping("/forgetpassword")
 	@Transactional
 	public Map<String, Object> forgetPassword(@RequestBody UserAccount userAccount) {
-		newTime = System.currentTimeMillis() + 10000;
+		newTime = System.currentTimeMillis() + 5000;
+
 //		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		Map<String, Object> json = new HashMap();
 		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
-		// if email exists
 
-		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 4) {
+		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 4 && otpEnabled == true) {
 
 			// get current user otp count
 			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
-			count = count + 1;
 			// once email is sent, run timer and update user's otp count
-			timerCheckUserOTPStatus(count);
-			if(otpEnabled == true) {
-				// generate new password
-				String reset_password = getRandomNumberString(8);
+//			timerCheckUserOTPStatus(count);
+
+			// generate new password
+			String reset_password = getRandomNumberString(8);
 //				userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
 //				 send email
 //					sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
 
-				// then, hash this new password as per normal
-				// generate salt value
-				String generatedSalt = generateSalt().toString();
-				// 2. hash the user's password with the salt (X)
-				String password_plus_salt = "" + reset_password + generatedSalt;
-				// 3. use sha256 to hash X
-				String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-						.toString();
+			// then, hash this new password as per normal
+			// generate salt value
+			String generatedSalt = generateSalt().toString();
+			// 2. hash the user's password with the salt (X)
+			String password_plus_salt = "" + reset_password + generatedSalt;
+			// 3. use sha256 to hash X
+			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+					.toString();
 
-				// replace old password_hash and salt
-				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 1);
+			// replace old password_hash and salt
+			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 1);
 
-				userAccountRepo.updateOTPCount(count, userAccount.getUsername());
+			count = count + 1;
+			userAccountRepo.updateOTPCount(count, userAccount.getUsername());
+			json.put("email_sent", "true");
 
-				if (otpEnabled == true) {
-					json.put("email_sent", "true");
-				} else {
+			setEmailSent(true);
+//				if (otpEnabled == true) {
+//					json.put("email_sent", "true");
+//				} else {
 					userAccountRepo.updateStatus("locked", userAccount.getUsername());
-					json.put("email_sent", "locked");
-				}
-			}		
-
-//			json.put("email_sent", "true");
+//					json.put("email_sent", "locked");
+//				}
+			otpEnabled = false;
+			json.put("email_sent", "true");
 			return json;
 		} else {
 			json.put("email_sent", "false");
 			return json;
 		}
-		
 
 	}
 
@@ -436,34 +492,32 @@ public class UserAccountController {
 		return json;
 	}
 
-	public void timerCheckUserOTPStatus(int count) {
+	public void timerCheckUserOTPStatus() {
+		long current = System.currentTimeMillis();
+		
 		TimerTask repeatedTask = new TimerTask() {
 			public void run() {
 				System.out.println("Task performed on " + new Date());
+								
 			}
 		};
 		Timer timer = new Timer("Timer");
 
 		long delay = 1000L;
-		long period = 10000L;
+		long period = 1000L;
 		timer.scheduleAtFixedRate(repeatedTask, delay, period);
 
-		Map<String, Object> json = new HashMap();
-
-		long current = System.currentTimeMillis();
 		
-
-		if (newTime < current) {
-			otpEnabled = true;
-			// lock user out when count reaches 4
-			if (count >= 4) {
-				otpEnabled = false;
-			} else {
-				otpEnabled = true;
-			}
-		} else {
-			otpEnabled = false;
-		}
+		// if passed 10 secs, enable back otp
+//		if (newTime < current) {
+//			otpEnabled = true;
+//			// lock user out when count reaches 4
+//			if (count >= 4) {
+//				otpEnabled = false;
+//			} else {
+//				otpEnabled = true;
+//			}
+//		}
 
 	}
 
@@ -495,6 +549,14 @@ public class UserAccountController {
 	@RequestMapping({ "/hello" })
 	public String firstPage() {
 		return "Hello World";
+	}
+
+	public boolean isEmailSent() {
+		return emailSent;
+	}
+
+	public void setEmailSent(boolean emailSent) {
+		this.emailSent = emailSent;
 	}
 
 }
