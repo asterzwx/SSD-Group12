@@ -545,8 +545,7 @@ public class UserAccountController {
 	@Transactional
 	public Map<String, Object> verifyOTP(@PathVariable String username, @PathVariable String otp) {
 //		Optional<UserAccount> user = userService.findById(username);
-		Map<String, Object> json = new HashMap();
-		
+		Map<String, Object> json = new HashMap();		
 		for(UserAccount u : userAccountRepo.getAllUserDetails()) {
 			if(u.getUsername().equals(username) && u.getOtp().equals(otp)) {
 				json.put("verified", "true");

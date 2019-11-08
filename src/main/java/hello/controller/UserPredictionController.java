@@ -72,20 +72,31 @@ public class UserPredictionController {
 	public Map<String, Object> create(@PathVariable String username, @RequestBody UserPrediction userPrediction) {
 		Map<String, Object> json = new HashMap();
 		boolean x = true;
-		for(UserPrediction u: userPredictionRepo.getPredictionsByUsername(username)) {
-			if(u.getMatch_id() == userPrediction.getMatch_id()&& x) {
-				json.put("created", "false");	
-				x = false;
-			}
-			else if(x) {
-				userPredictionService.saveUserPrediction(userPrediction);
-				json.put("created", "true");
-			}
-			else {
-				json.put("created", "false");
-			}
+		
+		if(userPredictionRepo.getPredictionsByUsername(username).size() == 0) {
+			userPredictionService.saveUserPrediction(userPrediction);
+			json.put("created", "true");
+			return json;
 		}
-		return json;
+		else {
+			
+			for(UserPrediction u: userPredictionRepo.getPredictionsByUsername(username)) {
+				if(u.getMatch_id() == userPrediction.getMatch_id()&& x) {
+					json.put("created", "false");	
+					x = false;
+				}
+				else if(x) {
+					userPredictionService.saveUserPrediction(userPrediction);
+					json.put("created", "true");
+				}
+				else {
+					json.put("created", "false");
+				}
+			}
+			return json;
+		}
+		
+	
 	}
 	
 	
