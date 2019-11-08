@@ -161,12 +161,12 @@ public class UserInventoryController {
 				userInventory.setItem_in_use(false);
 //				userInventoryRepo.save(userInventory);
 				create(userInventory);
-//				try {
-//					TimeUnit.SECONDS.sleep(3);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				try {
+					TimeUnit.SECONDS.sleep(3);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				// 2. update all record set points = latestpoints where username = username
 				userInventoryRepo.updateUserPoints(latestPoints, username);
 				json.put("purchase", "true");
