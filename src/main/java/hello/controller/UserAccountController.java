@@ -391,7 +391,7 @@ public class UserAccountController {
 		// check that reset_password field is not null, proves that he has requested to
 		// forget/reset password
 		
-		//get current pw
+		//get current pw  
 		String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getUsername());
 		//hsahed new pw
 		
