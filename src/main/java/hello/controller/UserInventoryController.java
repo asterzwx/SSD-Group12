@@ -28,7 +28,7 @@ import hello.repo.UserInventoryRepo;
 import hello.service.PollService;
 import hello.service.UserInventoryService;
 
-@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
+@CrossOrigin(origins = { "https://gambit-team12.tk", "http://localhost:4200" })
 @RestController
 @RequestMapping(value = "/rest/userinventory")
 public class UserInventoryController {
@@ -52,7 +52,7 @@ public class UserInventoryController {
 //
 //		return ResponseEntity.ok(user_inventory.get());
 //	}
-	
+
 	@GetMapping("/{username}")
 	public List<UserInventory> getInventoryByUsername(@PathVariable String username) {
 		return userInventoryRepo.getItemsOwnedById(username);
@@ -61,7 +61,7 @@ public class UserInventoryController {
 	@PostMapping("/create") // Map ONLY POST Requests
 	public ResponseEntity create(@RequestBody UserInventory user_inventory) {
 //		if (!userInventoryService.findById(user_inventory.getUsername()).isPresent()) {
-			return ResponseEntity.ok(userInventoryService.saveUserInventory(user_inventory));
+		return ResponseEntity.ok(userInventoryService.saveUserInventory(user_inventory));
 //		}
 //		return null;
 	}
@@ -119,11 +119,11 @@ public class UserInventoryController {
 		}
 		return updateItemInUse(username, item_id);
 	}
-	
+
 	// check if item id exist in table where username = username
-	@GetMapping("/{item_id}/{username}")
-	public boolean itemOwnedByUser(@PathVariable int item_id, @PathVariable String username) {
-		Map<String, Object> json = new HashMap();
+//	@GetMapping("/{item_id}/{username}")
+	public boolean itemOwnedByUser(int item_id, String username) {
+//		Map<String, Object> json = new HashMap();
 		boolean itemOwned = false;
 		List<UserInventory> user_inventory = userInventoryRepo.getItemsOwnedById(username);
 		for (UserInventory u : user_inventory) {
@@ -137,48 +137,42 @@ public class UserInventoryController {
 	}
 
 	@Transactional
-	@PostMapping("/buy/{username}/{item_id}/{item_cost}") // Map ONLY POST Requests
-	public Map<String, Object> buy(@Valid @PathVariable String username, @Valid @PathVariable int item_id,
-			@Valid @PathVariable int item_cost) {
-		Map<String, Object> json = new HashMap();	
-		
-		int currentUserPoints = 0;
-		try {
-			currentUserPoints = userInventoryRepo.getPointsById(username);
-			if (currentUserPoints == 0) {
-				json.put("purchase", "false");
-				return json;
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
+	@PostMapping("/buy/{username}/{item_id}/{cost}") // Map ONLY POST Requests
+	public Map<String, Object> buy(@PathVariable String username, @PathVariable int item_id,
+			@PathVariable int cost) {
+		Map<String, Object> json = new HashMap();
+
+		int currentUserPoints = userInventoryRepo.getPointsById(username);
+		if (currentUserPoints == 0) {
 			json.put("purchase", "false");
 			return json;
-		}	
-		
-
-		if (currentUserPoints < item_cost || itemOwnedByUser(item_id, username) == true) {
-			json.put("purchase", "false");
-		}
-		else {
-			int latestPoints = currentUserPoints - item_cost;
-			// if purchase success,
-			// 1. create new record in user_inventory with the latest points
-			UserInventory userInventory = new UserInventory();
-			userInventory.setUsername(username);
-			userInventory.setPoints(latestPoints);
-			userInventory.setItem_id(item_id);
-			userInventory.setItem_in_use(false);
-//			userInventoryRepo.save(userInventory);
-			create(userInventory);
-			try {
-				TimeUnit.SECONDS.sleep(3);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		} else {
+			if (currentUserPoints < cost || itemOwnedByUser(item_id, username) == true) {
+				json.put("purchase", "false");
+				
+			} else {
+				int latestPoints = currentUserPoints - cost;
+				// if purchase success,
+				// 1. create new record in user_inventory with the latest points
+				UserInventory userInventory = new UserInventory();
+				userInventory.setUsername(username);
+				userInventory.setPoints(latestPoints);
+				userInventory.setItem_id(item_id);
+				userInventory.setItem_in_use(false);
+//				userInventoryRepo.save(userInventory);
+				create(userInventory);
+//				try {
+//					TimeUnit.SECONDS.sleep(3);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				// 2. update all record set points = latestpoints where username = username
+				userInventoryRepo.updateUserPoints(latestPoints, username);
+				json.put("purchase", "true");
+				
 			}
-			// 2. update all record set points = latestpoints where username = username
-			userInventoryRepo.updateUserPoints(latestPoints, username);
-			json.put("purchase", "true");
+
 		}
 
 		return json;

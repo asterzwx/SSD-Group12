@@ -164,7 +164,7 @@ public class UserAccountController {
 		}
 		// if user dont exist
 		if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
-			userAccount.setUsername(userAccount.getUsername());
+//			userAccount.setUsername(userAccount.getUsername());
 
 			// 1. generate salt
 			// generate salt value
@@ -184,12 +184,12 @@ public class UserAccountController {
 			// at the same time, create a record for this new user in user_inventory
 			userInventoryRepo.createNewRecord(userAccount.getUsername(), 500, 0, false);
 
-			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+//			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
 
 			json.put("created", "true");
 
 		} else {
-			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
+//			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
 			json.put("created", "false");
 
 		}
