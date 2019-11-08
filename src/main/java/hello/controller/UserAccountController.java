@@ -295,6 +295,7 @@ public class UserAccountController {
 				// new password
 				if (!(userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0)) {
 					json.put("login", "resetted");
+					userAccountRepo.updateResetPassword(userAccount.getUsername(), 0);
 
 				} else {
 					json.put("login", "true");
@@ -388,32 +389,52 @@ public class UserAccountController {
 		Map<String, Object> json = new HashMap();
 		// check that reset_password field is not null, proves that he has requested to
 		// forget/reset password
-		try {
-			if (!(userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0)) {
-				// 1. generate salt
-				// generate salt value
-				String generatedSalt = generateSalt().toString();
-				// 2. hash the user's password with the salt (X)
-				String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
-				// 3. use sha256 to hash X
-				String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-						.toString();
+		
+		//get current pw
+		String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getPassword_hash());
+		//hsahed new pw
+		
+		String newPw = userAccount.getPassword();
+		// generate salt value
+		String generatedSalt_newPw = generateSalt().toString();
+		// 2. hash the user's password with the salt (X)
+		String password_plus_salt_newPw = "" + userAccount.getPassword() + generatedSalt_newPw;
+		// 3. use sha256 to hash X
+		String generatedHash_SHA256_newPw = Hashing.sha256().hashString(password_plus_salt_newPw, StandardCharsets.UTF_8)
+				.toString();
+		newPw = generatedHash_SHA256_newPw;
+		
+		if(!currentPw.equals(newPw)) {
+			try {
+				if (!(userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0)) {
+					// 1. generate salt
+					// generate salt value
+					String generatedSalt = generateSalt().toString();
+					// 2. hash the user's password with the salt (X)
+					String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+					// 3. use sha256 to hash X
+					String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+							.toString();
 
-				userAccount.setPassword_hash(generatedHash_SHA256);
-				userAccount.setSalt(generatedSalt.toString());
-				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 0);
-				// update reset_password to null
-//				userService.updateResetPassword(userAccount.getUsername(), null);
-				json.put("updated", "true");
-				return json;
-			} else {
+					userAccount.setPassword_hash(generatedHash_SHA256);
+					userAccount.setSalt(generatedSalt.toString());
+					userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 0);
+					// update reset_password to null
+//					userService.updateResetPassword(userAccount.getUsername(), null);
+					json.put("updated", "true");
+					return json;
+				} else {
+					json.put("updated", "false");
+					return json;
+				}
+
+			} catch (Exception e) {
 				json.put("updated", "false");
-				return json;
 			}
-
-		} catch (Exception e) {
-			json.put("updated", "false");
 		}
+		else {
+			json.put("updated", "false");
+		}				
 		return json;
 	}
 

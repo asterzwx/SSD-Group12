@@ -105,6 +105,10 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("SELECT u FROM UserAccount u ") 
 	List<UserAccount> getAllUserDetails();
 	
+	@Query("SELECT u.password_hash FROM UserAccount u WHERE u.username = :username") 
+	String getPasswordHashOnlyByUsername(@Param("password_hash") String password_hash);
+	
+	
 	
 //	@Modifying
 //    @Query(value = "insert into user_account (username,password_hash,salt,mobile_number,email,status,role,reset_password,otp_count,datetime_locked) VALUES "
