@@ -101,6 +101,9 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 			+ "AND TIMESTAMP(datetime_locked) < NOW() - INTERVAL 2 MINUTE ", nativeQuery = true)
 	@Transactional
 	int unlockAccounts();
+
+	@Query("SELECT u FROM UserAccount u ") 
+	List<UserAccount> getAllUserDetails();
 	
 	
 //	@Modifying

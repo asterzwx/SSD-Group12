@@ -212,37 +212,46 @@ public class UserAccountController {
 			json.put("created", "false");
 
 		}
-		// if user dont exist
-		if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
-			userAccount.setUsername(userAccount.getUsername());
+		for(UserAccount u: userAccountRepo.getAllUserDetails()) {
+			if(userAccount.getEmail() != u.getEmail()) {
+				// if user dont exist
+				if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
+					userAccount.setUsername(userAccount.getUsername());
 
-			// 1. generate salt
-			// generate salt value
-			String generatedSalt = generateSalt().toString();
-			// 2. hash the user's password with the salt (X)
-			String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
-			// 3. use sha256 to hash X
-			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-					.toString();
+					// 1. generate salt
+					// generate salt value
+					String generatedSalt = generateSalt().toString();
+					// 2. hash the user's password with the salt (X)
+					String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+					// 3. use sha256 to hash X
+					String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
+							.toString();
 
-			userAccount.setPassword_hash(generatedHash_SHA256);
-			userAccount.setSalt(generatedSalt.toString());
-//			userService.saveUser(userAccount);
-			userAccountRepo.createUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
-					userAccount.getMobile_number(), userAccount.getEmail(), "active", true);
+					userAccount.setPassword_hash(generatedHash_SHA256);
+					userAccount.setSalt(generatedSalt.toString());
+//					userService.saveUser(userAccount);
+					userAccountRepo.createUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+							userAccount.getMobile_number(), userAccount.getEmail(), "active", true);
 
-			// at the same time, create a record for this new user in user_inventory
-			userInventoryRepo.createNewRecord(userAccount.getUsername(), 500, 0, false);
+					// at the same time, create a record for this new user in user_inventory
+					userInventoryRepo.createNewRecord(userAccount.getUsername(), 500, 0, false);
 
-			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
+					responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
 
-			json.put("created", "true");
+					json.put("created", "true");
 
-		} else {
-			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
-			json.put("created", "false");
+				} else {
+					responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
+					json.put("created", "false");
 
+				}
+			}
+			else {
+				responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
+				json.put("created", "false");
+			}
 		}
+		
 
 		return json;
 	}
