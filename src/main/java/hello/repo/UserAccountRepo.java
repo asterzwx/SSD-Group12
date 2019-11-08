@@ -84,6 +84,10 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("UPDATE UserAccount u SET u.otp_count = :otp_count WHERE u.username = :username") 
     int updateOTPCount(@Param("otp_count") int otp_count, @Param("username") String username);
 	
+	@Modifying
+	@Query("UPDATE UserAccount u SET u.otp = :otp WHERE u.username = :username") 
+    int updateOTP(@Param("otp") String otp, @Param("username") String username);
+	
 	@Query("SELECT u.otp_count as otp_count FROM UserAccount u WHERE u.username = :username") 
 	int getCurrentOTPCount(@Param("username") String username);
 	
@@ -106,7 +110,7 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	List<UserAccount> getAllUserDetails();
 	
 	@Query("SELECT u.password_hash FROM UserAccount u WHERE u.username = :username") 
-	String getPasswordHashOnlyByUsername(@Param("password_hash") String password_hash);
+	String getPasswordHashOnlyByUsername(@Param("username") String username);
 	
 	
 	

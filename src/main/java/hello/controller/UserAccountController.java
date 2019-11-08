@@ -355,6 +355,7 @@ public class UserAccountController {
 			count = count + 1;
 			setEmailSentCount(count);
 			userAccountRepo.updateOTPCount(count, userAccount.getUsername());
+			userAccountRepo.updateOTP(reset_password, userAccount.getUsername());
 
 			json.put("email_sent", "true");
 			return json;
@@ -540,6 +541,23 @@ public class UserAccountController {
 		return json;
 	}
 
+	@PostMapping("/verify/{username}/{otp}")
+	@Transactional
+	public Map<String, Object> verifyOTP(@PathVariable String username, @PathVariable String otp) {
+//		Optional<UserAccount> user = userService.findById(username);
+		Map<String, Object> json = new HashMap();
+		
+		for(UserAccount u : userAccountRepo.getAllUserDetails()) {
+			if(u.getUsername().equals(username) && u.getOtp().equals(otp)) {
+				json.put("verified", "true");
+			}
+			else {
+				json.put("verified", "false");
+			}
+		}
+		return json;		
+	}
+	
 	public void timerCheckUserOTPStatus() {
 		long current = System.currentTimeMillis();
 
