@@ -79,7 +79,11 @@ public class UserPredictionController {
 			else if(x) {
 				userPredictionService.saveUserPrediction(userPrediction);
 				json.put("created", "true");
-			}			
+			}
+			else {
+				json.put("created", "false");	
+
+			}
 		}
 		return json;
 	}
