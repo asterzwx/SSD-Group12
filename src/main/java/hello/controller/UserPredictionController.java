@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -67,11 +68,11 @@ public class UserPredictionController {
 //	}
 	
 	
-	@PostMapping("/create") // Map ONLY POST Requests
-	public Map<String, Object> create(@RequestBody UserPrediction userPrediction) {
+	@PostMapping("/create/{username}") // Map ONLY POST Requests
+	public Map<String, Object> create(@PathVariable String username, @RequestBody UserPrediction userPrediction) {
 		Map<String, Object> json = new HashMap();
 		boolean x = true;
-		for(UserPrediction u: userPredictionRepo.getPredictionsByUsername(userPrediction.getUsername())) {
+		for(UserPrediction u: userPredictionRepo.getPredictionsByUsername(username)) {
 			if(u.getMatch_id() == userPrediction.getMatch_id()&& x) {
 				json.put("created", "false");	
 				x = false;
@@ -81,8 +82,7 @@ public class UserPredictionController {
 				json.put("created", "true");
 			}
 			else {
-				json.put("created", "false");	
-
+				json.put("created", "false");
 			}
 		}
 		return json;
