@@ -212,8 +212,8 @@ public class UserAccountController {
 			json.put("created", "false");
 
 		}
-		for(UserAccount u: userAccountRepo.getAllUserDetails()) {
-			if(userAccount.getEmail() != u.getEmail()) {
+		for (UserAccount u : userAccountRepo.getAllUserDetails()) {
+			if (userAccount.getEmail() != u.getEmail()) {
 				// if user dont exist
 				if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
 					userAccount.setUsername(userAccount.getUsername());
@@ -224,8 +224,8 @@ public class UserAccountController {
 					// 2. hash the user's password with the salt (X)
 					String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
 					// 3. use sha256 to hash X
-					String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-							.toString();
+					String generatedHash_SHA256 = Hashing.sha256()
+							.hashString(password_plus_salt, StandardCharsets.UTF_8).toString();
 
 					userAccount.setPassword_hash(generatedHash_SHA256);
 					userAccount.setSalt(generatedSalt.toString());
@@ -245,13 +245,11 @@ public class UserAccountController {
 					json.put("created", "false");
 
 				}
-			}
-			else {
+			} else {
 				responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
 				json.put("created", "false");
 			}
 		}
-		
 
 		return json;
 	}
@@ -390,22 +388,22 @@ public class UserAccountController {
 		Map<String, Object> json = new HashMap();
 		// check that reset_password field is not null, proves that he has requested to
 		// forget/reset password
-		
-		//get current pw  
+
+		// get current pw
 		String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getUsername());
-		//hsahed new pw
-		
+		// hsahed new pw
+
 		String newPw = userAccount.getPassword();
 		// generate salt value
-		String generatedSalt_newPw = generateSalt().toString();
-		// 2. hash the user's password with the salt (X)
+		String generatedSalt_newPw = userAccountRepo.getSaltOnlyByUsername(userAccount.getUsername());
+		// 2. hash the user's password with OLD SALT
 		String password_plus_salt_newPw = "" + userAccount.getPassword() + generatedSalt_newPw;
 		// 3. use sha256 to hash X
-		String generatedHash_SHA256_newPw = Hashing.sha256().hashString(password_plus_salt_newPw, StandardCharsets.UTF_8)
-				.toString();
+		String generatedHash_SHA256_newPw = Hashing.sha256()
+				.hashString(password_plus_salt_newPw, StandardCharsets.UTF_8).toString();
 		newPw = generatedHash_SHA256_newPw;
-		
-		if(!currentPw.equals(newPw)) {
+
+		if (!currentPw.equals(newPw)) {
 			try {
 				if (!(userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0)) {
 					// 1. generate salt
@@ -414,12 +412,13 @@ public class UserAccountController {
 					// 2. hash the user's password with the salt (X)
 					String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
 					// 3. use sha256 to hash X
-					String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-							.toString();
+					String generatedHash_SHA256 = Hashing.sha256()
+							.hashString(password_plus_salt, StandardCharsets.UTF_8).toString();
 
 					userAccount.setPassword_hash(generatedHash_SHA256);
 					userAccount.setSalt(generatedSalt.toString());
-					userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 0);
+					userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+							0);
 					// update reset_password to null
 //					userService.updateResetPassword(userAccount.getUsername(), null);
 					json.put("updated", "true");
@@ -432,10 +431,9 @@ public class UserAccountController {
 			} catch (Exception e) {
 				json.put("updated", "false");
 			}
-		}
-		else {
+		} else {
 			json.put("updated", "false");
-		}				
+		}
 		return json;
 	}
 
@@ -443,35 +441,53 @@ public class UserAccountController {
 	@Transactional
 	public Map<String, Object> changePassword(@RequestBody UserAccount userAccount) {
 		Map<String, Object> json = new HashMap();
-		// check that reset_password field is not null, proves that he has requested to
-		// forget/reset password
-		try {
-			if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0) {
-				// 1. generate salt
+
+		// get current pw
+				String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getUsername());
+				// hsahed new pw
+
+				String newPw = userAccount.getPassword();
 				// generate salt value
-				String generatedSalt = generateSalt().toString();
+				String generatedSalt_newPw = userAccountRepo.getSaltOnlyByUsername(userAccount.getUsername());
 				// 2. hash the user's password with the salt (X)
-				String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+				String password_plus_salt_newPw = "" + userAccount.getPassword() + generatedSalt_newPw;
 				// 3. use sha256 to hash X
-				String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-						.toString();
+				String generatedHash_SHA256_newPw = Hashing.sha256()
+						.hashString(password_plus_salt_newPw, StandardCharsets.UTF_8).toString();
+				newPw = generatedHash_SHA256_newPw;
 
-				userAccount.setPassword_hash(generatedHash_SHA256);
-				userAccount.setSalt(generatedSalt.toString());
-				userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 0);
-				// update reset_password to null
-//				userService.updateResetPassword(userAccount.getUsername(), null);
-				json.put("updated", "true");
-				return json;
-			} else {
-				json.put("updated", "false");
-				return json;
-			}
+				if (!currentPw.equals(newPw)) {
+					try {
+						if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0) {
+							// 1. generate salt
+							// generate salt value
+							String generatedSalt = generateSalt().toString();
+							// 2. hash the user's password with the salt (X)
+							String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+							// 3. use sha256 to hash X
+							String generatedHash_SHA256 = Hashing.sha256()
+									.hashString(password_plus_salt, StandardCharsets.UTF_8).toString();
 
-		} catch (Exception e) {
-			json.put("updated", "false");
-		}
-		return json;
+							userAccount.setPassword_hash(generatedHash_SHA256);
+							userAccount.setSalt(generatedSalt.toString());
+							userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+									0);
+							// update reset_password to null
+//							userService.updateResetPassword(userAccount.getUsername(), null);
+							json.put("updated", "true");
+							return json;
+						} else {
+							json.put("updated", "false");
+							return json;
+						}
+
+					} catch (Exception e) {
+						json.put("updated", "false");
+					}
+				} else {
+					json.put("updated", "false");
+				}
+				return json;
 
 	}
 
@@ -545,18 +561,27 @@ public class UserAccountController {
 	@Transactional
 	public Map<String, Object> verifyOTP(@PathVariable String username, @PathVariable String otp) {
 //		Optional<UserAccount> user = userService.findById(username);
-		Map<String, Object> json = new HashMap();		
-		for(UserAccount u : userAccountRepo.getAllUserDetails()) {
-			if(u.getUsername().equals(username) && u.getOtp().equals(otp)) {
-				json.put("verified", "true");
-			}
-			else {
-				json.put("verified", "false");
-			}
+		Map<String, Object> json = new HashMap();	
+		
+		if(userAccountRepo.getOTPByUsername(username).equals(otp)) {
+			userAccountRepo.updateOTP("0", username);
+			userAccountRepo.updateResetPassword(username, 0);
+			userAccountRepo.updateOTPCount(0, username);
+			json.put("verified", "true");			
 		}
-		return json;		
+		else {
+			json.put("verified", "false");
+		}
+//		for (UserAccount u : userAccountRepo.getAllUserDetails()) {
+//			if (u.getUsername().equals(username) && u.getOtp().equals(otp)) {
+//				json.put("verified", "true");
+//			} else {
+//				json.put("verified", "false");
+//			}
+//		}
+		return json;
 	}
-	
+
 	public void timerCheckUserOTPStatus() {
 		long current = System.currentTimeMillis();
 

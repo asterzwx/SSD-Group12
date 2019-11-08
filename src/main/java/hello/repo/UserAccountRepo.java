@@ -109,10 +109,14 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("SELECT u FROM UserAccount u ") 
 	List<UserAccount> getAllUserDetails();
 	
+	@Query("SELECT u.otp FROM UserAccount u WHERE u.username = :username ") 
+	String getOTPByUsername(@Param("username") String username);
+	
 	@Query("SELECT u.password_hash FROM UserAccount u WHERE u.username = :username") 
 	String getPasswordHashOnlyByUsername(@Param("username") String username);
 	
-	
+	@Query("SELECT u.salt FROM UserAccount u WHERE u.username = :username") 
+	String getSaltOnlyByUsername(@Param("username") String username);
 	
 //	@Modifying
 //    @Query(value = "insert into user_account (username,password_hash,salt,mobile_number,email,status,role,reset_password,otp_count,datetime_locked) VALUES "
