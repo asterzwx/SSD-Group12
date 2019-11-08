@@ -105,6 +105,12 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 			+ "AND TIMESTAMP(datetime_locked) < NOW() - INTERVAL 5 MINUTE ", nativeQuery = true)
 	@Transactional
 	int unlockAccounts();
+	
+	@Modifying
+	@Query("UPDATE UserAccount u SET u.otp = '0' WHERE u.username = :username") 
+    @Transactional
+	int makeOTPExpire(@Param("username") String username);
+
 
 	@Query("SELECT u FROM UserAccount u ") 
 	List<UserAccount> getAllUserDetails();

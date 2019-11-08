@@ -359,6 +359,9 @@ public class UserAccountController {
 			userAccountRepo.updateOTP(reset_password, userAccount.getUsername());
 
 			json.put("email_sent", "true");
+			
+			timerMakeOTPExpire(userAccount.getUsername());
+			
 			return json;
 		} else {
 			userAccountRepo.updateStatus("locked", userAccount.getUsername());
@@ -607,7 +610,6 @@ public class UserAccountController {
 				// unlock account
 				System.out.println("!!!! UNLOCKING ACCOUNTS ");
 				userAccountRepo.unlockAccounts();
-
 			}
 		};
 		Timer timer = new Timer("Timer");
@@ -615,14 +617,30 @@ public class UserAccountController {
 		long delay = 1000L;
 		long period = 1000L;
 		timer.scheduleAtFixedRate(repeatedTask, delay, period);
-
-		// if passed 10 secs, enable back otp
-//		if (newTime < current) {
-//			otpEnabled = true;
-//			
-//		}
-
 	}
+	
+	
+	public void timerMakeOTPExpire(String username) {
+		long current = System.currentTimeMillis();
+
+		TimerTask repeatedTask = new TimerTask() {
+			public void run() {
+
+				System.out.println("Task performed on " + new Date());				
+
+				// unlock account
+				System.out.println("##### EXPIRING OTP ");
+				userAccountRepo.makeOTPExpire(username);
+			}
+		};
+		Timer timer = new Timer("Timer");
+
+		long delay = 50000L;
+		long period = 50000L;
+		timer.scheduleAtFixedRate(repeatedTask, delay, period);
+	}
+	
+	
 
 	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
