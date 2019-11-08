@@ -6,6 +6,7 @@ import hello.model.UserAccount;
 
 public interface UserAccountView {
 	
+	
 	String getUsername();
 	
 	String getProfile_picture();
@@ -21,5 +22,7 @@ public interface UserAccountView {
 	boolean getRole();
 	
 	String getDatetime_locked();
+	
+	
 
 }

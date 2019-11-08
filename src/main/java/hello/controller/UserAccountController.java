@@ -135,17 +135,25 @@ public class UserAccountController {
 		return userAccountRepo.getAllUsers();
 	}
 
-//	@GetMapping("/{username}")
-//	public Object findById(@PathVariable String username) {
-//		Object user = userAccountRepo.getUserByUsername(username);
-//		return user;
-//	}
-
 	@GetMapping("/{username}")
-	public List<UserAccountView> findById(@PathVariable String username) {
-		List<UserAccountView> json = userAccountRepo.getDetailsByUsername(username);
+	public Map<String, Object> findById(@PathVariable String username) {
+		Map<String, Object> json = new HashMap();
+		for(UserAccountView u : userAccountRepo.getDetailsByUsername3(username)) {
+			json.put("username", u.getUsername());
+			json.put("mobile_number", u.getMobile_number());
+			json.put("email", u.getEmail());
+			json.put("reset_password", u.getReset_password());
+			json.put("datetime_locked", u.getDatetime_locked());
+		}
+		
 		return json;
 	}
+
+//	@GetMapping("/{username}")
+//	public List<UserAccountView> findById(@PathVariable String username) {
+//		List<UserAccountView> json = userAccountRepo.getDetailsByUsername(username);	
+//		return json;
+//	}
 
 	@PostMapping("/create") // Map ONLY POST Requests
 	public Map<String, Object> createNormalUser(@RequestBody UserAccount userAccount) {

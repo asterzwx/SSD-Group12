@@ -42,6 +42,16 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	List<UserAccountView> getDetailsByUsername(@Param("username") String username);
 	
 	
+	@Query(value = "SELECT username, email, status FROM user_account "
+			+ " WHERE username = :username ", nativeQuery = true) 
+	List<UserAccount> getDetailsByUsername2(@Param("username") String username);
+	
+	@Query("SELECT username as username, profile_picture as profile_picture, mobile_number as mobile_number, email as email, status as status,"
+			+ " reset_password as reset_password, role as role, datetime_locked as datetime_locked "
+			+ " FROM UserAccount u WHERE u.username = :username") 
+	List<UserAccountView> getDetailsByUsername3(@Param("username") String username);
+	
+	
 	@Query("SELECT username as username, profile_picture as profile_picture, mobile_number as mobile_number, email as email, status as status,"
 			+ " reset_password as reset_password, role as role, datetime_locked as datetime_locked "
 			+ " FROM UserAccount u ") 
