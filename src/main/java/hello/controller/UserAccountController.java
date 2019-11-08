@@ -392,7 +392,7 @@ public class UserAccountController {
 		// forget/reset password
 		
 		//get current pw
-		String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getPassword_hash());
+		String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getUsername());
 		//hsahed new pw
 		
 		String newPw = userAccount.getPassword();
