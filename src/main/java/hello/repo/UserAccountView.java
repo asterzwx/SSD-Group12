@@ -16,6 +16,10 @@ public interface UserAccountView {
 	
 	String getStatus();
 	
+	String getReset_password();
 	
+	boolean getRole();
+	
+	String getDatetime_locked();
 
 }
