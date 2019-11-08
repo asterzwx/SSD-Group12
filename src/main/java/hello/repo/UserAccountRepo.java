@@ -102,7 +102,7 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Modifying
 	@Query(value = "UPDATE user_account SET status = 'active', otp_count = 0, datetime_locked = '0' "
 			+ "WHERE datetime_locked <> '0' "
-			+ "AND TIMESTAMP(datetime_locked) < NOW() - INTERVAL 2 MINUTE ", nativeQuery = true)
+			+ "AND TIMESTAMP(datetime_locked) < NOW() - INTERVAL 5 MINUTE ", nativeQuery = true)
 	@Transactional
 	int unlockAccounts();
 
@@ -112,11 +112,16 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Query("SELECT u.otp FROM UserAccount u WHERE u.username = :username ") 
 	String getOTPByUsername(@Param("username") String username);
 	
+	@Query("SELECT u.status FROM UserAccount u WHERE u.username = :username ") 
+	String getStatusByUsername(@Param("username") String username);
+	
 	@Query("SELECT u.password_hash FROM UserAccount u WHERE u.username = :username") 
 	String getPasswordHashOnlyByUsername(@Param("username") String username);
 	
 	@Query("SELECT u.salt FROM UserAccount u WHERE u.username = :username") 
 	String getSaltOnlyByUsername(@Param("username") String username);
+	
+	
 	
 //	@Modifying
 //    @Query(value = "insert into user_account (username,password_hash,salt,mobile_number,email,status,role,reset_password,otp_count,datetime_locked) VALUES "

@@ -262,8 +262,10 @@ public class UserAccountController {
 		ResponseEntity<UserAccount> responseEntity = null;
 		HttpHeaders httpHeaders = new HttpHeaders();
 
+		String status = userAccountRepo.getStatusByUsername(userAccount.getUsername());
 		// if user exists
-		if (userService.findById(userAccount.getUsername()).isPresent()) {
+		if (userService.findById(userAccount.getUsername()).isPresent() 
+				&& !status.equals("locked")) {
 			UserAccount userInfo = user.get();
 			// get user's paswordhash
 			String user_password_hash = userInfo.getPassword_hash(); // for comparing later
@@ -278,7 +280,7 @@ public class UserAccountController {
 			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
 
 			// compare this hash with the user's pw hash
-			if (user_password_hash.equals(generatedHash_SHA256)) {
+			if (user_password_hash.equals(generatedHash_SHA256) ) {
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
 
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
@@ -325,7 +327,8 @@ public class UserAccountController {
 			otpEnabled = false;
 		}
 
-		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 3 && otpEnabled == true) {
+		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 3 
+				&& otpEnabled == true) {
 
 			// get current user otp count
 			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
@@ -550,6 +553,9 @@ public class UserAccountController {
 		if (userService.findById(username).isPresent()) {
 			json.put("login", "false");
 			userAccountRepo.updateUserLogoutStatus(username, "active");
+			userAccountRepo.updateOTP("0", username);
+			userAccountRepo.updateResetPassword(username, 0);
+			userAccountRepo.updateOTPCount(0, username);
 			System.out.println(username + " logged out");
 		} else {
 			json.put("login", "invalid user");
