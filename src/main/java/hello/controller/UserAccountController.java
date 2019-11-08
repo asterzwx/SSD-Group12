@@ -5,6 +5,16 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -94,8 +105,8 @@ public class UserAccountController {
 	static SecureRandom rnd = new SecureRandom();
 
 	boolean otpEnabled = true;
-	long newTime;
-	boolean emailSent = false;
+
+	int emailSentCount = 0;
 
 	@Bean
 	public JavaMailSender getJavaMailSender() {
@@ -119,10 +130,10 @@ public class UserAccountController {
 		this.jwtGenerator = jwtGenerator;
 	}
 
-//	@GetMapping(value = "/all")
-//	public List<UserAccount> getAllUsers() {
-//		return userService.getAll();
-//	}
+	@GetMapping(value = "/all")
+	public List<UserAccountView> getAllUsers() {
+		return userAccountRepo.getAllUsers();
+	}
 
 //	@GetMapping("/{username}")
 //	public Object findById(@PathVariable String username) {
@@ -185,8 +196,7 @@ public class UserAccountController {
 
 		return json;
 	}
-	
-	
+
 	@PostMapping("/create/admin") // Map ONLY POST Requests
 	public Map<String, Object> createAdminUser(@RequestBody UserAccount userAccount) {
 		ResponseEntity<Admin> responseEntity = null;
@@ -236,10 +246,6 @@ public class UserAccountController {
 
 		return json;
 	}
-	
-	
-	
-	
 
 	@PostMapping("/login")
 	@Transactional
@@ -302,13 +308,16 @@ public class UserAccountController {
 	@PostMapping("/forgetpassword")
 	@Transactional
 	public Map<String, Object> forgetPassword(@RequestBody UserAccount userAccount) {
-		newTime = System.currentTimeMillis() + 5000;
+//		newTime = System.currentTimeMillis() + 5000;
 
 //		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		Map<String, Object> json = new HashMap();
 		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
+		if (userAccount.getOtp_count() >= 3) {
+			otpEnabled = false;
+		}
 
-		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 4 && otpEnabled == true) {
+		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 3 && otpEnabled == true) {
 
 			// get current user otp count
 			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
@@ -334,21 +343,28 @@ public class UserAccountController {
 			userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt, 1);
 
 			count = count + 1;
+			setEmailSentCount(count);
 			userAccountRepo.updateOTPCount(count, userAccount.getUsername());
-			json.put("email_sent", "true");
 
-			setEmailSent(true);
-//				if (otpEnabled == true) {
-//					json.put("email_sent", "true");
-//				} else {
-					userAccountRepo.updateStatus("locked", userAccount.getUsername());
-//					json.put("email_sent", "locked");
-//				}
-			otpEnabled = false;
 			json.put("email_sent", "true");
 			return json;
 		} else {
-			json.put("email_sent", "false");
+			userAccountRepo.updateStatus("locked", userAccount.getUsername());
+			
+			String timeString = ZonedDateTime                    // Represent a moment as perceived in the wall-clock time used by the people of a particular region ( a time zone).
+					.now(                            // Capture the current moment.
+					    ZoneId.of( "Asia/Singapore" )  // Specify the time zone using proper Continent/Region name. Never use 3-4 character pseudo-zones such as PDT, EST, IST. 
+					)                                // Returns a `ZonedDateTime` object. 
+					.format(                         // Generate a `String` object containing text representing the value of our date-time object. 
+					    DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm:ss" )
+					);
+					
+			        System.out.println("!!!!!!!!!!!!!!!");
+			        System.out.println(timeString);
+		
+			userAccountRepo.lockAccount(timeString, userAccount.getUsername());
+			json.put("email_sent", "locked");
+//			json.put("email_sent", "false");
 			return json;
 		}
 
@@ -494,11 +510,24 @@ public class UserAccountController {
 
 	public void timerCheckUserOTPStatus() {
 		long current = System.currentTimeMillis();
-		
+
 		TimerTask repeatedTask = new TimerTask() {
 			public void run() {
+				
 				System.out.println("Task performed on " + new Date());
-								
+				// lock user out when count reaches 3
+				if (getEmailSentCount() >= 3) {
+					otpEnabled = false;
+					System.out.println("OTP ENABLED FALSE");
+				} else {
+					otpEnabled = true;
+					System.out.println("OTP ENABLED TRUE");
+				}
+				
+				//unlock account
+				System.out.println("!!!! UNLOCKING ACCOUNTS ");
+				userAccountRepo.unlockAccounts();
+
 			}
 		};
 		Timer timer = new Timer("Timer");
@@ -507,16 +536,10 @@ public class UserAccountController {
 		long period = 1000L;
 		timer.scheduleAtFixedRate(repeatedTask, delay, period);
 
-		
 		// if passed 10 secs, enable back otp
 //		if (newTime < current) {
 //			otpEnabled = true;
-//			// lock user out when count reaches 4
-//			if (count >= 4) {
-//				otpEnabled = false;
-//			} else {
-//				otpEnabled = true;
-//			}
+//			
 //		}
 
 	}
@@ -551,12 +574,12 @@ public class UserAccountController {
 		return "Hello World";
 	}
 
-	public boolean isEmailSent() {
-		return emailSent;
+	public int getEmailSentCount() {
+		return emailSentCount;
 	}
 
-	public void setEmailSent(boolean emailSent) {
-		this.emailSent = emailSent;
+	public void setEmailSentCount(int emailSentCount) {
+		this.emailSentCount = emailSentCount;
 	}
 
 }

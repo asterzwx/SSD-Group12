@@ -42,6 +42,11 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	List<UserAccountView> getDetailsByUsername(@Param("username") String username);
 	
 	
+	@Query("SELECT username as username, profile_picture as profile_picture, mobile_number as mobile_number, email as email, status as status,"
+			+ " reset_password as reset_password, role as role, datetime_locked as datetime_locked "
+			+ " FROM UserAccount u ") 
+	List<UserAccountView> getAllUsers();
+	
 	@Modifying
 	@Query("UPDATE UserAccount u SET u.token = :token WHERE u.username = :username") 
     int updateUserToken(@Param("username") String username, @Param("token") String token);
@@ -85,5 +90,23 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	@Modifying
 	@Query("UPDATE UserAccount u SET u.status = :status WHERE u.username = :username") 
     int updateStatus(@Param("status") String status, @Param("username") String username);
+	
+	@Modifying
+	@Query("UPDATE UserAccount u SET u.datetime_locked = :datetime_locked WHERE u.username = :username") 
+    int lockAccount(@Param("datetime_locked") String datetime_locked, @Param("username") String username);
+
+	@Modifying
+	@Query(value = "UPDATE user_account SET status = 'active', otp_count = 0, datetime_locked = '0' "
+			+ "WHERE datetime_locked <> '0' "
+			+ "AND TIMESTAMP(datetime_locked) < NOW() - INTERVAL 2 MINUTE ", nativeQuery = true)
+	@Transactional
+	int unlockAccounts();
+	
+	
+//	@Modifying
+//    @Query(value = "insert into user_account (username,password_hash,salt,mobile_number,email,status,role,reset_password,otp_count,datetime_locked) VALUES "
+//    		+ "(:username,:password_hash,:salt,:mobile_number,:email,:status,:role,0,0,'0')", nativeQuery = true)
+//    @Transactional
+	
 
 }
