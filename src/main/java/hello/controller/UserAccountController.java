@@ -328,7 +328,7 @@ public class UserAccountController {
 			String reset_password = getRandomNumberString(8);
 //				userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
 //				 send email
-//					sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
+			sendEmail(userAccount.getEmail(), userAccount.getUsername(), reset_password);
 
 			// then, hash this new password as per normal
 			// generate salt value
@@ -350,18 +350,20 @@ public class UserAccountController {
 			return json;
 		} else {
 			userAccountRepo.updateStatus("locked", userAccount.getUsername());
-			
-			String timeString = ZonedDateTime                    // Represent a moment as perceived in the wall-clock time used by the people of a particular region ( a time zone).
-					.now(                            // Capture the current moment.
-					    ZoneId.of( "Asia/Singapore" )  // Specify the time zone using proper Continent/Region name. Never use 3-4 character pseudo-zones such as PDT, EST, IST. 
-					)                                // Returns a `ZonedDateTime` object. 
-					.format(                         // Generate a `String` object containing text representing the value of our date-time object. 
-					    DateTimeFormatter.ofPattern( "yyyy-MM-dd HH:mm:ss" )
-					);
-					
-			        System.out.println("!!!!!!!!!!!!!!!");
-			        System.out.println(timeString);
-		
+
+			String timeString = ZonedDateTime // Represent a moment as perceived in the wall-clock time used by the
+												// people of a particular region ( a time zone).
+					.now( // Capture the current moment.
+							ZoneId.of("Asia/Singapore") // Specify the time zone using proper Continent/Region name.
+														// Never use 3-4 character pseudo-zones such as PDT, EST, IST.
+					) // Returns a `ZonedDateTime` object.
+					.format( // Generate a `String` object containing text representing the value of our
+								// date-time object.
+							DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+			System.out.println("!!!!!!!!!!!!!!!");
+			System.out.println(timeString);
+
 			userAccountRepo.lockAccount(timeString, userAccount.getUsername());
 			json.put("email_sent", "locked");
 //			json.put("email_sent", "false");
@@ -513,7 +515,7 @@ public class UserAccountController {
 
 		TimerTask repeatedTask = new TimerTask() {
 			public void run() {
-				
+
 				System.out.println("Task performed on " + new Date());
 				// lock user out when count reaches 3
 				if (getEmailSentCount() >= 3) {
@@ -523,8 +525,8 @@ public class UserAccountController {
 					otpEnabled = true;
 					System.out.println("OTP ENABLED TRUE");
 				}
-				
-				//unlock account
+
+				// unlock account
 				System.out.println("!!!! UNLOCKING ACCOUNTS ");
 				userAccountRepo.unlockAccounts();
 
