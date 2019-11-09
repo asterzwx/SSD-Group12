@@ -696,14 +696,14 @@ public class UserAccountController {
 
 		if (userAccountRepo.getStatusByUsername(username).equals("locked")) {
 			json.put("verified", "locked");
-			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
-			json.put("input_otp", otp);
+//			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
+//			json.put("input_otp", otp);
 			return json;
 		}
 		if (userAccountRepo.getOTPByUsername(username).equals(otp)) {
 			json.put("verified", "true");
-			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
-			json.put("input_otp", otp);
+//			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
+//			json.put("input_otp", otp);
 			userAccountRepo.updateOTP("0", username);
 			userAccountRepo.updateResetPassword(username, 0);
 			userAccountRepo.updateOTPCount(0, username);
@@ -711,8 +711,8 @@ public class UserAccountController {
 			return json;
 		} else {
 			json.put("verified", "false");
-			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
-			json.put("input_otp", otp);
+//			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
+//			json.put("input_otp", otp);
 			return json;
 		}
 
