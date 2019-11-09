@@ -659,7 +659,7 @@ public class UserAccountController {
 			msg.setFrom(new InternetAddress("ssdgroup12@gmail.com"));
 			InternetAddress[] toAddresses = { new InternetAddress(email) };
 			msg.setRecipients(Message.RecipientType.TO, toAddresses);
-			msg.setSubject("GAMBIT Reset Password");
+			msg.setSubject("GAMBIT OTP");
 			msg.setSentDate(new Date());
 			// set plain text message
 			EmailTemplate emailTemplate = new EmailTemplate();
