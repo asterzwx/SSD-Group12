@@ -149,7 +149,7 @@ public class UserInventoryController {
 		} else {
 			if (currentUserPoints < cost || itemOwnedByUser(item_id, username) == true) {
 				json.put("purchase", "false");
-				
+				return json;	
 			} else {
 				int latestPoints = currentUserPoints - cost;
 				// if purchase success,
