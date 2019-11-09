@@ -129,10 +129,13 @@ public class UserInventoryController {
 		for (UserInventory u : user_inventory) {
 			if (item_id == u.getItem_id()) {
 				itemOwned = true;
-			} else {
-				itemOwned = false;
-			}
+				return itemOwned;
+			} 
+//			else {
+//				itemOwned = false;				
+//			}
 		}
+		itemOwned = false;
 		return itemOwned;
 	}
 
