@@ -138,14 +138,14 @@ public class UserAccountController {
 	@GetMapping("/{username}")
 	public Map<String, Object> findById(@PathVariable String username) {
 		Map<String, Object> json = new HashMap();
-		for(UserAccountView u : userAccountRepo.getDetailsByUsername3(username)) {
+		for (UserAccountView u : userAccountRepo.getDetailsByUsername3(username)) {
 			json.put("username", u.getUsername());
 			json.put("mobile_number", u.getMobile_number());
 			json.put("email", u.getEmail());
 			json.put("reset_password", u.getReset_password());
 			json.put("datetime_locked", u.getDatetime_locked());
 		}
-		
+
 		return json;
 	}
 
@@ -170,35 +170,44 @@ public class UserAccountController {
 			json.put("created", "false");
 
 		}
-		// if user dont exist
-		if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
+		for (UserAccount u : userAccountRepo.getAllUserDetails()) {
+			if (userAccount.getEmail().equals(u.getEmail())) {
+				json.put("created", "email exists");
+				return json;
+			} else {
+				// if user dont exist
+				if (!userService.findById(userAccount.getUsername()).isPresent() && regexPassed == true) {
 //			userAccount.setUsername(userAccount.getUsername());
 
-			// 1. generate salt
-			// generate salt value
-			String generatedSalt = generateSalt().toString();
-			// 2. hash the user's password with the salt (X)
-			String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
-			// 3. use sha256 to hash X
-			String generatedHash_SHA256 = Hashing.sha256().hashString(password_plus_salt, StandardCharsets.UTF_8)
-					.toString();
+					// 1. generate salt
+					// generate salt value
+					String generatedSalt = generateSalt().toString();
+					// 2. hash the user's password with the salt (X)
+					String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+					// 3. use sha256 to hash X
+					String generatedHash_SHA256 = Hashing.sha256()
+							.hashString(password_plus_salt, StandardCharsets.UTF_8).toString();
 
-			userAccount.setPassword_hash(generatedHash_SHA256);
-			userAccount.setSalt(generatedSalt.toString());
+					userAccount.setPassword_hash(generatedHash_SHA256);
+					userAccount.setSalt(generatedSalt.toString());
 //			userService.saveUser(userAccount);
-			userAccountRepo.createUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
-					userAccount.getMobile_number(), userAccount.getEmail(), "active", false);
+					userAccountRepo.createUser(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+							userAccount.getMobile_number(), userAccount.getEmail(), "active", false);
 
-			// at the same time, create a record for this new user in user_inventory
-			userInventoryRepo.createNewRecord(userAccount.getUsername(), 500, 0, false);
+					// at the same time, create a record for this new user in user_inventory
+					userInventoryRepo.createNewRecord(userAccount.getUsername(), 500, 0, false);
 
 //			responseEntity = new ResponseEntity<Admin>(HttpStatus.CREATED);
 
-			json.put("created", "true");
+					json.put("created", "true");
+					return json;
 
-		} else {
+				} else {
 //			responseEntity = new ResponseEntity<Admin>(HttpStatus.BAD_REQUEST);
-			json.put("created", "false");
+					json.put("created", "false");
+
+				}
+			}
 
 		}
 
@@ -272,8 +281,7 @@ public class UserAccountController {
 
 		String status = userAccountRepo.getStatusByUsername(userAccount.getUsername());
 		// if user exists
-		if (userService.findById(userAccount.getUsername()).isPresent() 
-				&& !status.equals("locked")) {
+		if (userService.findById(userAccount.getUsername()).isPresent() && !status.equals("locked")) {
 			UserAccount userInfo = user.get();
 			// get user's paswordhash
 			String user_password_hash = userInfo.getPassword_hash(); // for comparing later
@@ -288,7 +296,7 @@ public class UserAccountController {
 			System.out.println("@@@@@@@@@@@@@ " + generatedHash_SHA256);
 
 			// compare this hash with the user's pw hash
-			if (user_password_hash.equals(generatedHash_SHA256) ) {
+			if (user_password_hash.equals(generatedHash_SHA256)) {
 				userAccountRepo.updateUserLoginStatus(userAccount.getUsername(), "online");
 
 				responseEntity = new ResponseEntity<UserAccount>(HttpStatus.OK);
@@ -328,17 +336,16 @@ public class UserAccountController {
 	public Map<String, Object> sendEmailOTP(@RequestBody UserAccount userAccount) {
 
 		Map<String, Object> json = new HashMap();
-		
+
 		int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
 
 		if (count >= 3) {
 			otpEnabled = false;
-		}
-		else {
+		} else {
 			otpEnabled = true;
 		}
 		String email = userAccountRepo.getEmailByUsername(userAccount.getUsername());
-		if (count < 3	&& otpEnabled == true) {
+		if (count < 3 && otpEnabled == true) {
 
 			// get current user otp count
 			// once email is sent, run timer and update user's otp count
@@ -356,9 +363,9 @@ public class UserAccountController {
 			userAccountRepo.updateOTP(otp, userAccount.getUsername());
 
 			json.put("email_sent", "true");
-			
+
 			timerMakeOTPExpire(userAccount.getUsername());
-			
+
 			return json;
 		} else {
 			userAccountRepo.updateStatus("locked", userAccount.getUsername());
@@ -383,8 +390,7 @@ public class UserAccountController {
 		}
 
 	}
-	
-	
+
 	@PostMapping("/forgetpassword")
 	@Transactional
 	public Map<String, Object> forgetPassword(@RequestBody UserAccount userAccount) {
@@ -397,8 +403,7 @@ public class UserAccountController {
 			otpEnabled = false;
 		}
 
-		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 3 
-				&& otpEnabled == true) {
+		if (userAccount.getEmail().equals(getEmailString) && userAccount.getOtp_count() < 3 && otpEnabled == true) {
 
 			// get current user otp count
 			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
@@ -429,9 +434,9 @@ public class UserAccountController {
 //			userAccountRepo.updateOTP(reset_password, userAccount.getUsername());
 
 			json.put("email_sent", "true");
-			
+
 			timerMakeOTPExpire(userAccount.getUsername());
-			
+
 			return json;
 		} else {
 			userAccountRepo.updateStatus("locked", userAccount.getUsername());
@@ -456,13 +461,6 @@ public class UserAccountController {
 		}
 
 	}
-	
-	
-	
-	
-	
-	
-	
 
 	// when changing new password
 	@PostMapping("/updatepassword")
@@ -526,51 +524,51 @@ public class UserAccountController {
 		Map<String, Object> json = new HashMap();
 
 		// get current pw
-				String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getUsername());
-				// hsahed new pw
+		String currentPw = userAccountRepo.getPasswordHashOnlyByUsername(userAccount.getUsername());
+		// hsahed new pw
 
-				String newPw = userAccount.getPassword();
-				// generate salt value
-				String generatedSalt_newPw = userAccountRepo.getSaltOnlyByUsername(userAccount.getUsername());
-				// 2. hash the user's password with the salt (X)
-				String password_plus_salt_newPw = "" + userAccount.getPassword() + generatedSalt_newPw;
-				// 3. use sha256 to hash X
-				String generatedHash_SHA256_newPw = Hashing.sha256()
-						.hashString(password_plus_salt_newPw, StandardCharsets.UTF_8).toString();
-				newPw = generatedHash_SHA256_newPw;
+		String newPw = userAccount.getPassword();
+		// generate salt value
+		String generatedSalt_newPw = userAccountRepo.getSaltOnlyByUsername(userAccount.getUsername());
+		// 2. hash the user's password with the salt (X)
+		String password_plus_salt_newPw = "" + userAccount.getPassword() + generatedSalt_newPw;
+		// 3. use sha256 to hash X
+		String generatedHash_SHA256_newPw = Hashing.sha256()
+				.hashString(password_plus_salt_newPw, StandardCharsets.UTF_8).toString();
+		newPw = generatedHash_SHA256_newPw;
 
-				if (!currentPw.equals(newPw)) {
-					try {
-						if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0) {
-							// 1. generate salt
-							// generate salt value
-							String generatedSalt = generateSalt().toString();
-							// 2. hash the user's password with the salt (X)
-							String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
-							// 3. use sha256 to hash X
-							String generatedHash_SHA256 = Hashing.sha256()
-									.hashString(password_plus_salt, StandardCharsets.UTF_8).toString();
+		if (!currentPw.equals(newPw)) {
+			try {
+				if (userAccountRepo.checkResetPasswordNull(userAccount.getUsername()) == 0) {
+					// 1. generate salt
+					// generate salt value
+					String generatedSalt = generateSalt().toString();
+					// 2. hash the user's password with the salt (X)
+					String password_plus_salt = "" + userAccount.getPassword() + generatedSalt;
+					// 3. use sha256 to hash X
+					String generatedHash_SHA256 = Hashing.sha256()
+							.hashString(password_plus_salt, StandardCharsets.UTF_8).toString();
 
-							userAccount.setPassword_hash(generatedHash_SHA256);
-							userAccount.setSalt(generatedSalt.toString());
-							userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
-									0);
-							// update reset_password to null
+					userAccount.setPassword_hash(generatedHash_SHA256);
+					userAccount.setSalt(generatedSalt.toString());
+					userAccountRepo.updateNewPassword(userAccount.getUsername(), generatedHash_SHA256, generatedSalt,
+							0);
+					// update reset_password to null
 //							userService.updateResetPassword(userAccount.getUsername(), null);
-							json.put("updated", "true");
-							return json;
-						} else {
-							json.put("updated", "false");
-							return json;
-						}
-
-					} catch (Exception e) {
-						json.put("updated", "false");
-					}
+					json.put("updated", "true");
+					return json;
 				} else {
 					json.put("updated", "false");
+					return json;
 				}
-				return json;
+
+			} catch (Exception e) {
+				json.put("updated", "false");
+			}
+		} else {
+			json.put("updated", "false");
+		}
+		return json;
 
 	}
 
@@ -580,15 +578,15 @@ public class UserAccountController {
 			sb.append(AB.charAt(rnd.nextInt(AB.length())));
 		return sb.toString();
 	}
-	
+
 	public static String get6DigitOTP() {
 		// It will generate 6 digit random Number.
-	    // from 0 to 999999
-	    Random rnd = new Random();
-	    int number = rnd.nextInt(999999);
+		// from 0 to 999999
+		Random rnd = new Random();
+		int number = rnd.nextInt(999999);
 
-	    // this will convert any number sequence into 6 character.
-	    return String.format("%06d", number);
+		// this will convert any number sequence into 6 character.
+		return String.format("%06d", number);
 	}
 
 	public void sendEmail(String email, String username, String password) {
@@ -633,7 +631,7 @@ public class UserAccountController {
 		}
 
 	}
-	
+
 	public void sendEmail_OTP(String email, String username, String password) {
 
 		// sets SMTP server properties
@@ -676,8 +674,6 @@ public class UserAccountController {
 		}
 
 	}
-	
-	
 
 	@PostMapping("/logout/{username}")
 	@Transactional
@@ -702,24 +698,23 @@ public class UserAccountController {
 	@Transactional
 	public Map<String, Object> verifyOTP(@PathVariable String username, @PathVariable String otp) {
 //		Optional<UserAccount> user = userService.findById(username);
-		Map<String, Object> json = new HashMap();	
-		
-		if(userAccountRepo.getStatusByUsername(username).equals("locked")) {
-			json.put("verified", "locked");		
+		Map<String, Object> json = new HashMap();
+
+		if (userAccountRepo.getStatusByUsername(username).equals("locked")) {
+			json.put("verified", "locked");
 			return json;
 		}
-		if(userAccountRepo.getOTPByUsername(username).equals(otp)) {
+		if (userAccountRepo.getOTPByUsername(username).equals(otp)) {
 			userAccountRepo.updateOTP("0", username);
 			userAccountRepo.updateResetPassword(username, 0);
 			userAccountRepo.updateOTPCount(0, username);
-			json.put("verified", "true");		
+			json.put("verified", "true");
 			return json;
-		}
-		else {
+		} else {
 			json.put("verified", "false");
 			return json;
 		}
-		
+
 	}
 
 	public void timerCheckUserOTPStatus() {
@@ -749,15 +744,14 @@ public class UserAccountController {
 		long period = 1000L;
 		timer.scheduleAtFixedRate(repeatedTask, delay, period);
 	}
-	
-	
+
 	public void timerMakeOTPExpire(String username) {
 		long current = System.currentTimeMillis();
 
 		TimerTask repeatedTask = new TimerTask() {
 			public void run() {
 
-				System.out.println("Task performed on " + new Date());				
+				System.out.println("Task performed on " + new Date());
 
 				// unlock account
 				System.out.println("##### EXPIRING OTP ");
@@ -770,8 +764,6 @@ public class UserAccountController {
 		long period = 50000L;
 		timer.scheduleAtFixedRate(repeatedTask, delay, period);
 	}
-	
-	
 
 	@PutMapping("/update/{username}")
 	public ResponseEntity<UserAccount> update(@PathVariable String username, @RequestBody UserAccount userAccount) {
