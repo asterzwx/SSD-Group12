@@ -40,15 +40,22 @@ public class ItemController {
 		return itemService.getAll();
 	}
 	
-	@GetMapping("/{item_id}")
-	public ResponseEntity<Item> findById(@PathVariable int item_id) {
-		Optional<Item> item = itemService.findById(item_id);
-		if (!item.isPresent()) {
-			ResponseEntity.badRequest().build();
-		}
-
-		return ResponseEntity.ok(item.get());
+//	@GetMapping("/{item_id}")
+//	public ResponseEntity<Item> findById(@PathVariable int item_id) {
+//		Optional<Item> item = itemService.findById(item_id);
+//		if (!item.isPresent()) {
+//			ResponseEntity.badRequest().build();
+//		}
+//
+//		return ResponseEntity.ok(item.get());
+//	}
+	
+	@GetMapping(value = "/{item_id}")
+	public List<Item> getItemById(@PathVariable int item_id) {
+		return itemRepo.getItemById(item_id);
 	}
+	
+	
 	
 	@GetMapping(value = "/all/{username}")
 	public List<Map<String, String>> getItemsByUsername(@Valid @PathVariable String username) {
