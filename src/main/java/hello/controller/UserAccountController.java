@@ -343,7 +343,7 @@ public class UserAccountController {
 //			timerCheckUserOTPStatus(count);
 
 			// generate new password
-			String otp = getRandomNumberString(8);
+			String otp = get6DigitOTP();
 //				userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
 //				 send email
 			sendEmail(email, userAccount.getUsername(), otp);
@@ -577,6 +577,16 @@ public class UserAccountController {
 		for (int i = 0; i < len; i++)
 			sb.append(AB.charAt(rnd.nextInt(AB.length())));
 		return sb.toString();
+	}
+	
+	public static String get6DigitOTP() {
+		// It will generate 6 digit random Number.
+	    // from 0 to 999999
+	    Random rnd = new Random();
+	    int number = rnd.nextInt(999999);
+
+	    // this will convert any number sequence into 6 character.
+	    return String.format("%06d", number);
 	}
 
 	public void sendEmail(String email, String username, String password) {
