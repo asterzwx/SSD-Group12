@@ -326,24 +326,23 @@ public class UserAccountController {
 	@PostMapping("/sendemailotp")
 	@Transactional
 	public Map<String, Object> sendEmailOTP(@RequestBody UserAccount userAccount) {
-//		newTime = System.currentTimeMillis() + 5000;
 
-//		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		Map<String, Object> json = new HashMap();
 		
-		if (userAccount.getOtp_count() >= 3) {
+		int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
+
+		if (count >= 3) {
 			otpEnabled = false;
 		}
 		else {
 			otpEnabled = true;
 		}
 		String email = userAccountRepo.getEmailByUsername(userAccount.getUsername());
-		if (userAccount.getOtp_count() < 3	&& otpEnabled == true) {
+		if (count < 3	&& otpEnabled == true) {
 
 			// get current user otp count
-			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
 			// once email is sent, run timer and update user's otp count
-//			timerCheckUserOTPStatus(count);
+			timerCheckUserOTPStatus();
 
 			// generate new password
 			String otp = get6DigitOTP();
@@ -679,7 +678,6 @@ public class UserAccountController {
 	}
 	
 	
-	
 
 	@PostMapping("/logout/{username}")
 	@Transactional
@@ -706,6 +704,10 @@ public class UserAccountController {
 //		Optional<UserAccount> user = userService.findById(username);
 		Map<String, Object> json = new HashMap();	
 		
+		if(userAccountRepo.getStatusByUsername(username).equals("locked")) {
+			json.put("verified", "locked");		
+			return json;
+		}
 		if(userAccountRepo.getOTPByUsername(username).equals(otp)) {
 			userAccountRepo.updateOTP("0", username);
 			userAccountRepo.updateResetPassword(username, 0);
@@ -717,13 +719,6 @@ public class UserAccountController {
 			json.put("verified", "false");
 			return json;
 		}
-//		for (UserAccount u : userAccountRepo.getAllUserDetails()) {
-//			if (u.getUsername().equals(username) && u.getOtp().equals(otp)) {
-//				json.put("verified", "true");
-//			} else {
-//				json.put("verified", "false");
-//			}
-//		}
 		
 	}
 
