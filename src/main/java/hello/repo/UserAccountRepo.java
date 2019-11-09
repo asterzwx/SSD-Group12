@@ -138,7 +138,6 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, String>{
 	String getSaltOnlyByUsername(@Param("username") String username);
 	
 	
-	
 //	@Modifying
 //    @Query(value = "insert into user_account (username,password_hash,salt,mobile_number,email,status,role,reset_password,otp_count,datetime_locked) VALUES "
 //    		+ "(:username,:password_hash,:salt,:mobile_number,:email,:status,:role,0,0,'0')", nativeQuery = true)

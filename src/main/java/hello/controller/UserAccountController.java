@@ -323,6 +323,66 @@ public class UserAccountController {
 		return json;
 	}
 
+	@PostMapping("/sendemailotp")
+	@Transactional
+	public Map<String, Object> sendEmailOTP(@RequestBody UserAccount userAccount) {
+//		newTime = System.currentTimeMillis() + 5000;
+
+//		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
+		Map<String, Object> json = new HashMap();
+		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
+		if (userAccount.getOtp_count() >= 3) {
+			otpEnabled = false;
+		}
+		String email = userAccountRepo.getEmailByUsername(userAccount.getUsername());
+		if (userAccount.getOtp_count() < 3	&& otpEnabled == true) {
+
+			// get current user otp count
+			int count = userAccountRepo.getCurrentOTPCount(userAccount.getUsername());
+			// once email is sent, run timer and update user's otp count
+//			timerCheckUserOTPStatus(count);
+
+			// generate new password
+			String otp = getRandomNumberString(8);
+//				userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
+//				 send email
+			sendEmail(email, userAccount.getUsername(), otp);
+
+			count = count + 1;
+			setEmailSentCount(count);
+			userAccountRepo.updateOTPCount(count, userAccount.getUsername());
+			userAccountRepo.updateOTP(otp, userAccount.getUsername());
+
+			json.put("email_sent", "true");
+			
+			timerMakeOTPExpire(userAccount.getUsername());
+			
+			return json;
+		} else {
+			userAccountRepo.updateStatus("locked", userAccount.getUsername());
+
+			String timeString = ZonedDateTime // Represent a moment as perceived in the wall-clock time used by the
+												// people of a particular region ( a time zone).
+					.now( // Capture the current moment.
+							ZoneId.of("Asia/Singapore") // Specify the time zone using proper Continent/Region name.
+														// Never use 3-4 character pseudo-zones such as PDT, EST, IST.
+					) // Returns a `ZonedDateTime` object.
+					.format( // Generate a `String` object containing text representing the value of our
+								// date-time object.
+							DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+			System.out.println("OTP SENT");
+			System.out.println(timeString);
+
+			userAccountRepo.lockAccount(timeString, userAccount.getUsername());
+			json.put("email_sent", "locked");
+//			json.put("email_sent", "false");
+			return json;
+		}
+
+	}
+	
+	
 	@PostMapping("/forgetpassword")
 	@Transactional
 	public Map<String, Object> forgetPassword(@RequestBody UserAccount userAccount) {
@@ -364,7 +424,7 @@ public class UserAccountController {
 			count = count + 1;
 			setEmailSentCount(count);
 			userAccountRepo.updateOTPCount(count, userAccount.getUsername());
-			userAccountRepo.updateOTP(reset_password, userAccount.getUsername());
+//			userAccountRepo.updateOTP(reset_password, userAccount.getUsername());
 
 			json.put("email_sent", "true");
 			
@@ -394,6 +454,13 @@ public class UserAccountController {
 		}
 
 	}
+	
+	
+	
+	
+	
+	
+	
 
 	// when changing new password
 	@PostMapping("/updatepassword")
@@ -554,6 +621,52 @@ public class UserAccountController {
 		}
 
 	}
+	
+	public void sendEmail_OTP(String email, String username, String password) {
+
+		// sets SMTP server properties
+		Properties properties = new Properties();
+		properties.put("mail.smtp.host", "smtp.gmail.com");
+		properties.put("mail.smtp.port", 587);
+		properties.put("mail.smtp.auth", "true");
+		properties.put("mail.smtp.starttls.enable", "true");
+
+		// creates a new session with an authenticator
+		Authenticator auth = new Authenticator() {
+			public PasswordAuthentication getPasswordAuthentication() {
+				return new PasswordAuthentication("ssdgroup12@gmail.com", "dmkimdgswosawvyq");
+			}
+		};
+
+		Session session = Session.getInstance(properties, auth);
+
+		// creates a new e-mail message
+		Message msg = new MimeMessage(session);
+		try {
+			msg.setFrom(new InternetAddress("ssdgroup12@gmail.com"));
+			InternetAddress[] toAddresses = { new InternetAddress(email) };
+			msg.setRecipients(Message.RecipientType.TO, toAddresses);
+			msg.setSubject("GAMBIT Reset Password");
+			msg.setSentDate(new Date());
+			// set plain text message
+			EmailTemplate emailTemplate = new EmailTemplate();
+			msg.setContent(emailTemplate.template_otp(password), "text/html");
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+		// sends the e-mail
+		try {
+			Transport.send(msg);
+		} catch (MessagingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+	
 
 	@PostMapping("/logout/{username}")
 	@Transactional
@@ -584,10 +697,12 @@ public class UserAccountController {
 			userAccountRepo.updateOTP("0", username);
 			userAccountRepo.updateResetPassword(username, 0);
 			userAccountRepo.updateOTPCount(0, username);
-			json.put("verified", "true");			
+			json.put("verified", "true");		
+			return json;
 		}
 		else {
 			json.put("verified", "false");
+			return json;
 		}
 //		for (UserAccount u : userAccountRepo.getAllUserDetails()) {
 //			if (u.getUsername().equals(username) && u.getOtp().equals(otp)) {
@@ -596,7 +711,7 @@ public class UserAccountController {
 //				json.put("verified", "false");
 //			}
 //		}
-		return json;
+		
 	}
 
 	public void timerCheckUserOTPStatus() {
