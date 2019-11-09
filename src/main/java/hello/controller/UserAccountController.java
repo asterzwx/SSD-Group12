@@ -344,26 +344,22 @@ public class UserAccountController {
 		}
 		String email = userAccountRepo.getEmailByUsername(userAccount.getUsername());
 		if (count < 3 && otpEnabled == true) {
-
 			// get current user otp count
 			// once email is sent, run timer and update user's otp count
 			timerCheckUserOTPStatus();
-
 			// generate new password
 			String otp = get6DigitOTP();
 //				userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
 //				 send email
 			sendEmail_OTP(email, userAccount.getUsername(), otp);
-
 			count = count + 1;
 			setEmailSentCount(count);
+			System.out.println("------------------- " + count);
+			System.out.println("=================== " + otp);
 			userAccountRepo.updateOTPCount(count, userAccount.getUsername());
 			userAccountRepo.updateOTP(otp, userAccount.getUsername());
-
 			json.put("email_sent", "true");
-
 			timerMakeOTPExpire(userAccount.getUsername());
-
 			return json;
 		} else {
 			userAccountRepo.updateStatus("locked", userAccount.getUsername());
@@ -700,16 +696,23 @@ public class UserAccountController {
 
 		if (userAccountRepo.getStatusByUsername(username).equals("locked")) {
 			json.put("verified", "locked");
+			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
+			json.put("input_otp", otp);
 			return json;
 		}
 		if (userAccountRepo.getOTPByUsername(username).equals(otp)) {
+			json.put("verified", "true");
+			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
+			json.put("input_otp", otp);
 			userAccountRepo.updateOTP("0", username);
 			userAccountRepo.updateResetPassword(username, 0);
 			userAccountRepo.updateOTPCount(0, username);
-			json.put("verified", "true");
+			
 			return json;
 		} else {
 			json.put("verified", "false");
+			json.put("db_otp", userAccountRepo.getOTPByUsername(username));
+			json.put("input_otp", otp);
 			return json;
 		}
 
@@ -758,8 +761,8 @@ public class UserAccountController {
 		};
 		Timer timer = new Timer("Timer");
 
-		long delay = 50000L;
-		long period = 50000L;
+		long delay = 300000L;
+		long period = 300000L;
 		timer.scheduleAtFixedRate(repeatedTask, delay, period);
 	}
 
