@@ -148,17 +148,17 @@ public class UserInventoryController {
 		int currentUserPoints = userInventoryRepo.getPointsById(username);
 		if (currentUserPoints == 0) {
 			json.put("purchase", "false");
-			json.put("already_owned", alreadyOwn);
-			json.put("user_points", userInventoryRepo.getPointsById(username));
-			json.put("item_cost", cost);
+//			json.put("already_owned", alreadyOwn);
+//			json.put("user_points", userInventoryRepo.getPointsById(username));
+//			json.put("item_cost", cost);
 			
 			return json;
 		}
 		if (currentUserPoints < cost || alreadyOwn == true) {
-			json.put("purchase", "insufficient or owned");
-			json.put("already_owned", alreadyOwn);
-			json.put("user_points", userInventoryRepo.getPointsById(username));
-			json.put("item_cost", cost);
+			json.put("purchase", "false");
+//			json.put("already_owned", alreadyOwn);
+//			json.put("user_points", userInventoryRepo.getPointsById(username));
+//			json.put("item_cost", cost);
 			return json;
 		} else {
 			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " + currentUserPoints);
@@ -183,9 +183,9 @@ public class UserInventoryController {
 			// 2. update all record set points = latestpoints where username = username
 			userInventoryRepo.updateUserPoints(latestPoints, username);
 			json.put("purchase", "true");
-			json.put("already_owned", alreadyOwn);
-			json.put("user_points", userInventoryRepo.getPointsById(username));
-			json.put("item_cost", cost);
+//			json.put("already_owned", alreadyOwn);
+//			json.put("user_points", userInventoryRepo.getPointsById(username));
+//			json.put("item_cost", cost);
 			return json;
 
 		}
