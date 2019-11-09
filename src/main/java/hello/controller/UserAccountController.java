@@ -330,9 +330,12 @@ public class UserAccountController {
 
 //		Optional<UserAccount> user = userService.findById(userAccount.getUsername());
 		Map<String, Object> json = new HashMap();
-		String getEmailString = userAccountRepo.getEmailByUsername(userAccount.getUsername());
+		
 		if (userAccount.getOtp_count() >= 3) {
 			otpEnabled = false;
+		}
+		else {
+			otpEnabled = true;
 		}
 		String email = userAccountRepo.getEmailByUsername(userAccount.getUsername());
 		if (userAccount.getOtp_count() < 3	&& otpEnabled == true) {
@@ -346,7 +349,7 @@ public class UserAccountController {
 			String otp = get6DigitOTP();
 //				userAccountRepo.updateResetPassword(userAccount.getUsername(), reset_password);
 //				 send email
-			sendEmail(email, userAccount.getUsername(), otp);
+			sendEmail_OTP(email, userAccount.getUsername(), otp);
 
 			count = count + 1;
 			setEmailSentCount(count);
