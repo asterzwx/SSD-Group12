@@ -145,12 +145,22 @@ public class UserInventoryController {
 		int currentUserPoints = userInventoryRepo.getPointsById(username);
 		if (currentUserPoints == 0) {
 			json.put("purchase", "false");
+			json.put("already_owned", alreadyOwn);
+			json.put("user_points", userInventoryRepo.getPointsById(username));
+			json.put("item_cost", cost);
+			
 			return json;
 		}
 		if (currentUserPoints < cost || alreadyOwn == true) {
 			json.put("purchase", "insufficient or owned");
+			json.put("already_owned", alreadyOwn);
+			json.put("user_points", userInventoryRepo.getPointsById(username));
+			json.put("item_cost", cost);
 			return json;
 		} else {
+			System.out.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " + currentUserPoints);
+			System.out.println("--------------------------------- " + cost);
+			
 			int latestPoints = currentUserPoints - cost;
 			// if purchase success,
 			// 1. create new record in user_inventory with the latest points
@@ -170,6 +180,9 @@ public class UserInventoryController {
 			// 2. update all record set points = latestpoints where username = username
 			userInventoryRepo.updateUserPoints(latestPoints, username);
 			json.put("purchase", "true");
+			json.put("already_owned", alreadyOwn);
+			json.put("user_points", userInventoryRepo.getPointsById(username));
+			json.put("item_cost", cost);
 			return json;
 
 		}
