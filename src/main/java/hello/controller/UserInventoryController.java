@@ -141,14 +141,15 @@ public class UserInventoryController {
 	public Map<String, Object> buy(@PathVariable String username, @PathVariable int item_id,
 			@PathVariable int cost) {
 		Map<String, Object> json = new HashMap();
+		boolean alreadyOwn = itemOwnedByUser(item_id, username);
 
 		int currentUserPoints = userInventoryRepo.getPointsById(username);
 		if (currentUserPoints == 0) {
 			json.put("purchase", "false");
 			return json;
 		} else {
-			if (currentUserPoints < cost || itemOwnedByUser(item_id, username) == true) {
-				json.put("purchase", "false");
+			if (currentUserPoints < cost || alreadyOwn == true) {
+				json.put("purchase", "insufficient or owned");
 				return json;	
 			} else {
 				int latestPoints = currentUserPoints - cost;
