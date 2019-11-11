@@ -28,7 +28,7 @@ import hello.controller.UserAccountController;
 import hello.repo.UserAccountRepo;
 import javassist.compiler.ast.NewExpr;
 
-@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200", "https://www.gambit-team12.tk"})
 @EnableJpaRepositories(basePackages = "hello.repo")
 @SpringBootApplication
 @EnableJpaAuditing
