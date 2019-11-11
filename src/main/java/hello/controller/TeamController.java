@@ -19,7 +19,7 @@ import hello.repo.TeamRepo;
 import hello.service.PlayerService;
 import hello.service.TeamService;
 
-@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200", "https://www.gambit-team12.tk"})
 @RestController
 @RequestMapping(value = "/rest/team")
 public class TeamController {

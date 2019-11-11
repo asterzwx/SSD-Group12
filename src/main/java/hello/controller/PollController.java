@@ -22,7 +22,7 @@ import hello.model.Poll;
 import hello.repo.PollRepo;
 import hello.service.PollService;
 
-@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200", "https://www.gambit-team12.tk"})
 @RestController
 @RequestMapping(value = "/rest/poll")
 public class PollController {

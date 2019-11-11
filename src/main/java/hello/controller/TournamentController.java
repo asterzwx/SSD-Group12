@@ -36,7 +36,7 @@ import hello.repo.TournamentRepo;
 import hello.service.LeagueService;
 import hello.service.TournamentService;
 
-@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200"})
+@CrossOrigin(origins = {"https://gambit-team12.tk", "http://localhost:4200", "https://www.gambit-team12.tk"})
 @RestController
 @RequestMapping(value = "/rest/tournament")
 public class TournamentController {
